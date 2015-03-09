@@ -1,0 +1,29 @@
+<controls>
+    <Button_Reset_Pins_to_Zero>
+        <name>Reset Pins to Zero</name>
+        <value>0</value>
+    </Button_Reset_Pins_to_Zero>
+    <ComboBox_Interaction_Mode>
+        <name>Interaction Mode</name>
+        <value>0</value>
+    </ComboBox_Interaction_Mode>
+    <SliderInt_Min_Pin_Level>
+        <name>Min Pin Level</name>
+        <value>30</value>
+    </SliderInt_Min_Pin_Level>
+    <SliderInt_Mid_Pin_Level>
+        <name>Mid Pin Level</name>
+        <value>100</value>
+    </SliderInt_Mid_Pin_Level>
+    <SliderInt_Dimple_Pin_Height>
+        <name>Dimple Pin Height</name>
+        <value>10</value>
+    </SliderInt_Dimple_Pin_Height>
+    <SliderInt_Dimple_Radius>
+        <name>Dimple Radius</name>
+        <value>0</value>
+        <name>Dimple Radius</name>
+        <value>0</value>
+    </SliderInt_Dimple_Radius>
+    <SliderInt_Dimple_Radius></SliderInt_Dimple_Radius>
+</controls>
