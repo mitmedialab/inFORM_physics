@@ -87,10 +87,12 @@ void KinectTracker::update(){
 	if(kinect.isFrameNew()) {
         
         colorImg.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
-        colorImg.mirror(1,1);
+        colorImg.mirror(0,1);
         colorImg.flagImageChanged();
         
 		depthImg.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+        depthImg.mirror(1,0);
+        depthImg.flagImageChanged();
 
         // ------------------- begin ROI
         vector<ofPoint> redBalls;

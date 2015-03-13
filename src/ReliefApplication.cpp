@@ -162,7 +162,6 @@ void ReliefApplication::update(){
     ofSetColor(255);
     kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     detectedObjectsImage.end();
-  
     
     sendHeightToRelief();
 }
@@ -177,15 +176,15 @@ void ReliefApplication::draw(){
     
     ofRect(305, 1, 302, 302);
     pinHeightMapImage.draw(306, 2, 300, 300);
-    
+
     ofRect(609, 1, 302, 302);
     pinHeightMapImageSmall.draw(610, 2, 300, 300);
     
     ofRect(913, 1, 302, 302);
     detectedObjectsImage.draw(914, 2, 300, 300);
 
-    ofDrawBitmapString(ofToString(kinectTracker.size), 913, 350);
-    ofDrawBitmapString(kinectTracker.pointsText.str(), 913, 380);
+    ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
+    ofDrawBitmapString(kinectTracker.pointsText.str(), 1, 380);
 
 
     //Draw Graphics onto projector
