@@ -184,7 +184,7 @@ void ReliefApplication::draw(){
     detectedObjectsImage.draw(914, 2, 300, 300);
 
     ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
-    ofDrawBitmapString(kinectTracker.pointsText.str(), 1, 380);
+    ofDrawBitmapString(kinectTracker.pointLocationsText.str(), 1, 380);
 
 
     //Draw Graphics onto projector

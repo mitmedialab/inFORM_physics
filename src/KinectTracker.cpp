@@ -15,38 +15,44 @@ void KinectTracker::setup(){
     
 	kinect.init();
 	kinect.open();		// opens first available kinect
-    
-    src[0] = ofPoint(6,4);
-    src[1] = ofPoint(188,6);
-    src[2] = ofPoint(190, 189);
-    src[3] = ofPoint(1,187);
-    dst[0] = ofPoint(0, 0);
-    dst[1] = ofPoint(190,0);
-    dst[2] = ofPoint(190,190);
-    dst[3] = ofPoint(0,190);
-    
+
     kinectView.allocate(kinect.width, kinect.height);
 
     colorImg.allocate(kinect.width, kinect.height);
 	depthImg.allocate(kinect.width, kinect.height);
+
     depthImgBG.allocate(kinect.width, kinect.height);
     depthImgBGPlusSurface.allocate(kinect.width, kinect.height);
     depthImgFiltered.allocate(kinect.width, kinect.height);
+    depthThreshold.allocate(kinect.width, kinect.height);
+    thresholdedColorImg.allocate(kinect.width, kinect.height);
+
+    int frameWidth = kinect.width;
+    int frameHeight = kinect.height;
+    
+    src[0] = ofPoint(6, 4);
+    src[1] = ofPoint(188, 6);
+    src[2] = ofPoint(190, 189);
+    src[3] = ofPoint(1, 187);
+    dst[0] = ofPoint(0, 0);
+    dst[1] = ofPoint(frameWidth, 0);
+    dst[2] = ofPoint(frameWidth, frameHeight);
+    dst[3] = ofPoint(0, frameHeight);
 
     //colorImg.setROI(234, 157, 190, 190);
-    scaledColorImg.allocate(190,190);
+    scaledColorImg.allocate(frameWidth, frameHeight);
 
-    hsvImage.allocate(190, 190);
-    hue.allocate(190, 190);
-    sat.allocate(190, 190);
-    bri.allocate(190, 190);
-    filtered.allocate(190, 190);
+    hsvImage.allocate(frameWidth, frameHeight);
+    hue.allocate(frameWidth, frameHeight);
+    sat.allocate(frameWidth, frameHeight);
+    bri.allocate(frameWidth, frameHeight);
+    filtered.allocate(frameWidth, frameHeight);
 
-	hueThreshNear.allocate(190, 190);
-	hueThreshFar.allocate(190, 190);
-	satThresh.allocate(190, 190);
-	hueThresh.allocate(190, 190);
-    
+    hueThreshNear.allocate(frameWidth, frameHeight);
+    hueThreshFar.allocate(frameWidth, frameHeight);
+    satThresh.allocate(frameWidth, frameHeight);
+    hueThresh.allocate(frameWidth, frameHeight);
+
     pinHeightMapImage.allocate(pinHeightMapWidth, pinHeightMapHeight);
 
     finger_contourFinder.bTrackBlobs = true;
@@ -55,7 +61,7 @@ void KinectTracker::setup(){
     ball_contourFinder.bTrackFingers = false;
 
     calib.setup(kinect.width, kinect.height, &finger_tracker);
-    calib.setup(190, 190, &ball_tracker);
+    calib.setup(frameWidth, frameHeight, &ball_tracker);
     verdana.loadFont("frabk.ttf", 8, true, true);
     
     loadDepthBackground();
@@ -69,9 +75,9 @@ void KinectTracker::setup(){
 	farThreshold = 233;
 	bThreshWithOpenCV = true;
     
-    depthImageAlpha.allocate(640, 480, OF_IMAGE_COLOR_ALPHA);
-    colorImageAlpha.allocate(640, 480, OF_IMAGE_COLOR_ALPHA);
-    detectedObjectsImageAlpha.allocate(640, 480, OF_IMAGE_COLOR_ALPHA);
+    depthImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
+    colorImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
+    detectedObjectsImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
 }
 
 void KinectTracker::exit() {
@@ -91,61 +97,15 @@ void KinectTracker::update(){
         colorImg.flagImageChanged();
         
 		depthImg.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
-        depthImg.mirror(1,0);
+        depthImg.mirror(0,1);
         depthImg.flagImageChanged();
 
-        // ------------------- begin ROI
-        vector<ofPoint> redBalls;
-//        findBalls(172, 5, 200, redBalls); // strict red threshold?
-        findBalls(172, 205, 100, redBalls); // loose threshold
-
-        size = redBalls.size();
-        /*
-        if (size == 0) {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::black);
-        } else if (size == 1) {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::brown);
-        } else if (size == 2) {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::red);
-        } else if (size == 3) {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::orange);
-        } else if (size == 4) {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::yellow);
-        } else {
-            detectedObjectsImageAlpha.getPixelsRef().setColor(ofColor::green);
-        }
-        */
-        detectedObjectsImageAlpha.getPixelsRef().setFromPixels(colorImg.getPixels(), colorImg.getWidth(), colorImg.getHeight(), colorImg.getPixelsRef().getNumChannels());
-
-        pointsText.str("");
-        int width = detectedObjectsImageAlpha.getPixelsRef().getWidth();
-        int height = detectedObjectsImageAlpha.getPixelsRef().getHeight();
-        for(vector<ofPoint>::iterator itr = redBalls.begin();itr < redBalls.end();itr++) {
-            pointsText << '(' << itr->x << ',' << itr->y << ")  ";
-            int x = itr->x * width;
-            int y = itr->y * height;
-            for (int dx = 0; dx < width / 20; dx++) {
-                for (int dy = 0; dy < height / 20; dy++) {
-                    detectedObjectsImageAlpha.getPixelsRef().setColor(x+dx, y+dy, ofColor::green);
-                    /*
-                    int i = (width * (y + dy) + x + dx);
-                    detectedObjectsImageAlpha.getPixelsRef()[i] = 255;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+1] = 0;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+2] = 0;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+3] = 255;
-                    */
-                }
-            }
-        }
-        // ------------------- end ROI
-        
         if(bThreshWithOpenCV) {
 			//grayThreshNear = depthImg;
-			grayThreshFar = depthImg;
 			//grayThreshNear.threshold(nearThreshold, true);
+			grayThreshFar = depthImg;
 			grayThreshFar.threshold(farThreshold);
 			cvAnd(grayThreshFar.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
-            depthImg.mirror(1, 1);
             depthImg.operator-=(233);
             
             unsigned char * depthPixels = depthImg.getPixels();
@@ -153,7 +113,7 @@ void KinectTracker::update(){
             
             unsigned char * colorPixels = colorImg.getPixels();
             unsigned char * colorAlphaPixels = colorImageAlpha.getPixels();
-            for (int i = 0; i < 640*480; i++) {
+            for (int i = 0; i < depthImageAlpha.width * depthImageAlpha.height; i++) {
                 depthPixels[i] *= 10;
                 
                 int indexRGB = i*3;
@@ -172,21 +132,61 @@ void KinectTracker::update(){
                 
             }
             depthImg.flagImageChanged();
-            
             depthImageAlpha.update();
             colorImageAlpha.update();
-            detectedObjectsImageAlpha.update();
-            
 		}
+
+        ofxCvGrayscaleImage depthThresholdGray;
+        depthThresholdGray = depthImg;
+        depthThresholdGray.threshold(0); // set to white all pixels that aren't black
+        depthThreshold.setFromGrayscalePlanarImages(depthThresholdGray, depthThresholdGray, depthThresholdGray);
+
+        // black out color image regions that are outside the depth range
+        cvAnd(colorImg.getCvImage(), depthThreshold.getCvImage(), thresholdedColorImg.getCvImage(), NULL);
+        thresholdedColorImg.flagImageChanged();
+
+
+        vector<ofPoint> redBalls;
+        //findBalls(172, 5, 200, redBalls); // strict red threshold?
+        findBalls(172, 205, 100, redBalls); // loose threshold
+
+        size = redBalls.size();
+        detectedObjectsImageAlpha.getPixelsRef().setFromPixels(thresholdedColorImg.getPixels(), thresholdedColorImg.getWidth(), thresholdedColorImg.getHeight(), thresholdedColorImg.getPixelsRef().getNumChannels());
+
+        int width = detectedObjectsImageAlpha.getPixelsRef().getWidth();
+        int height = detectedObjectsImageAlpha.getPixelsRef().getHeight();
+        int dx_radius = width/100;
+        int dy_radius = height/100;
+        pointLocationsText.str(""); // write out detected point coordinates for debugging use
+        for(vector<ofPoint>::iterator itr = redBalls.begin();itr < redBalls.end();itr++) {
+            pointLocationsText << '(' << itr->x << ',' << itr->y << ")  ";
+            int x = itr->x * width;
+            int y = itr->y * height;
+            for (int dx = 0; dx < dx_radius * 2; dx++) {
+                for (int dy = 0; dy < dy_radius * 2; dy++) {
+                    detectedObjectsImageAlpha.getPixelsRef().setColor(x - dx_radius + dx, y - dy_radius + dy, ofColor::green);
+                    /*
+                    int i = (width * (y + dy) + x + dx);
+                    detectedObjectsImageAlpha.getPixelsRef()[i] = 255;
+                    detectedObjectsImageAlpha.getPixelsRef()[i+1] = 0;
+                    detectedObjectsImageAlpha.getPixelsRef()[i+2] = 0;
+                    detectedObjectsImageAlpha.getPixelsRef()[i+3] = 255;
+                    */
+                }
+            }
+        }
+
+        detectedObjectsImageAlpha.update();
     }
 }
 
 void KinectTracker::findBalls(int hue_target, int hue_tolerance, int sat_limit, vector<ofPoint>& points){
-    scaledColorImg.setFromPixels(colorImg.getPixelsRef()); // was erroring when using .getRoiPixelsRef()
+    // scale thresholded color image down (note - this was erroring when using .getRoiPixelsRef())
+    scaledColorImg.setFromPixels(thresholdedColorImg.getPixelsRef());
     scaledColorImg.flagImageChanged();
 
     hsvImage.warpIntoMe(scaledColorImg, dst, dst);
-    //hsvImage.setFromPixels(colorImg.getPixelsRef()); // was erroring when using .getRoiPixelsRef()
+    //hsvImage.warpIntoMe(scaledColorImg, src, dst); // use in conjunction with an ROI (region of interest)
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
     hsvImage.flagImageChanged();
@@ -208,15 +208,16 @@ void KinectTracker::findBalls(int hue_target, int hue_tolerance, int sat_limit, 
     cvAnd(hueThreshNear.getCvImage(), hueThreshFar.getCvImage(), hueThresh.getCvImage(), NULL);
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), filtered.getCvImage(), NULL);
     filtered.flagImageChanged();
-    
-    ball_contourFinder.findContours(filtered, 75, (190*190)/2, 20, 20.0, false);
+
+    int imgSize = filtered.width * filtered.height;
+    ball_contourFinder.findContours(filtered, imgSize / 400, imgSize / 4, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
     
     
     
     points.clear();
     for(vector<Blob>::iterator itr = ball_contourFinder.blobs.begin(); itr < ball_contourFinder.blobs.end(); itr++) {
-        points.push_back(itr->centroid / 190);
+        points.push_back(ofPoint(itr->centroid.x / filtered.width, itr->centroid.y / filtered.height, 0));
     }
 }
 

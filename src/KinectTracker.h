@@ -49,7 +49,7 @@ public:
     
     ofPoint src[4],dst[4];
 
-    ofxCvColorImage colorImg, scaledColorImg;
+    ofxCvColorImage colorImg, depthThreshold, thresholdedColorImg, scaledColorImg;
     ofxCvGrayscaleImage depthImg, depthImgBG, depthImgBGPlusSurface, depthImgFiltered, pinHeightMapImage;
     ofImage depthImageAlpha;
     ofImage colorImageAlpha;
@@ -57,7 +57,7 @@ public:
 
     int frame = 0;
     int size;
-    ostringstream pointsText;
+    ostringstream pointLocationsText;
     
 	ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
 	
