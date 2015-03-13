@@ -96,7 +96,8 @@ void KinectTracker::update(){
 
         // ------------------- begin ROI
         vector<ofPoint> redBalls;
-        findBalls(172, 5, 200, redBalls);
+//        findBalls(172, 5, 200, redBalls); // strict red threshold?
+        findBalls(172, 205, 100, redBalls); // loose threshold
 
         size = redBalls.size();
         /*
