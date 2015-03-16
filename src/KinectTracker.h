@@ -49,8 +49,11 @@ public:
     
     ofPoint src[4],dst[4];
 
-    ofxCvColorImage colorImg, depthThreshold, thresholdedColorImg, scaledColorImg;
-    ofxCvGrayscaleImage depthImg, depthImgBG, depthImgBGPlusSurface, depthImgFiltered, pinHeightMapImage;
+    int frameWidth = 190;
+    int frameHeight = 190;
+
+    ofxCvColorImage colorImgRaw, colorImg, depthThreshold, thresholdedColorImg, scaledColorImg;
+    ofxCvGrayscaleImage depthImgRaw, depthImg, depthImgBG, depthImgBGPlusSurface, depthImgFiltered, pinHeightMapImage;
     ofImage depthImageAlpha;
     ofImage colorImageAlpha;
     ofImage detectedObjectsImageAlpha;

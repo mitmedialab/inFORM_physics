@@ -18,18 +18,21 @@ void KinectTracker::setup(){
 
     kinectView.allocate(kinect.width, kinect.height);
 
-    colorImg.allocate(kinect.width, kinect.height);
-	depthImg.allocate(kinect.width, kinect.height);
+    colorImgRaw.allocate(kinect.width, kinect.height);
+	depthImgRaw.allocate(kinect.width, kinect.height);
 
-    depthImgBG.allocate(kinect.width, kinect.height);
-    depthImgBGPlusSurface.allocate(kinect.width, kinect.height);
-    depthImgFiltered.allocate(kinect.width, kinect.height);
-    depthThreshold.allocate(kinect.width, kinect.height);
-    thresholdedColorImg.allocate(kinect.width, kinect.height);
+    colorImgRaw.setROI(223, 158, frameWidth, frameHeight);
+    depthImgRaw.setROI(223, 158, frameWidth, frameHeight);
 
-    int frameWidth = kinect.width;
-    int frameHeight = kinect.height;
-    
+    colorImg.allocate(frameWidth, frameHeight);
+	depthImg.allocate(frameWidth, frameHeight);
+
+    depthImgBG.allocate(frameWidth, frameHeight);
+    depthImgBGPlusSurface.allocate(frameWidth, frameHeight);
+    depthImgFiltered.allocate(frameWidth, frameHeight);
+    depthThreshold.allocate(frameWidth, frameHeight);
+    thresholdedColorImg.allocate(frameWidth, frameHeight);
+
     src[0] = ofPoint(6, 4);
     src[1] = ofPoint(188, 6);
     src[2] = ofPoint(190, 189);
@@ -39,7 +42,6 @@ void KinectTracker::setup(){
     dst[2] = ofPoint(frameWidth, frameHeight);
     dst[3] = ofPoint(0, frameHeight);
 
-    //colorImg.setROI(234, 157, 190, 190);
     scaledColorImg.allocate(frameWidth, frameHeight);
 
     hsvImage.allocate(frameWidth, frameHeight);
@@ -68,16 +70,16 @@ void KinectTracker::setup(){
     
     
     // allocate threshold images
-    grayThreshNear.allocate(kinect.width, kinect.height);
-	grayThreshFar.allocate(kinect.width, kinect.height);
+    grayThreshNear.allocate(frameWidth, frameHeight);
+	grayThreshFar.allocate(frameWidth, frameHeight);
 	
 	nearThreshold = 255;
 	farThreshold = 213; // 216 for setup in Daniel's room
 	bThreshWithOpenCV = true;
     
-    depthImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
-    colorImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
-    detectedObjectsImageAlpha.allocate(kinect.width, kinect.height, OF_IMAGE_COLOR_ALPHA);
+    depthImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
+    colorImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
+    detectedObjectsImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
 }
 
 void KinectTracker::exit() {
@@ -92,12 +94,14 @@ void KinectTracker::update(){
 	// there is a new frame and we are connected
 	if(kinect.isFrameNew()) {
         
-        colorImg.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
-        colorImg.mirror(0,1);
+        colorImgRaw.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
+        colorImgRaw.flagImageChanged();
+        colorImg.setFromPixels(colorImgRaw.getRoiPixels(), frameWidth, frameHeight);
         colorImg.flagImageChanged();
         
-		depthImg.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
-        depthImg.mirror(0,1);
+		depthImgRaw.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+        depthImgRaw.flagImageChanged();
+        depthImg.setFromPixels(depthImgRaw.getRoiPixels(), frameWidth, frameHeight);
         depthImg.flagImageChanged();
 
         if(bThreshWithOpenCV) {
