@@ -150,11 +150,11 @@ void KinectTracker::update(){
         thresholdedColorImg.flagImageChanged();
 
 
-        vector<Blob> redBalls;
-        //findBalls(172, 5, 200, redBalls); // strict red threshold?
-        findBalls(172, 205, 100, redBalls); // loose threshold
+        vector<Blob> redBlobs;
+        //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
+        findBlobs(172, 205, 100, redBlobs); // loose threshold
 
-        size = redBalls.size();
+        size = redBlobs.size();
         detectedObjectsImageAlpha.getPixelsRef().setFromPixels(thresholdedColorImg.getPixels(), thresholdedColorImg.getWidth(), thresholdedColorImg.getHeight(), thresholdedColorImg.getPixelsRef().getNumChannels());
 
         int width = detectedObjectsImageAlpha.getPixelsRef().getWidth();
@@ -162,7 +162,7 @@ void KinectTracker::update(){
         int dx_radius = width/100;
         int dy_radius = height/100;
         pointLocationsText.str(""); // write out detected point coordinates for debugging use
-        for(vector<Blob>::iterator blobs_itr = redBalls.begin(); blobs_itr < redBalls.end(); blobs_itr++) {
+        for(vector<Blob>::iterator blobs_itr = redBlobs.begin(); blobs_itr < redBlobs.end(); blobs_itr++) {
             int x = blobs_itr->centroid.x;
             int y = blobs_itr->centroid.y;
             pointLocationsText << '(' << x * 1.0 / width << ',' << y * 1.0 / height << ")  ";
@@ -187,7 +187,7 @@ void KinectTracker::update(){
     }
 }
 
-void KinectTracker::findBalls(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
+void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
     // scale thresholded color image down (note - this was erroring when using .getRoiPixelsRef())
     scaledColorImg.setFromPixels(thresholdedColorImg.getPixelsRef());
     scaledColorImg.flagImageChanged();
@@ -389,7 +389,7 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
     filtered.draw(x,y,width,height);
     // draw red circles around balls
     ofSetColor(ofColor::red);
-    for(vector<ofPoint>::iterator itr = redBalls.begin();itr < redBalls.end();itr++) {
+    for(vector<ofPoint>::iterator itr = redBlobs.begin();itr < redBlobs.end();itr++) {
         ofCircle(x + itr->x / 900.0 * width, y + itr->y / 900.0 * height, 5.0f);
         
         int coord =((int)(itr->y * 190.0 / 900.0) * 190) + (int)(itr->x * 190.0 / 900.0);
@@ -456,6 +456,14 @@ void KinectTracker::drawColorImage(int x, int y, int width, int height) {
     //colorImageAlpha.draw(x,y,width,height);
     colorImg.draw(x,y,width,height);
     ofDisableAlphaBlending();
+}
+
+
+void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
+    //ofEnableAlphaBlending();
+    ofSetColor(255, 255, 255);
+    depthImageAlpha.draw(x,y,width,height);
+    //ofDisableAlphaBlending();
 }
 
 

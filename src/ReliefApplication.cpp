@@ -44,12 +44,14 @@ void ReliefApplication::setup(){
     mIOManager->sendValueToAllBoards(TERM_ID_GRAVITYCOMP, (unsigned char)gravityComp);
     mIOManager->sendValueToAllBoards(TERM_ID_MAXSPEED, (unsigned char)(maxSpeed/2));
     
+    colorInputImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+    depthInputImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+    detectedObjectsImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
-    
     pinHeightMapImageSmall.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
-    detectedObjectsImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
-    
+
     myMarbleMachine = new MarbleMachine();
     
     myRipple = new RRipple();
@@ -98,8 +100,9 @@ void ReliefApplication::update(){
     //    renderableObjects[i]->update(dt);
     //}
     
-    // render graphics
-    pinDisplayImage.begin();
+    // render input color image
+    colorInputImage.begin();
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, 900, 900);
@@ -116,13 +119,12 @@ void ReliefApplication::update(){
     if(show3DModel) model.draw();
     glDisable(GL_DEPTH_TEST);
     
-    //kinectTracker.drawColorImage(-300, -300, 2000, 1500);
     kinectTracker.drawColorImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     
-    pinDisplayImage.end();
+    colorInputImage.end();
     
-    // render large heightmap
-    pinHeightMapImage.begin();
+    // render input depth image
+    depthInputImage.begin();
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -144,17 +146,9 @@ void ReliefApplication::update(){
     glDisable(GL_DEPTH_TEST);
     mHeightMapShader.end();
 
-    kinectTracker.draw(-300, -300, 2000, 1500, 0, 0);
-    kinectTracker.draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 0, 0);
+    kinectTracker.drawDepthImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
 
-    pinHeightMapImage.end();
-    
-    // render small heightmap
-    pinHeightMapImageSmall.begin();
-    ofBackground(0);
-    ofSetColor(255);
-    pinHeightMapImage.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
-    pinHeightMapImageSmall.end();
+    depthInputImage.end();
     
     // render detected objects
     detectedObjectsImage.begin();
@@ -163,6 +157,20 @@ void ReliefApplication::update(){
     kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     detectedObjectsImage.end();
     
+    // render large heightmap
+    pinHeightMapImage.begin();
+    ofBackground(0);
+    ofSetColor(255);
+    depthInputImage.draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+    pinHeightMapImage.end();
+    
+    // render small heightmap
+    pinHeightMapImageSmall.begin();
+    ofBackground(0);
+    ofSetColor(255);
+    pinHeightMapImage.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
+    pinHeightMapImageSmall.end();
+
     sendHeightToRelief();
 }
 
@@ -170,19 +178,20 @@ void ReliefApplication::update(){
 void ReliefApplication::draw(){
     ofBackground(0,0,0);
     ofSetColor(255);
+
     ofRect(1, 1, 302, 302);
-    pinDisplayImage.draw(2, 2, 300, 300);
-    
-    
+    colorInputImage.draw(2, 2, 300, 300);
+
     ofRect(305, 1, 302, 302);
-    pinHeightMapImage.draw(306, 2, 300, 300);
+    depthInputImage.draw(306, 2, 300, 300);
 
     ofRect(609, 1, 302, 302);
-    pinHeightMapImageSmall.draw(610, 2, 300, 300);
+    detectedObjectsImage.draw(610, 2, 300, 300);
     
     ofRect(913, 1, 302, 302);
-    detectedObjectsImage.draw(914, 2, 300, 300);
+    pinHeightMapImageSmall.draw(914, 2, 300, 300);
 
+    // for object detection debugging use
     ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
     ofDrawBitmapString(kinectTracker.pointLocationsText.str(), 1, 380);
 

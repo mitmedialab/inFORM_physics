@@ -39,11 +39,14 @@ public:
     ReliefIOManager * mIOManager;
 	unsigned char mPinHeightToRelief [RELIEF_SIZE_X][RELIEF_SIZE_Y];
 
+    ofFbo colorInputImage; //color image from camera
+    ofFbo depthInputImage; //depth image from camera
+    ofFbo detectedObjectsImage; //objects detected in input images
+
     ofFbo pinDisplayImage; //FBO where we render graphics for pins
     ofFbo pinHeightMapImage; //FBO where we render height map
     ofFbo pinHeightMapImageSmall; //FBO where we render height map
-    ofFbo detectedObjectsImage; //FBO where we render detected objects
-    
+
     int projectorOffsetX;
     
     vector< RenderableObject *> renderableObjects;

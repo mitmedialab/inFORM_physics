@@ -22,12 +22,13 @@ public:
     
     void setup();
     void exit();
-    void draw(int x, int y, int width, int height, int probe_x, int probe_y);
+    void draw(int x, int y, int width, int height, int probe_x=NULL, int probe_y=NULL);
     void drawColorImage(int x, int y, int width, int height);
+    void drawDepthImage(int x, int y, int width, int height);
     void drawDetectedObjects(int x, int y, int width, int height);
     void update();
     
-    void findBalls(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs);
+    void findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
     
@@ -38,8 +39,8 @@ public:
 
     void drawCount(int width, int height);
     
-    vector<ofPoint>  redBalls;
-    vector<ofPoint>  blueBalls;
+    vector<ofPoint>  redBlobs;
+    vector<ofPoint>  blueBlobs;
     vector<ofPoint>  fingers; //z is relative above height map
     vector<ofPoint>  absFingers; //z is absolute (not vodka)
     
