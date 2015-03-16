@@ -27,7 +27,7 @@ public:
     void drawDetectedObjects(int x, int y, int width, int height);
     void update();
     
-    void findBalls(int hue_target, int hue_tolerance, int sat_limit, vector<ofPoint>& points);
+    void findBalls(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
     
