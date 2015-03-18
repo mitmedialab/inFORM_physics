@@ -219,6 +219,24 @@ void KinectTracker::update(){
             detectedObjectsDisplayImage.getPixelsRef().setColor(cubeBottomCorner.x, cubeBottomCorner.y, ofColor::blue);
 
 
+            int xSpread = cubeMaxX - cubeMinX;
+            int ySpread = cubeMaxY - cubeMinY;
+
+            // categorize current state of detected objects
+            if (size == 1) {
+                currentBlob = *blobs_itr;
+                if (xSpread <= 30 && ySpread <= 30) {
+                    cubeIsReady = true;
+                    cout << "ready" << endl;
+                } else {
+                    cubeIsReady = false;
+                    cout << "not ready" << endl;
+                }
+                cubeIsReady = true;
+            } else {
+                cubeIsReady = false;
+                cout << "WARNING: detected " << size << " objects, expected 1"<< endl;
+            }
         }
 
         detectedObjectsDisplayImage.update();

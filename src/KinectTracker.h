@@ -63,6 +63,8 @@ public:
     int size;
     ostringstream pointLocationsText;
 
+    Blob currentBlob;
+    bool cubeIsReady;
     int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY;
     ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner;
     
