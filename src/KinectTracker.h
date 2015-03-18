@@ -62,6 +62,9 @@ public:
     int frame = 0;
     int size;
     ostringstream pointLocationsText;
+
+    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY;
+    ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner;
     
 	ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
 
