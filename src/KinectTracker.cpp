@@ -12,6 +12,9 @@ void KinectTracker::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
+
+    // set depth range of interest in mm
+	kinect.setDepthClipping(800, 1050); // 0.8 to 1.05 meters
     
 	kinect.init();
 	kinect.open();		// opens first available kinect
@@ -67,19 +70,14 @@ void KinectTracker::setup(){
     verdana.loadFont("frabk.ttf", 8, true, true);
     
     loadDepthBackground();
-    
-    
+
     // allocate threshold images
     grayThreshNear.allocate(frameWidth, frameHeight);
 	grayThreshFar.allocate(frameWidth, frameHeight);
-	
-	nearThreshold = 255;
-	farThreshold = 213; // 216 for setup in Daniel's room
-	bThreshWithOpenCV = true;
-    
-    depthImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
-    colorImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
-    detectedObjectsImageAlpha.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR_ALPHA);
+
+    depthDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
+    colorDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
+    detectedObjectsDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
 }
 
 void KinectTracker::exit() {
@@ -93,52 +91,64 @@ void KinectTracker::update(){
 	
 	// there is a new frame and we are connected
 	if(kinect.isFrameNew()) {
-        
+
+        // get color image data in region of interest
         colorImgRaw.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
         colorImgRaw.flagImageChanged();
         colorImg.setFromPixels(colorImgRaw.getRoiPixels(), frameWidth, frameHeight);
         colorImg.flagImageChanged();
-        
+
+        // get depth image data in region of interest
 		depthImgRaw.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
         depthImgRaw.flagImageChanged();
         depthImg.setFromPixels(depthImgRaw.getRoiPixels(), frameWidth, frameHeight);
-        depthImg.flagImageChanged();
+        depthImg.dilate();
+        depthImg.erode();
 
-        if(bThreshWithOpenCV) {
-			//grayThreshNear = depthImg;
-			//grayThreshNear.threshold(nearThreshold, true);
-			grayThreshFar = depthImg;
-			grayThreshFar.threshold(farThreshold);
-			cvAnd(grayThreshFar.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
-            depthImg.operator-=(farThreshold);
-            
-            unsigned char * depthPixels = depthImg.getPixels();
-            unsigned char * depthAlphaPixels = depthImageAlpha.getPixels();
-            
-            unsigned char * colorPixels = colorImg.getPixels();
-            unsigned char * colorAlphaPixels = colorImageAlpha.getPixels();
-            for (int i = 0; i < depthImageAlpha.width * depthImageAlpha.height; i++) {
-                depthPixels[i] *= 10;
-                
-                int indexRGB = i*3;
-                int indexRGBA = i*4;
-                
-                depthAlphaPixels[indexRGBA] = depthPixels[i];
-                depthAlphaPixels[indexRGBA+1] = depthPixels[i];
-                depthAlphaPixels[indexRGBA+2] = depthPixels[i];
-                depthAlphaPixels[indexRGBA+3] = (depthPixels[i] == 0) ? 0 : 255;
-                
-                colorAlphaPixels[indexRGBA] = (unsigned char)(colorPixels[indexRGB] * 1.0);
-                colorAlphaPixels[indexRGBA+1] = (unsigned char)(colorPixels[indexRGB+1] * 1.0); // 0.7
-                colorAlphaPixels[indexRGBA+2] = (unsigned char)(colorPixels[indexRGB+2] * 1.0); // 0.7
-                colorAlphaPixels[indexRGBA+3] = (depthPixels[i] == 0) ? 0 : 255;
-                
-                
+        // reject near depths
+        int nearThreshold = 254; // all pixels closer than the minimum depth are 255, so clip at 254
+        grayThreshNear = depthImg;
+        grayThreshNear.threshold(nearThreshold, true);
+        cvAnd(grayThreshNear.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
+
+        depthImg.flagImageChanged();
+        
+        unsigned char * depthPixels = depthImg.getPixels();
+        unsigned char * colorPixels = colorImg.getPixels();
+        unsigned char * depthDisplayPixels = depthDisplayImage.getPixels();
+        unsigned char * colorDisplayPixels = colorDisplayImage.getPixels();
+
+        // for human display only, normalize depth pixels to easily visible values
+        int displayFloor = 50;
+        float displayScalar = (255.0f - displayFloor) / nearThreshold;
+        unsigned char displayNormalizedValue;
+
+        for (int i = 0; i < depthDisplayImage.width * depthDisplayImage.height; i++) {
+            int indexRGB = i*3;
+
+            if (depthPixels[i] == 0) {
+                depthDisplayPixels[indexRGB] = 0;
+                depthDisplayPixels[indexRGB+1] = 0;
+                depthDisplayPixels[indexRGB+2] = 0;
+
+                colorDisplayPixels[indexRGB] = 0;
+                colorDisplayPixels[indexRGB+1] = 0;
+                colorDisplayPixels[indexRGB+2] = 0;
+
+            } else {
+                displayNormalizedValue = depthPixels[i] * displayScalar + displayFloor;
+
+                depthDisplayPixels[indexRGB] = displayNormalizedValue;
+                depthDisplayPixels[indexRGB+1] = displayNormalizedValue;
+                depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
+
+                colorDisplayPixels[indexRGB] = (unsigned char)(colorPixels[indexRGB] * 1.0);
+                colorDisplayPixels[indexRGB+1] = (unsigned char)(colorPixels[indexRGB+1] * 1.0);
+                colorDisplayPixels[indexRGB+2] = (unsigned char)(colorPixels[indexRGB+2] * 1.0);
             }
-            depthImg.flagImageChanged();
-            depthImageAlpha.update();
-            colorImageAlpha.update();
-		}
+        }
+        depthDisplayImage.update();
+        colorDisplayImage.update();
 
         ofxCvGrayscaleImage depthThresholdGray;
         depthThresholdGray = depthImg;
@@ -150,15 +160,14 @@ void KinectTracker::update(){
         thresholdedColorImg.flagImageChanged();
 
 
-        vector<Blob> redBlobs;
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
         findBlobs(172, 205, 100, redBlobs); // loose threshold
 
         size = redBlobs.size();
-        detectedObjectsImageAlpha.getPixelsRef().setFromPixels(thresholdedColorImg.getPixels(), thresholdedColorImg.getWidth(), thresholdedColorImg.getHeight(), thresholdedColorImg.getPixelsRef().getNumChannels());
+        detectedObjectsDisplayImage.getPixelsRef().setFromPixels(thresholdedColorImg.getPixels(), thresholdedColorImg.getWidth(), thresholdedColorImg.getHeight(), thresholdedColorImg.getPixelsRef().getNumChannels());
 
-        int width = detectedObjectsImageAlpha.getPixelsRef().getWidth();
-        int height = detectedObjectsImageAlpha.getPixelsRef().getHeight();
+        int width = detectedObjectsDisplayImage.getPixelsRef().getWidth();
+        int height = detectedObjectsDisplayImage.getPixelsRef().getHeight();
         int dx_radius = width/100;
         int dy_radius = height/100;
         pointLocationsText.str(""); // write out detected point coordinates for debugging use
@@ -168,22 +177,21 @@ void KinectTracker::update(){
             pointLocationsText << '(' << x * 1.0 / width << ',' << y * 1.0 / height << ")  ";
             for (int dx = -dx_radius; dx < dx_radius * 2; dx++) {
                 for (int dy = -dy_radius; dy < dy_radius * 2; dy++) {
-                    detectedObjectsImageAlpha.getPixelsRef().setColor(x + dx, y + dy, ofColor::green);
+                    detectedObjectsDisplayImage.getPixelsRef().setColor(x + dx, y + dy, ofColor::green);
                     /*
                     int i = (width * (y + dy) + x + dx);
-                    detectedObjectsImageAlpha.getPixelsRef()[i] = 255;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+1] = 0;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+2] = 0;
-                    detectedObjectsImageAlpha.getPixelsRef()[i+3] = 255;
+                    detectedObjectsDisplayImage.getPixelsRef()[i] = 255;
+                    detectedObjectsDisplayImage.getPixelsRef()[i+1] = 0;
+                    detectedObjectsDisplayImage.getPixelsRef()[i+2] = 0;
                     */
                 }
             }
             for(vector<ofPoint>::iterator points_itr = blobs_itr->pts.begin(); points_itr < blobs_itr->pts.end(); points_itr++) {
-                detectedObjectsImageAlpha.getPixelsRef().setColor(points_itr->x, points_itr->y, ofColor::green);
+                detectedObjectsDisplayImage.getPixelsRef().setColor(points_itr->x, points_itr->y, ofColor::green);
             }
         }
 
-        detectedObjectsImageAlpha.update();
+        detectedObjectsDisplayImage.update();
     }
 }
 
@@ -379,11 +387,9 @@ void KinectTracker::setPinHeightMap(ofPixels & tempPixels){
 //--------------------------------------------------------------
 void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int probe_y) {
     
-    //ofEnableAlphaBlending();
     ofSetColor(255, 255, 255);
-    depthImageAlpha.draw(x,y,width,height);
-    //ofDisableAlphaBlending();
-    
+    depthDisplayImage.draw(x,y,width,height);
+
     
     /*
     filtered.draw(x,y,width,height);
@@ -451,25 +457,18 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
 
 
 void KinectTracker::drawColorImage(int x, int y, int width, int height) {
-    ofEnableAlphaBlending();
     ofSetColor(255, 255, 255);
-    //colorImageAlpha.draw(x,y,width,height);
     colorImg.draw(x,y,width,height);
-    ofDisableAlphaBlending();
 }
 
 
 void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
-    //ofEnableAlphaBlending();
     ofSetColor(255, 255, 255);
-    depthImageAlpha.draw(x,y,width,height);
-    //ofDisableAlphaBlending();
+    depthDisplayImage.draw(x,y,width,height);
 }
 
 
 void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
-    ofEnableAlphaBlending();
     ofSetColor(255, 255, 255);
-    detectedObjectsImageAlpha.draw(x,y,width,height);
-    ofDisableAlphaBlending();
+    detectedObjectsDisplayImage.draw(x,y,width,height);
 }

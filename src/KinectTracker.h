@@ -39,8 +39,8 @@ public:
 
     void drawCount(int width, int height);
     
-    vector<ofPoint>  redBlobs;
-    vector<ofPoint>  blueBlobs;
+    vector<Blob>  redBlobs;
+    vector<Blob>  blueBlobs;
     vector<ofPoint>  fingers; //z is relative above height map
     vector<ofPoint>  absFingers; //z is absolute (not vodka)
     
@@ -55,19 +55,15 @@ public:
 
     ofxCvColorImage colorImgRaw, colorImg, depthThreshold, thresholdedColorImg, scaledColorImg;
     ofxCvGrayscaleImage depthImgRaw, depthImg, depthImgBG, depthImgBGPlusSurface, depthImgFiltered, pinHeightMapImage;
-    ofImage depthImageAlpha;
-    ofImage colorImageAlpha;
-    ofImage detectedObjectsImageAlpha;
+    ofImage depthDisplayImage;
+    ofImage colorDisplayImage;
+    ofImage detectedObjectsDisplayImage;
 
     int frame = 0;
     int size;
     ostringstream pointLocationsText;
     
 	ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
-	
-	int nearThreshold;
-	int farThreshold;
-	bool bThreshWithOpenCV;
 
     ofxCvColorImage hsvImage;
     ofxCvGrayscaleImage hueThreshNear, hueThreshFar, hueThresh, satThresh; // the near thresholded image
