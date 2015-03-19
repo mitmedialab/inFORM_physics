@@ -28,11 +28,18 @@ public:
     void update(float dt);
     
     void keyPressed(int key);
+
+    // swords schema specifiers
+    bool useStaticSecondSword;
+    bool intersectSwords;
+    bool blockadeSword;
     
 private:
     KinectTracker *kinectTracker;
     ofFbo pinHeightMapImage; //FBO where we render height map
-    
+
+    void drawSwordsHeightMap();
+
 };
 
 #endif /* defined(__Relief2__HybridTokens__) */

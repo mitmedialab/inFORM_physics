@@ -11,6 +11,11 @@
 HybridTokens::HybridTokens(KinectTracker *tracker) {
     kinectTracker = tracker;
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+
+    // swords schema default
+    useStaticSecondSword = true;
+    intersectSwords = false;
+    blockadeSword = true;
 }
 
 void HybridTokens::drawHeightMap() {
@@ -24,14 +29,13 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
+    drawSwordsHeightMap();
+    pinHeightMapImage.end();
+}
 
+void HybridTokens::drawSwordsHeightMap() {
     // for now, assume a ready cube is flat and aligned to the coordinate axes
     if (kinectTracker->cubeIsReady) {
-        // specify schema
-        bool useStaticSecondSword = true;
-        bool intersect = false;
-        bool blockade = true;
-        
         // known width and height of our cubes
         int width = 26;
         int height = 26;
@@ -62,7 +66,7 @@ void HybridTokens::update(float dt) {
             ofRect(fixedLeft, fixedTop, fixedRight - fixedLeft, fixedBottom - fixedTop);
             
             // draw sword intersections
-            if (intersect) {
+            if (intersectSwords) {
                 ofSetColor(255);
                 if (fixedLeft < right && fixedRight > left && fixedTop < bottom && fixedBottom > top) {
                     int overlapLeft, overlapRight, overlapTop, overlapBottom;
@@ -75,7 +79,8 @@ void HybridTokens::update(float dt) {
             }
             
             // draw blockade
-            if (blockade) {
+            if (blockadeSword) {
+                ofSetColor(140);
                 int closeDistance = 13 * RELIEF_PROJECTOR_SIZE_X / 190;
                 if (left < fixedRight + closeDistance) {
                     int adjWidth = width * RELIEF_PROJECTOR_SIZE_X / 190;
@@ -86,7 +91,6 @@ void HybridTokens::update(float dt) {
             }
         }
     }
-    pinHeightMapImage.end();
 }
 
 void HybridTokens::keyPressed(int key) {
