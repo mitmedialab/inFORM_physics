@@ -207,6 +207,18 @@ void ReliefApplication::draw(){
 //--------------------------------------------------------------
 void ReliefApplication::keyPressed(int key){
     myCurrentRenderedObject->keyPressed(key);
+
+    if(key == 's') {
+        myHybridTokens->useStaticSecondSword = !myHybridTokens->useStaticSecondSword;
+    }
+
+    if(key == 'i') {
+        myHybridTokens->intersectSwords = !myHybridTokens->intersectSwords;
+    }
+
+    if(key == 'b') {
+        myHybridTokens->blockadeSword = !myHybridTokens->blockadeSword;
+    }
     
     if(key == 'p') {
         kinectTracker.saveDepthImage();
