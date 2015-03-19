@@ -10,6 +10,7 @@
 #include "RBitmap.h"
 #include "KinectTracker.h"
 #include "RRipple.h"
+#include "HybridTokens.h"
 #include <memory>
 #include "R3DModel.h"
 
@@ -54,6 +55,8 @@ public:
     MarbleMachine * myMarbleMachine;
     RRipple * myRipple;
     
+    HybridTokens * myHybridTokens;
+
     RenderableObject * myCurrentRenderedObject;
     
     KinectTracker kinectTracker;

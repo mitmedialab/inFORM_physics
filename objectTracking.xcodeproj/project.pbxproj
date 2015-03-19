@@ -80,6 +80,7 @@
 		65E6ECB81AA4EBD300520937 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAE1AA4EBD300520937 /* main.cpp */; };
 		65E6ECB91AA4EBD300520937 /* MarbleMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAF1AA4EBD300520937 /* MarbleMachine.cpp */; };
 		65E6ECBB1AA4EBD300520937 /* ReliefApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */; };
+		65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FDDE651ABA383900649421 /* HybridTokens.cpp */; };
 		66CA411C5A9664E27326BF36 /* ofxTCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C085E327DAB912CFA2A443D /* ofxTCPServer.cpp */; };
 		67FE4C7B15C2F0478C8126C2 /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B361208CD4107E479F04E7B /* NetworkingUtils.cpp */; };
 		686B0DF6249B52E1A85B39EC /* ofxKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7ED9FFC7D08DA194C2CE7D09 /* ofxKinect.cpp */; };
@@ -339,6 +340,8 @@
 		65E6ECB51AA4EBD300520937 /* ReliefApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReliefApplication.h; sourceTree = "<group>"; };
 		65E6ECC11AAA478800520937 /* ofxKCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKCore.h; sourceTree = "<group>"; };
 		65EEFA3DA3526E9CDD9C21F9 /* ofxOscBundle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscBundle.cpp; path = ../../../addons/ofxOsc/src/ofxOscBundle.cpp; sourceTree = SOURCE_ROOT; };
+		65FDDE641ABA382400649421 /* HybridTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridTokens.h; sourceTree = "<group>"; };
+		65FDDE651ABA383900649421 /* HybridTokens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HybridTokens.cpp; sourceTree = "<group>"; };
 		665780A3005496E3A4A0D9EF /* compat.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = compat.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/legacy/compat.hpp; sourceTree = SOURCE_ROOT; };
 		67AF0E794FA186DD25454CC9 /* calib3d.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = calib3d.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/calib3d/calib3d.hpp; sourceTree = SOURCE_ROOT; };
 		6A430934FF822613CC649F40 /* ofx3DModelLoader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofx3DModelLoader.h; path = ../../../addons/ofx3DModelLoader/src/ofx3DModelLoader.h; sourceTree = SOURCE_ROOT; };
@@ -841,6 +844,8 @@
 				65E6ECAE1AA4EBD300520937 /* main.cpp */,
 				65E6ECAF1AA4EBD300520937 /* MarbleMachine.cpp */,
 				65E6ECB01AA4EBD300520937 /* MarbleMachine.h */,
+				65FDDE651ABA383900649421 /* HybridTokens.cpp */,
+				65FDDE641ABA382400649421 /* HybridTokens.h */,
 				65E6ECC11AAA478800520937 /* ofxKCore.h */,
 				65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */,
 				65E6ECB51AA4EBD300520937 /* ReliefApplication.h */,
@@ -1568,6 +1573,7 @@
 				65E6EC841AA4E85300520937 /* boxAlign.cpp in Sources */,
 				66CA411C5A9664E27326BF36 /* ofxTCPServer.cpp in Sources */,
 				65E6EC971AA4E85300520937 /* TouchMessenger.cpp in Sources */,
+				65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */,
 				65E6EC901AA4E85300520937 /* ofxGuiPanel.cpp in Sources */,
 				65E6EC8C1AA4E85300520937 /* ofxGuiGlobals.cpp in Sources */,
 				E2564CF7DDB3713772BB682E /* ofxUDPManager.cpp in Sources */,
