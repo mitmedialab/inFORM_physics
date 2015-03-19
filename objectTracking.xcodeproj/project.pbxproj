@@ -78,7 +78,6 @@
 		65E6ECA41AA4E95A00520937 /* ReliefSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECA11AA4E95A00520937 /* ReliefSerial.cpp */; };
 		65E6ECB71AA4EBD300520937 /* KinectTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */; };
 		65E6ECB81AA4EBD300520937 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAE1AA4EBD300520937 /* main.cpp */; };
-		65E6ECB91AA4EBD300520937 /* MarbleMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAF1AA4EBD300520937 /* MarbleMachine.cpp */; };
 		65E6ECBB1AA4EBD300520937 /* ReliefApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */; };
 		65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FDDE651ABA383900649421 /* HybridTokens.cpp */; };
 		66CA411C5A9664E27326BF36 /* ofxTCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C085E327DAB912CFA2A443D /* ofxTCPServer.cpp */; };
@@ -334,8 +333,6 @@
 		65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectTracker.cpp; sourceTree = "<group>"; };
 		65E6ECAD1AA4EBD300520937 /* KinectTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectTracker.h; sourceTree = "<group>"; };
 		65E6ECAE1AA4EBD300520937 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		65E6ECAF1AA4EBD300520937 /* MarbleMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarbleMachine.cpp; sourceTree = "<group>"; };
-		65E6ECB01AA4EBD300520937 /* MarbleMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarbleMachine.h; sourceTree = "<group>"; };
 		65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReliefApplication.cpp; sourceTree = "<group>"; };
 		65E6ECB51AA4EBD300520937 /* ReliefApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReliefApplication.h; sourceTree = "<group>"; };
 		65E6ECC11AAA478800520937 /* ofxKCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKCore.h; sourceTree = "<group>"; };
@@ -842,8 +839,6 @@
 				65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */,
 				65E6ECAD1AA4EBD300520937 /* KinectTracker.h */,
 				65E6ECAE1AA4EBD300520937 /* main.cpp */,
-				65E6ECAF1AA4EBD300520937 /* MarbleMachine.cpp */,
-				65E6ECB01AA4EBD300520937 /* MarbleMachine.h */,
 				65FDDE651ABA383900649421 /* HybridTokens.cpp */,
 				65FDDE641ABA382400649421 /* HybridTokens.h */,
 				65E6ECC11AAA478800520937 /* ofxKCore.h */,
@@ -1566,7 +1561,6 @@
 				D31F5C1B140C59B2AF1533A8 /* registration.c in Sources */,
 				65E6EC8F1AA4E85300520937 /* ofxGuiObject.cpp in Sources */,
 				49BEEB2DFA5319D55AA6899F /* tilt.c in Sources */,
-				65E6ECB91AA4EBD300520937 /* MarbleMachine.cpp in Sources */,
 				255A7B680DC81E543C875794 /* usb_libusb10.c in Sources */,
 				960D20B191346612D5C05A6A /* ofxTCPClient.cpp in Sources */,
 				125506CD3E5F428AAFE5CC65 /* ofxTCPManager.cpp in Sources */,

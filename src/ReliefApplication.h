@@ -6,7 +6,6 @@
 #include "RenderableObject.h"
 #include "RWell.h"
 #include "RRectangle.h"
-#include "MarbleMachine.h"
 #include "RBitmap.h"
 #include "KinectTracker.h"
 #include "RRipple.h"
@@ -52,11 +51,8 @@ public:
     
     vector< RenderableObject *> renderableObjects;
     
-    MarbleMachine * myMarbleMachine;
-    RRipple * myRipple;
-    
     HybridTokens * myHybridTokens;
-
+    
     RenderableObject * myCurrentRenderedObject;
     
     KinectTracker kinectTracker;

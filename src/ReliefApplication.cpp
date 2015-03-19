@@ -52,13 +52,6 @@ void ReliefApplication::setup(){
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     pinHeightMapImageSmall.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
-    myMarbleMachine = new MarbleMachine();
-    
-    myRipple = new RRipple();
-    myRipple->setPosition(ofPoint(450,450));
-    myRipple->setSize(ofPoint(650,650));
-    myRipple->render = true;
-    
     myHybridTokens = new HybridTokens(&kinectTracker);
 
     myCurrentRenderedObject = myHybridTokens;
