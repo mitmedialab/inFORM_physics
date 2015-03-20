@@ -31,9 +31,7 @@ public:
     void findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
-    
-    void setPinHeightMap(ofPixels & tempPixels);
-    
+
     void saveDepthImage();
     void loadDepthBackground();
 
@@ -42,11 +40,7 @@ public:
     vector<Blob>  redBlobs;                     // red blobs detected
     vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
     vector<ofPoint>  absFingers;                // fingers detected (z is absolute)
-    
-    ofPixels pinHeightMap;
-    int pinHeightMapWidth = 30;
-    int pinHeightMapHeight = 30;
-    
+
     ofPoint src[4],dst[4];
 
     int frameWidth = 190;
@@ -63,7 +57,6 @@ public:
     ofxCvGrayscaleImage depthImgBG;             // used by finger tracking
     ofxCvGrayscaleImage depthImgBGPlusSurface;  // used by finger tracking
     ofxCvGrayscaleImage depthImgFiltered;       // used by finger tracking
-    ofxCvGrayscaleImage pinHeightMapImage;      // large-size pin height specification
 
     ofImage depthDisplayImage;
     ofImage colorDisplayImage;

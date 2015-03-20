@@ -55,8 +55,6 @@ void KinectTracker::setup(){
     satThresh.allocate(frameWidth, frameHeight);
     hueThresh.allocate(frameWidth, frameHeight);
 
-    pinHeightMapImage.allocate(pinHeightMapWidth, pinHeightMapHeight);
-
     finger_contourFinder.bTrackBlobs = true;
     finger_contourFinder.bTrackFingers = true;
     ball_contourFinder.bTrackBlobs = true;
@@ -313,8 +311,7 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
     
     int nearThreshold = 255;
 	int farThreshold = 200;
-    
-    
+
     int roiStartX = 232;
     int roiStartY =  152;
     int roiWidth = 427-232;
@@ -325,9 +322,7 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
     
     ofxCvGrayscaleImage tempDepth;
     tempDepth.allocate(roiWidth, roiHeight);
-    tempDepth.scaleIntoMe(pinHeightMapImage);
-    
-    
+
     unsigned char * tempDepthPix = tempDepth.getPixels();
     
     //cout<<int(tempDepthPix[3])<<endl;
@@ -341,20 +336,11 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
         }
     }
     
-    pinHeightMapImage.flagImageChanged();
-    
     depthImgBGPlusSurface.flagImageChanged();
-    
-    
-    unsigned char * tempDepthPix2 = pinHeightMapImage.getPixels();
-    //cout<<int(tempDepthPix2[3])<<endl;
-    
-    
+
     unsigned char * pix = depthImg.getPixels();
     unsigned char * filteredPix = depthImgFiltered.getPixels();
-   
-    
-    
+
     for(int i = 0; i < depthImg.getWidth() * depthImg.getHeight(); i++){
         filteredPix[i] = (pix[i]>(bgPixAdded[i]+1))?pix[i]:0;
         pix[i] = (filteredPix[i] < nearThreshold && filteredPix[i] > farThreshold)?255:0;
@@ -365,8 +351,7 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
     depthImg.erode_3x3();
     depthImg.dilate_3x3();
     depthImg.flagImageChanged();
-    
-    
+
     finger_contourFinder.findContours(depthImg,  (2 * 2) + 1, ((640 * 480) * .4) * (100 * .001), 20, 20.0, false);
     
     finger_tracker.track(&finger_contourFinder);
@@ -414,12 +399,6 @@ void KinectTracker::loadDepthBackground(){
     depthImgBGPlusSurface.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
 }
 
-void KinectTracker::setPinHeightMap(ofPixels & tempPixels){
-    pinHeightMapImage.setFromPixels(tempPixels);
-    
-    pinHeightMapImage.flagImageChanged();
-}
-
 
 //--------------------------------------------------------------
 void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int probe_y) {
@@ -454,9 +433,6 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
      
 
     
-    //pinHeightMapImage.draw(x,y,width,height);
-    
-
     /*
     // draw blue circles around fingers
     ofSetColor(ofColor::blue);
