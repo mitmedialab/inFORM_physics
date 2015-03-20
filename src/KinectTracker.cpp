@@ -19,8 +19,6 @@ void KinectTracker::setup(){
 	kinect.init();
 	kinect.open();		// opens first available kinect
 
-    kinectView.allocate(kinect.width, kinect.height);
-
     colorImgRaw.allocate(kinect.width, kinect.height);
 	depthImgRaw.allocate(kinect.width, kinect.height);
 
@@ -29,6 +27,7 @@ void KinectTracker::setup(){
 
     colorImg.allocate(frameWidth, frameHeight);
 	depthImg.allocate(frameWidth, frameHeight);
+    depthNearThreshold.allocate(frameWidth, frameHeight);
 
     depthImgBG.allocate(frameWidth, frameHeight);
     depthImgBGPlusSurface.allocate(frameWidth, frameHeight);
@@ -45,13 +44,11 @@ void KinectTracker::setup(){
     dst[2] = ofPoint(frameWidth, frameHeight);
     dst[3] = ofPoint(0, frameHeight);
 
-    scaledColorImg.allocate(frameWidth, frameHeight);
-
     hsvImage.allocate(frameWidth, frameHeight);
     hue.allocate(frameWidth, frameHeight);
     sat.allocate(frameWidth, frameHeight);
     bri.allocate(frameWidth, frameHeight);
-    filtered.allocate(frameWidth, frameHeight);
+    hueSatThresh.allocate(frameWidth, frameHeight);
 
     hueThreshNear.allocate(frameWidth, frameHeight);
     hueThreshFar.allocate(frameWidth, frameHeight);
@@ -70,10 +67,6 @@ void KinectTracker::setup(){
     verdana.loadFont("frabk.ttf", 8, true, true);
     
     loadDepthBackground();
-
-    // allocate threshold images
-    grayThreshNear.allocate(frameWidth, frameHeight);
-	grayThreshFar.allocate(frameWidth, frameHeight);
 
     depthDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
     colorDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
@@ -107,9 +100,9 @@ void KinectTracker::update(){
 
         // reject near depths
         int nearThreshold = 254; // all pixels closer than the minimum depth are 255, so clip at 254
-        grayThreshNear = depthImg;
-        grayThreshNear.threshold(nearThreshold, true);
-        cvAnd(grayThreshNear.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
+        depthNearThreshold = depthImg;
+        depthNearThreshold.threshold(nearThreshold, true);
+        cvAnd(depthNearThreshold.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
 
         depthImg.flagImageChanged();
         
@@ -244,12 +237,8 @@ void KinectTracker::update(){
 }
 
 void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
-    // scale thresholded color image down (note - this was erroring when using .getRoiPixelsRef())
-    scaledColorImg.setFromPixels(thresholdedColorImg.getPixelsRef());
-    scaledColorImg.flagImageChanged();
-
-    hsvImage.warpIntoMe(scaledColorImg, dst, dst);
-    //hsvImage.warpIntoMe(scaledColorImg, src, dst); // use in conjunction with an ROI (region of interest)
+    hsvImage.setFromPixels(thresholdedColorImg.getPixelsRef());
+    //hsvImage.warpIntoMe(thresholdedColorImg, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
     hsvImage.flagImageChanged();
@@ -269,11 +258,11 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     satThresh.threshold(sat_limit);
 
     cvAnd(hueThreshNear.getCvImage(), hueThreshFar.getCvImage(), hueThresh.getCvImage(), NULL);
-    cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), filtered.getCvImage(), NULL);
-    filtered.flagImageChanged();
+    cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
+    hueSatThresh.flagImageChanged();
 
-    int imgSize = filtered.width * filtered.height;
-    ball_contourFinder.findContours(filtered, imgSize / 400, imgSize / 4, 20, 20.0, false);
+    int imgSize = hueSatThresh.width * hueSatThresh.height;
+    ball_contourFinder.findContours(hueSatThresh, imgSize / 400, imgSize / 4, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;
@@ -440,7 +429,7 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
 
     
     /*
-    filtered.draw(x,y,width,height);
+    hueSatThresh.draw(x,y,width,height);
     // draw red circles around balls
     ofSetColor(ofColor::red);
     for(vector<ofPoint>::iterator itr = redBlobs.begin();itr < redBlobs.end();itr++) {
@@ -499,7 +488,6 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
     */
     
     //ofSetColor(ofColor::white);
-   // kinectView.draw(x,y);
 
 }
 

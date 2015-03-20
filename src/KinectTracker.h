@@ -37,12 +37,11 @@ public:
     void saveDepthImage();
     void loadDepthBackground();
 
-    void drawCount(int width, int height);
+    void drawCount(int width, int height);      // for debugging
     
-    vector<Blob>  redBlobs;
-    vector<Blob>  blueBlobs;
-    vector<ofPoint>  fingers; //z is relative above height map
-    vector<ofPoint>  absFingers; //z is absolute (not vodka)
+    vector<Blob>  redBlobs;                     // red blobs detected
+    vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
+    vector<ofPoint>  absFingers;                // fingers detected (z is absolute)
     
     ofPixels pinHeightMap;
     int pinHeightMapWidth = 30;
@@ -53,30 +52,44 @@ public:
     int frameWidth = 190;
     int frameHeight = 190;
 
-    ofxCvColorImage colorImgRaw, colorImg, depthThreshold, thresholdedColorImg, scaledColorImg;
-    ofxCvGrayscaleImage depthImgRaw, depthImg, depthImgBG, depthImgBGPlusSurface, depthImgFiltered, pinHeightMapImage;
+    ofxCvColorImage colorImgRaw;                // color straight from kinect
+    ofxCvColorImage colorImg;                   // color restricted to inFORM ROI
+    ofxCvColorImage depthThreshold;             // depth threshold as a color image
+    ofxCvColorImage thresholdedColorImg;        // depth-thresholded color
+
+    ofxCvGrayscaleImage depthImgRaw;            // depth straight from kinect
+    ofxCvGrayscaleImage depthImg;               // depth restricted to inFORM ROI
+    ofxCvGrayscaleImage depthNearThreshold;     // helper for removing depths that are too close
+    ofxCvGrayscaleImage depthImgBG;             // used by finger tracking
+    ofxCvGrayscaleImage depthImgBGPlusSurface;  // used by finger tracking
+    ofxCvGrayscaleImage depthImgFiltered;       // used by finger tracking
+    ofxCvGrayscaleImage pinHeightMapImage;      // large-size pin height specification
+
     ofImage depthDisplayImage;
     ofImage colorDisplayImage;
     ofImage detectedObjectsDisplayImage;
 
-    int frame = 0;
     int size;
     ostringstream pointLocationsText;
 
+    // blob tracking output
     Blob currentBlob;
     bool cubeIsReady;
-    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY;
-    ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner;
-    
-	ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
+    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY; // cube location descriptors
+    ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner; // cube key points
 
-    ofxCvColorImage hsvImage;
-    ofxCvGrayscaleImage hueThreshNear, hueThreshFar, hueThresh, satThresh; // the near thresholded image
-    ofxCvGrayscaleImage hue,sat,bri,filtered;
+    // blob tracking images
+    ofxCvColorImage hsvImage;                   // input image converted to hsv
+    ofxCvGrayscaleImage hue;                    // hue component
+    ofxCvGrayscaleImage sat;                    // saturation component
+    ofxCvGrayscaleImage bri;                    // brilliance component
+    ofxCvGrayscaleImage hueThreshNear;          // hue high boundary threshold
+    ofxCvGrayscaleImage hueThreshFar;           // hue low boundary threshold
+    ofxCvGrayscaleImage hueThresh;              // hue band threshold
+    ofxCvGrayscaleImage satThresh;              // saturation threshold
+    ofxCvGrayscaleImage hueSatThresh;           // combined hue and saturation threshold
 
-    ofFbo kinectView;
-    
-    
+    // tracking objects
     ContourFinder finger_contourFinder;
     ContourFinder ball_contourFinder;
     BlobTracker finger_tracker;
@@ -84,7 +97,6 @@ public:
     Calibration calib;
     
     ofTrueTypeFont verdana;
-
 
 };
 
