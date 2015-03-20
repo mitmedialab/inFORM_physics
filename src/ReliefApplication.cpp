@@ -49,8 +49,8 @@ void ReliefApplication::setup(){
     detectedObjectsImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
-    pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
-    pinHeightMapImageSmall.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    pinHeightMapImageForDisplay.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+    pinHeightMapImageForPins.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
     myHybridTokens = new HybridTokens(&kinectTracker);
 
@@ -153,18 +153,18 @@ void ReliefApplication::update(){
     detectedObjectsImage.end();
     
     // render large heightmap
-    pinHeightMapImage.begin();
+    pinHeightMapImageForDisplay.begin();
     ofBackground(0);
     ofSetColor(255);
     myCurrentRenderedObject->drawHeightMap();
-    pinHeightMapImage.end();
+    pinHeightMapImageForDisplay.end();
 
     // render small heightmap
-    pinHeightMapImageSmall.begin();
+    pinHeightMapImageForPins.begin();
     ofBackground(0);
     ofSetColor(255);
-    pinHeightMapImage.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
-    pinHeightMapImageSmall.end();
+    pinHeightMapImageForDisplay.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
+    pinHeightMapImageForPins.end();
 
     sendHeightToRelief();
 }
@@ -184,7 +184,7 @@ void ReliefApplication::draw(){
     detectedObjectsImage.draw(610, 2, 300, 300);
     
     ofRect(913, 1, 302, 302);
-    pinHeightMapImageSmall.draw(914, 2, 300, 300);
+    pinHeightMapImageForPins.draw(914, 2, 300, 300);
 
     // for object detection debugging use
     ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
@@ -272,7 +272,7 @@ void ReliefApplication::sendHeightToRelief(){
     
     unsigned char* pixels;
     ofPixels tempPixels;
-    pinHeightMapImageSmall.readToPixels(tempPixels);
+    pinHeightMapImageForPins.readToPixels(tempPixels);
     //Rotate to align all coordinate systems
     tempPixels.rotate90(1);
     tempPixels.mirror(true, false);

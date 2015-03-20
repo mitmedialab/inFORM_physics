@@ -43,9 +43,9 @@ public:
     ofFbo depthInputImage;                      // depth from camera
     ofFbo detectedObjectsImage;                 // objects detected in input images
 
-    ofFbo pinDisplayImage;                      // render graphics for pins here
-    ofFbo pinHeightMapImage;                    // render height map here
-    ofFbo pinHeightMapImageSmall;               // render height map for pins here
+    ofFbo pinDisplayImage;                      // render graphics for projection onto pins here
+    ofFbo pinHeightMapImageForDisplay;          // render height map for painting on visual display here
+    ofFbo pinHeightMapImageForPins;             // render height map for setting pin height here
 
     int projectorOffsetX;
 
