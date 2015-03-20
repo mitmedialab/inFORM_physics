@@ -29,11 +29,12 @@ void KinectTracker::setup(){
 	depthImg.allocate(frameWidth, frameHeight);
     depthNearThreshold.allocate(frameWidth, frameHeight);
 
-    depthImgBG.allocate(frameWidth, frameHeight);
-    depthImgBGPlusSurface.allocate(frameWidth, frameHeight);
-    depthImgFiltered.allocate(frameWidth, frameHeight);
+    depthBG.allocate(frameWidth, frameHeight);
+    depthBGPlusSurface.allocate(frameWidth, frameHeight);
+    depthFiltered.allocate(frameWidth, frameHeight);
     depthThreshold.allocate(frameWidth, frameHeight);
-    thresholdedColorImg.allocate(frameWidth, frameHeight);
+    depthThresholdC.allocate(frameWidth, frameHeight);
+    dThresholdedColor.allocate(frameWidth, frameHeight);
 
     src[0] = ofPoint(6, 4);
     src[1] = ofPoint(188, 6);
@@ -141,21 +142,20 @@ void KinectTracker::update(){
         depthDisplayImage.update();
         colorDisplayImage.update();
 
-        ofxCvGrayscaleImage depthThresholdGray;
-        depthThresholdGray = depthImg;
-        depthThresholdGray.threshold(0); // set to white all pixels that aren't black
-        depthThreshold.setFromGrayscalePlanarImages(depthThresholdGray, depthThresholdGray, depthThresholdGray);
+        depthThreshold = depthImg;
+        depthThreshold.threshold(0); // set to white all pixels that aren't black
+        depthThresholdC.setFromGrayscalePlanarImages(depthThreshold, depthThreshold, depthThreshold);
 
         // black out color image regions that are outside the depth range
-        cvAnd(colorImg.getCvImage(), depthThreshold.getCvImage(), thresholdedColorImg.getCvImage(), NULL);
-        thresholdedColorImg.flagImageChanged();
+        cvAnd(colorImg.getCvImage(), depthThresholdC.getCvImage(), dThresholdedColor.getCvImage(), NULL);
+        dThresholdedColor.flagImageChanged();
 
 
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
         findBlobs(172, 205, 100, redBlobs); // loose threshold
 
         size = redBlobs.size();
-        detectedObjectsDisplayImage.getPixelsRef().setFromPixels(thresholdedColorImg.getPixels(), thresholdedColorImg.getWidth(), thresholdedColorImg.getHeight(), thresholdedColorImg.getPixelsRef().getNumChannels());
+        detectedObjectsDisplayImage.getPixelsRef().setFromPixels(dThresholdedColor.getPixels(), dThresholdedColor.getWidth(), dThresholdedColor.getHeight(), dThresholdedColor.getPixelsRef().getNumChannels());
 
         int width = detectedObjectsDisplayImage.getPixelsRef().getWidth();
         int height = detectedObjectsDisplayImage.getPixelsRef().getHeight();
@@ -235,8 +235,8 @@ void KinectTracker::update(){
 }
 
 void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
-    hsvImage.setFromPixels(thresholdedColorImg.getPixelsRef());
-    //hsvImage.warpIntoMe(thresholdedColorImg, src, dst); // use to better align input image
+    hsvImage.setFromPixels(dThresholdedColor.getPixelsRef());
+    //hsvImage.warpIntoMe(thresholdedColor, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
     hsvImage.flagImageChanged();
@@ -272,15 +272,15 @@ void KinectTracker::findFingers(vector<ofPoint> &points) {
 	int farThreshold = 200;
     
     unsigned char * pix = depthImg.getPixels();
-    unsigned char * filteredPix = depthImgFiltered.getPixels();
-    unsigned char * bgPix = depthImgBG.getPixels();
+    unsigned char * filteredPix = depthFiltered.getPixels();
+    unsigned char * bgPix = depthBG.getPixels();
     
     for(int i = 0; i < depthImg.getWidth() * depthImg.getHeight(); i++){
         filteredPix[i] = (pix[i]>(bgPix[i]+1))?pix[i]:0;
         pix[i] = (filteredPix[i] < nearThreshold && filteredPix[i] > farThreshold)?255:0;
         
     }
-    depthImgFiltered.flagImageChanged();
+    depthFiltered.flagImageChanged();
     depthImg.flagImageChanged();
     depthImg.erode_3x3();
     depthImg.dilate_3x3();
@@ -317,8 +317,8 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
     int roiWidth = 427-232;
     int roiHeight = 345-152;
     
-    unsigned char * bgROIPix = depthImgBG.getPixels();
-    unsigned char * bgPixAdded = depthImgBGPlusSurface.getPixels();
+    unsigned char * bgROIPix = depthBG.getPixels();
+    unsigned char * bgPixAdded = depthBGPlusSurface.getPixels();
     
     ofxCvGrayscaleImage tempDepth;
     tempDepth.allocate(roiWidth, roiHeight);
@@ -336,17 +336,17 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
         }
     }
     
-    depthImgBGPlusSurface.flagImageChanged();
+    depthBGPlusSurface.flagImageChanged();
 
     unsigned char * pix = depthImg.getPixels();
-    unsigned char * filteredPix = depthImgFiltered.getPixels();
+    unsigned char * filteredPix = depthFiltered.getPixels();
 
     for(int i = 0; i < depthImg.getWidth() * depthImg.getHeight(); i++){
         filteredPix[i] = (pix[i]>(bgPixAdded[i]+1))?pix[i]:0;
         pix[i] = (filteredPix[i] < nearThreshold && filteredPix[i] > farThreshold)?255:0;
         
     }
-    depthImgFiltered.flagImageChanged();
+    depthFiltered.flagImageChanged();
     depthImg.flagImageChanged();
     depthImg.erode_3x3();
     depthImg.dilate_3x3();
@@ -395,8 +395,8 @@ void KinectTracker::saveDepthImage(){
 void KinectTracker::loadDepthBackground(){
     ofImage tempBG;
     tempBG.loadImage("backgroundGood.png");
-    depthImgBG.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
-    depthImgBGPlusSurface.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
+    depthBG.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
+    depthBGPlusSurface.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
 }
 
 

@@ -48,15 +48,16 @@ public:
 
     ofxCvColorImage colorImgRaw;                // color straight from kinect
     ofxCvColorImage colorImg;                   // color restricted to inFORM ROI
-    ofxCvColorImage depthThreshold;             // depth threshold as a color image
-    ofxCvColorImage thresholdedColorImg;        // depth-thresholded color
+    ofxCvColorImage depthThresholdC;            // depth threshold as a color image
+    ofxCvColorImage dThresholdedColor;          // depth-thresholded color
 
     ofxCvGrayscaleImage depthImgRaw;            // depth straight from kinect
     ofxCvGrayscaleImage depthImg;               // depth restricted to inFORM ROI
     ofxCvGrayscaleImage depthNearThreshold;     // helper for removing depths that are too close
-    ofxCvGrayscaleImage depthImgBG;             // used by finger tracking
-    ofxCvGrayscaleImage depthImgBGPlusSurface;  // used by finger tracking
-    ofxCvGrayscaleImage depthImgFiltered;       // used by finger tracking
+    ofxCvGrayscaleImage depthThreshold;         // threshold rejecting pixels of uninteresting depth
+    ofxCvGrayscaleImage depthBG;                // used by finger tracking
+    ofxCvGrayscaleImage depthBGPlusSurface;     // used by finger tracking
+    ofxCvGrayscaleImage depthFiltered;          // used by finger tracking
 
     ofImage depthDisplayImage;
     ofImage colorDisplayImage;
