@@ -94,9 +94,15 @@ void HybridTokens::drawSwordsHeightMap() {
 }
 
 void HybridTokens::keyPressed(int key) {
-    if (key == 'q') {
+    if(key == 's') {
+        useStaticSecondSword = !useStaticSecondSword;
     }
-    
-    if (key == 'w') {
+
+    if(key == 'i') {
+        intersectSwords = !intersectSwords;
+    }
+
+    if(key == 'b') {
+        blockadeSword = !blockadeSword;
     }
 }

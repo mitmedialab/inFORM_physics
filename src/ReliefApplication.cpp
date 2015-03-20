@@ -206,20 +206,19 @@ void ReliefApplication::draw(){
 
 //--------------------------------------------------------------
 void ReliefApplication::keyPressed(int key){
-    myCurrentRenderedObject->keyPressed(key);
 
+    // keys reserved for rendered objects' use
     if(key == 's') {
-        myHybridTokens->useStaticSecondSword = !myHybridTokens->useStaticSecondSword;
+        myCurrentRenderedObject->keyPressed('s');
     }
-
     if(key == 'i') {
-        myHybridTokens->intersectSwords = !myHybridTokens->intersectSwords;
+        myCurrentRenderedObject->keyPressed('i');
     }
-
     if(key == 'b') {
-        myHybridTokens->blockadeSword = !myHybridTokens->blockadeSword;
+        myCurrentRenderedObject->keyPressed('b');
     }
     
+    // other keys
     if(key == 'p') {
         kinectTracker.saveDepthImage();
     }
@@ -268,8 +267,6 @@ void ReliefApplication::gotMessage(ofMessage msg){
     
 }
 
-
-
 //-----------------------------------------------------------
 void ReliefApplication::sendHeightToRelief(){
     
@@ -302,5 +299,3 @@ void ReliefApplication::exit(){
     mIOManager->sendValueToAllBoards(TERM_ID_MAXSPEED, (unsigned char) 0);
     ofSleepMillis(1000);
 }
-
-
