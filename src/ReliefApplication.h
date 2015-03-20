@@ -23,7 +23,7 @@ public:
     void update();
     void draw();
     void exit();
-    
+
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -39,21 +39,20 @@ public:
     ReliefIOManager * mIOManager;
 	unsigned char mPinHeightToRelief [RELIEF_SIZE_X][RELIEF_SIZE_Y];
 
-    ofFbo colorInputImage; //color image from camera
-    ofFbo depthInputImage; //depth image from camera
-    ofFbo detectedObjectsImage; //objects detected in input images
+    ofFbo colorInputImage;                      // color from camera
+    ofFbo depthInputImage;                      // depth from camera
+    ofFbo detectedObjectsImage;                 // objects detected in input images
 
-    ofFbo pinDisplayImage; //FBO where we render graphics for pins
-    ofFbo pinHeightMapImage; //FBO where we render height map
-    ofFbo pinHeightMapImageSmall; //FBO where we render height map
+    ofFbo pinDisplayImage;                      // render graphics for pins here
+    ofFbo pinHeightMapImage;                    // render height map here
+    ofFbo pinHeightMapImageSmall;               // render height map for pins here
 
     int projectorOffsetX;
-    
+
+    // pin height map generators
     vector< RenderableObject *> renderableObjects;
-    
-    HybridTokens * myHybridTokens;
-    
     RenderableObject * myCurrentRenderedObject;
+    HybridTokens * myHybridTokens;
     
     KinectTracker kinectTracker;
         
