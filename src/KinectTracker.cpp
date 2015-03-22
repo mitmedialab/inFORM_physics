@@ -130,7 +130,6 @@ void KinectTracker::update(){
                 depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
             }
         }
-        depthDisplayImage.update();
 
         // depth threshold is depth image with all non-black pixels set to white
         depthThreshold = depthImg;
@@ -272,8 +271,6 @@ void KinectTracker::update(){
                 cout << "WARNING: detected " << size << " objects, expected 1"<< endl;
             }
         }
-
-        detectedObjectsDisplayImage.update();
     }
 }
 
@@ -497,11 +494,13 @@ void KinectTracker::drawColorImage(int x, int y, int width, int height) {
 
 void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
+    depthDisplayImage.update();
     depthDisplayImage.draw(x,y,width,height);
 }
 
 void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
+    detectedObjectsDisplayImage.update();
     detectedObjectsDisplayImage.draw(x,y,width,height);
 }
 
@@ -513,5 +512,6 @@ void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int 
 
 void KinectTracker::drawCornerLikelihoods(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
+    cornerLikelihoodsImage.update();
     cornerLikelihoodsImage.draw(x,y,width,height);
 }
