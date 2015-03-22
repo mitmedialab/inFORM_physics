@@ -34,7 +34,14 @@ void KinectTracker::setup(){
     depthFiltered.allocate(frameWidth, frameHeight);
     depthThreshold.allocate(frameWidth, frameHeight);
     depthThresholdC.allocate(frameWidth, frameHeight);
+    depthThresholdF.allocate(frameWidth, frameHeight);
+    depthThresholdDilated.allocate(frameWidth, frameHeight);
+    depthThresholdDilatedC.allocate(frameWidth, frameHeight);
     dThresholdedColor.allocate(frameWidth, frameHeight);
+    dThresholdedColorDilated.allocate(frameWidth, frameHeight);
+    dThresholdedColorDilatedG.allocate(frameWidth, frameHeight);
+    cornerLikelihoodsRawF.allocate(frameWidth, frameHeight);
+    cornerLikelihoods.allocate(frameWidth, frameHeight);
 
     src[0] = ofPoint(6, 4);
     src[1] = ofPoint(188, 6);
@@ -142,14 +149,30 @@ void KinectTracker::update(){
         depthDisplayImage.update();
         colorDisplayImage.update();
 
+        // depth threshold is depth image with all non-black pixels set to white
         depthThreshold = depthImg;
-        depthThreshold.threshold(0); // set to white all pixels that aren't black
+        depthThreshold.threshold(0);
+
+        // relax thresholding restriction since depth information is noisy
+        depthThreshold.dilate_3x3();
+
+        // create a threshold that's relaxed even further for edge-detecting algorithms.
+        // since some algorithms get confused by the threshold boundary's sharp drop to black, starting
+        // with a dilated threshold lets us later shrink the threshold back to reject boundary points.
+        depthThresholdDilated = depthThreshold;
+        depthThresholdDilated.dilate_3x3();
+
+        // convert grayscale depth thresholds to other image types
         depthThresholdC.setFromGrayscalePlanarImages(depthThreshold, depthThreshold, depthThreshold);
+        depthThresholdDilatedC.setFromGrayscalePlanarImages(depthThresholdDilated, depthThresholdDilated, depthThresholdDilated);
+        depthThresholdF = depthThresholdC;
 
         // black out color image regions that are outside the depth range
         cvAnd(colorImg.getCvImage(), depthThresholdC.getCvImage(), dThresholdedColor.getCvImage(), NULL);
         dThresholdedColor.flagImageChanged();
+        cvAnd(colorImg.getCvImage(), depthThresholdDilatedC.getCvImage(), dThresholdedColorDilated.getCvImage(), NULL);
 
+        dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
         findBlobs(172, 205, 100, redBlobs); // loose threshold
@@ -209,6 +232,44 @@ void KinectTracker::update(){
             detectedObjectsDisplayImage.getPixelsRef().setColor(cubeTopCorner.x, cubeTopCorner.y, ofColor::blue);
             detectedObjectsDisplayImage.getPixelsRef().setColor(cubeBottomCorner.x, cubeBottomCorner.y, ofColor::blue);
 
+
+            // Detector parameters
+            int blockSize = 2;
+            int apertureSize = 3;
+            double k = 0.04;
+
+            // detect corners. this computation is expensive! limit it to the region of interest
+            ofRectangle blobRoi = ofRectangle(cubeMinX, cubeMinY, cubeMaxX - cubeMinX, cubeMaxY - cubeMinY);
+            cornerLikelihoodsRawF.set(0);
+            dThresholdedColorDilatedG.setROI(blobRoi);
+            cornerLikelihoodsRawF.setROI(blobRoi);
+            cvCornerHarris(dThresholdedColorDilatedG.getCvImage(), cornerLikelihoodsRawF.getCvImage(), blockSize, apertureSize, k);
+            dThresholdedColorDilatedG.resetROI();
+            cornerLikelihoodsRawF.resetROI();
+
+            // reject points on the threshold boundary (the sharp black edges seduce the corner detector)
+            cvAnd(cornerLikelihoodsRawF.getCvImage(), depthThresholdF.getCvImage(), cornerLikelihoodsRawF.getCvImage());
+
+            // normalize results
+            cvNormalize(cornerLikelihoodsRawF.getCvImage(), cornerLikelihoods.getCvImage(), 0, 255, cv::NORM_MINMAX);
+
+            corners.clear();
+
+            int cornerThreshold = 100;
+            int w = cornerLikelihoods.getWidth();
+            int h = cornerLikelihoods.getHeight();
+
+            // Drawing a circle around corners
+            for(int i = 0; i < w; i++) {
+                for(int j = 0; j < h; j++) {
+                    if(cornerLikelihoods.getPixelsRef()[i + j * w] > cornerThreshold) {
+                        corners.push_back(ofPoint(i, j));
+                        // draw circles around selected corners for debugging purposes
+                        cvCircle(cornerLikelihoods.getCvImage(), cvPoint(i,j), 5,  cvScalar(50));
+                    }
+                }
+            }
+            cornerLikelihoodsImage = cornerLikelihoods.getPixelsRef();
 
             int xSpread = cubeMaxX - cubeMinX;
             int ySpread = cubeMaxY - cubeMinY;
@@ -483,4 +544,16 @@ void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
 void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
     detectedObjectsDisplayImage.draw(x,y,width,height);
+}
+
+
+void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int height) {
+    ofSetColor(255, 255, 255);
+    dThresholdedColorDilated.draw(x,y,width,height);
+}
+
+
+void KinectTracker::drawCornerLikelihoods(int x, int y, int width, int height) {
+    ofSetColor(255, 255, 255);
+    cornerLikelihoodsImage.draw(x,y,width,height);
 }
