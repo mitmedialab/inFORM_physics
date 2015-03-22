@@ -103,27 +103,18 @@ void KinectTracker::update(){
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
         findBlobs(172, 205, 100, redBlobs); // loose threshold
 
-        size = redBlobs.size();
         detectedObjectsDisplayImage.getPixelsRef().setFromPixels(dThresholdedColor.getPixels(), dThresholdedColor.getWidth(), dThresholdedColor.getHeight(), dThresholdedColor.getPixelsRef().getNumChannels());
 
         int width = detectedObjectsDisplayImage.getPixelsRef().getWidth();
         int height = detectedObjectsDisplayImage.getPixelsRef().getHeight();
         int dx_radius = width/100;
         int dy_radius = height/100;
-        pointLocationsText.str(""); // write out detected point coordinates for debugging use
         for(vector<Blob>::iterator blobs_itr = redBlobs.begin(); blobs_itr < redBlobs.end(); blobs_itr++) {
             cubeCenterX = blobs_itr->centroid.x;
             cubeCenterY = blobs_itr->centroid.y;
-            pointLocationsText << '(' << cubeCenterX * 1.0 / width << ',' << cubeCenterY * 1.0 / height << ")  ";
             for (int dx = -dx_radius; dx < dx_radius * 2; dx++) {
                 for (int dy = -dy_radius; dy < dy_radius * 2; dy++) {
                     detectedObjectsDisplayImage.getPixelsRef().setColor(cubeCenterX + dx, cubeCenterY + dy, ofColor::green);
-                    /*
-                    int i = (width * (y + dy) + x + dx);
-                    detectedObjectsDisplayImage.getPixelsRef()[i] = 255;
-                    detectedObjectsDisplayImage.getPixelsRef()[i+1] = 0;
-                    detectedObjectsDisplayImage.getPixelsRef()[i+2] = 0;
-                    */
                 }
             }
 
@@ -201,7 +192,7 @@ void KinectTracker::update(){
             int ySpread = cubeMaxY - cubeMinY;
 
             // categorize current state of detected objects
-            if (size == 1) {
+            if (redBlobs.size() == 1) {
                 currentBlob = *blobs_itr;
                 if (xSpread <= 30 && ySpread <= 30) {
                     cubeIsReady = true;
@@ -213,7 +204,7 @@ void KinectTracker::update(){
                 cubeIsReady = true;
             } else {
                 cubeIsReady = false;
-                cout << "WARNING: detected " << size << " objects, expected 1"<< endl;
+                cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
             }
         }
     }

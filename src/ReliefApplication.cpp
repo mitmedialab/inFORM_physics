@@ -239,10 +239,6 @@ void ReliefApplication::draw(){
         debugImage3.draw(914, 332, 300, 300);
     }
 
-    // for object detection debugging use
-    ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
-    ofDrawBitmapString(kinectTracker.pointLocationsText.str(), 1, 380);
-
 
     //Draw Graphics onto projector
     pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);

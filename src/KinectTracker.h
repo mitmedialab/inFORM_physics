@@ -75,9 +75,6 @@ public:
 
     vector<ofPoint> corners;
 
-    int size;
-    ostringstream pointLocationsText;
-
     // blob tracking output
     Blob currentBlob;
     bool cubeIsReady;
