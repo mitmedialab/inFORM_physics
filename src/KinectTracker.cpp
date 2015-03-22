@@ -106,65 +106,61 @@ void KinectTracker::update(){
 
         // extract basic information about detected objects
         generateBlobDescriptors(redBlobs);
-
-        for(vector<Blob>::iterator blobs_itr = redBlobs.begin(); blobs_itr < redBlobs.end(); blobs_itr++) {
-
-            // Detector parameters
-            int blockSize = 2;
-            int apertureSize = 3;
-            double k = 0.04;
-
-            // detect corners. this computation is expensive! limit it to the region of interest
-            ofRectangle blobRoi = ofRectangle(cubeMinX, cubeMinY, cubeMaxX - cubeMinX, cubeMaxY - cubeMinY);
-            cornerLikelihoodsRawF.set(0);
-            dThresholdedColorDilatedG.setROI(blobRoi);
-            cornerLikelihoodsRawF.setROI(blobRoi);
-            cvCornerHarris(dThresholdedColorDilatedG.getCvImage(), cornerLikelihoodsRawF.getCvImage(), blockSize, apertureSize, k);
-            dThresholdedColorDilatedG.resetROI();
-            cornerLikelihoodsRawF.resetROI();
-
-            // reject points on the threshold boundary (the sharp black edges seduce the corner detector)
-            cvAnd(cornerLikelihoodsRawF.getCvImage(), depthThresholdF.getCvImage(), cornerLikelihoodsRawF.getCvImage());
-
-            // normalize results
-            cvNormalize(cornerLikelihoodsRawF.getCvImage(), cornerLikelihoods.getCvImage(), 0, 255, cv::NORM_MINMAX);
-
-            corners.clear();
-
-            int cornerThreshold = 100;
-            int w = cornerLikelihoods.getWidth();
-            int h = cornerLikelihoods.getHeight();
-
-            // Drawing a circle around corners
-            for(int i = 0; i < w; i++) {
-                for(int j = 0; j < h; j++) {
-                    if(cornerLikelihoods.getPixelsRef()[i + j * w] > cornerThreshold) {
-                        corners.push_back(ofPoint(i, j));
-                        // draw circles around selected corners for debugging purposes
-                        cvCircle(cornerLikelihoods.getCvImage(), cvPoint(i,j), 5,  cvScalar(50));
-                    }
+        
+        // Detector parameters
+        int blockSize = 2;
+        int apertureSize = 3;
+        double k = 0.04;
+        
+        // detect corners. this computation is expensive! limit it to the region of interest
+        ofRectangle blobRoi = ofRectangle(cubeMinX, cubeMinY, cubeMaxX - cubeMinX, cubeMaxY - cubeMinY);
+        cornerLikelihoodsRawF.set(0);
+        dThresholdedColorDilatedG.setROI(blobRoi);
+        cornerLikelihoodsRawF.setROI(blobRoi);
+        cvCornerHarris(dThresholdedColorDilatedG.getCvImage(), cornerLikelihoodsRawF.getCvImage(), blockSize, apertureSize, k);
+        dThresholdedColorDilatedG.resetROI();
+        cornerLikelihoodsRawF.resetROI();
+        
+        // reject points on the threshold boundary (the sharp black edges seduce the corner detector)
+        cvAnd(cornerLikelihoodsRawF.getCvImage(), depthThresholdF.getCvImage(), cornerLikelihoodsRawF.getCvImage());
+        
+        // normalize results
+        cvNormalize(cornerLikelihoodsRawF.getCvImage(), cornerLikelihoods.getCvImage(), 0, 255, cv::NORM_MINMAX);
+        
+        corners.clear();
+        
+        int cornerThreshold = 100;
+        int w = cornerLikelihoods.getWidth();
+        int h = cornerLikelihoods.getHeight();
+        
+        // Drawing a circle around corners
+        for(int i = 0; i < w; i++) {
+            for(int j = 0; j < h; j++) {
+                if(cornerLikelihoods.getPixelsRef()[i + j * w] > cornerThreshold) {
+                    corners.push_back(ofPoint(i, j));
+                    // draw circles around selected corners for debugging purposes
+                    cvCircle(cornerLikelihoods.getCvImage(), cvPoint(i,j), 5,  cvScalar(50));
                 }
             }
-            cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
+        }
+        cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
 
+        // categorize current state of detected objects
+        if (redBlobs.size() == 1) {
+            currentBlob = *redBlobs.begin();
             int xSpread = cubeMaxX - cubeMinX;
             int ySpread = cubeMaxY - cubeMinY;
-
-            // categorize current state of detected objects
-            if (redBlobs.size() == 1) {
-                currentBlob = *blobs_itr;
-                if (xSpread <= 30 && ySpread <= 30) {
-                    cubeIsReady = true;
-                    cout << "ready" << endl;
-                } else {
-                    cubeIsReady = false;
-                    cout << "not ready" << endl;
-                }
+            if (xSpread <= 30 && ySpread <= 30) {
                 cubeIsReady = true;
+                cout << "ready" << endl;
             } else {
                 cubeIsReady = false;
-                cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
+                cout << "not ready" << endl;
             }
+            cubeIsReady = true;
+        } else {
+            cubeIsReady = false;
+            cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
         }
     }
 }
