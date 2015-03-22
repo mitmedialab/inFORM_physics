@@ -104,6 +104,7 @@ public:
 private:
     void updateInputImages();
     void updateDepthThresholds();
+    void generateBlobDescriptors(vector<Blob> blobs);
 
 };
 
