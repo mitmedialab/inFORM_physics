@@ -103,6 +103,9 @@ public:
     Calibration calib;
     
     ofTrueTypeFont verdana;
+    
+private:
+    void updateInputImages();
 
 };
 

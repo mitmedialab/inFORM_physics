@@ -89,47 +89,8 @@ void KinectTracker::update(){
 	
 	// there is a new frame and we are connected
 	if(kinect.isFrameNew()) {
-
-        // get color image data in region of interest
-        colorImgRaw.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
-        colorImg.setFromPixels(colorImgRaw.getRoiPixels(), frameWidth, frameHeight);
-
-        // get depth image data in region of interest
-		depthImgRaw.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
-        depthImg.setFromPixels(depthImgRaw.getRoiPixels(), frameWidth, frameHeight);
-        depthImg.dilate();
-        depthImg.erode();
-
-        // reject near depths
-        int nearThreshold = 254; // all pixels closer than the minimum depth are 255, so clip at 254
-        depthNearThreshold = depthImg;
-        depthNearThreshold.threshold(nearThreshold, true);
-        cvAnd(depthNearThreshold.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
-
-        unsigned char * depthPixels = depthImg.getPixels();
-        unsigned char * depthDisplayPixels = depthDisplayImage.getPixels();
-
-        // for human display only, normalize depth pixels to easily visible values
-        int displayFloor = 50;
-        float displayScalar = (255.0f - displayFloor) / nearThreshold;
-        unsigned char displayNormalizedValue;
-
-        for (int i = 0; i < depthDisplayImage.width * depthDisplayImage.height; i++) {
-            int indexRGB = i*3;
-
-            if (depthPixels[i] == 0) {
-                depthDisplayPixels[indexRGB] = 0;
-                depthDisplayPixels[indexRGB+1] = 0;
-                depthDisplayPixels[indexRGB+2] = 0;
-
-            } else {
-                displayNormalizedValue = depthPixels[i] * displayScalar + displayFloor;
-
-                depthDisplayPixels[indexRGB] = displayNormalizedValue;
-                depthDisplayPixels[indexRGB+1] = displayNormalizedValue;
-                depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
-            }
-        }
+        // get color and depth images from kinect
+        updateInputImages();
 
         // depth threshold is depth image with all non-black pixels set to white
         depthThreshold = depthImg;
@@ -270,6 +231,46 @@ void KinectTracker::update(){
                 cubeIsReady = false;
                 cout << "WARNING: detected " << size << " objects, expected 1"<< endl;
             }
+        }
+    }
+}
+
+void KinectTracker::updateInputImages(){
+    // get color image data in region of interest
+    colorImgRaw.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
+    colorImg.setFromPixels(colorImgRaw.getRoiPixels(), frameWidth, frameHeight);
+    
+    // get depth image data in region of interest
+    depthImgRaw.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+    depthImg.setFromPixels(depthImgRaw.getRoiPixels(), frameWidth, frameHeight);
+    depthImg.dilate();
+    depthImg.erode();
+    
+    // reject near depths. all pixels closer than the minimum depth are 255, so clip at 254
+    int nearThreshold = 254;
+    depthNearThreshold = depthImg;
+    depthNearThreshold.threshold(nearThreshold, true);
+    cvAnd(depthNearThreshold.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
+
+    // for human display only, normalize depth pixels to easily visible values
+    unsigned char * depthPixels = depthImg.getPixels();
+    unsigned char * depthDisplayPixels = depthDisplayImage.getPixels();
+    int displayFloor = 50;
+    float displayScalar = (255.0f - displayFloor) / nearThreshold;
+    for (int i = 0; i < depthDisplayImage.width * depthDisplayImage.height; i++) {
+        int indexRGB = i*3;
+        
+        if (depthPixels[i] == 0) {
+            depthDisplayPixels[indexRGB] = 0;
+            depthDisplayPixels[indexRGB+1] = 0;
+            depthDisplayPixels[indexRGB+2] = 0;
+            
+        } else {
+            unsigned char displayNormalizedValue = depthPixels[i] * displayScalar + displayFloor;
+            
+            depthDisplayPixels[indexRGB] = displayNormalizedValue;
+            depthDisplayPixels[indexRGB+1] = displayNormalizedValue;
+            depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
         }
     }
 }
