@@ -106,6 +106,7 @@ private:
     void updateDepthThresholds();
     void generateBlobDescriptors(vector<Blob> blobs);
     void detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>& cornersOut);
+    void updateDetectionStatus();
 
 };
 

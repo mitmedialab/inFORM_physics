@@ -114,22 +114,7 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.resetROI();
 
         // categorize current state of detected objects
-        if (redBlobs.size() == 1) {
-            currentBlob = *redBlobs.begin();
-            int xSpread = cubeMaxX - cubeMinX;
-            int ySpread = cubeMaxY - cubeMinY;
-            if (xSpread <= 30 && ySpread <= 30) {
-                cubeIsReady = true;
-                cout << "ready" << endl;
-            } else {
-                cubeIsReady = false;
-                cout << "not ready" << endl;
-            }
-            cubeIsReady = true;
-        } else {
-            cubeIsReady = false;
-            cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
-        }
+        updateDetectionStatus();
     }
 }
 
@@ -306,6 +291,25 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;
+}
+
+void KinectTracker::updateDetectionStatus() {
+    if (redBlobs.size() == 1) {
+        currentBlob = *redBlobs.begin();
+        int xSpread = cubeMaxX - cubeMinX;
+        int ySpread = cubeMaxY - cubeMinY;
+        if (xSpread <= 30 && ySpread <= 30) {
+            cubeIsReady = true;
+            cout << "ready" << endl;
+        } else {
+            cubeIsReady = false;
+            cout << "not ready" << endl;
+        }
+        cubeIsReady = true;
+    } else {
+        cubeIsReady = false;
+        cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
+    }
 }
 
 void KinectTracker::findFingers(vector<ofPoint> &points) {
