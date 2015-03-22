@@ -430,11 +430,9 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
 }
 
 void KinectTracker::saveDepthImage(){
-    
     ofImage tempBG;
     tempBG.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height, OF_IMAGE_GRAYSCALE);
     tempBG.saveImage("background.png");
-    
 }
 
 void KinectTracker::loadDepthBackground(){
@@ -444,14 +442,11 @@ void KinectTracker::loadDepthBackground(){
     depthBGPlusSurface.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
 }
 
-
-//--------------------------------------------------------------
 void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int probe_y) {
     
     ofSetColor(255, 255, 255);
     depthDisplayImage.draw(x,y,width,height);
 
-    
     /*
     hueSatThresh.draw(x,y,width,height);
     // draw red circles around balls
@@ -474,9 +469,7 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
             verdana.drawString(idStr, x + itr->x / 900.0 * width, y + itr->y / 900.0 * height);
         }
     }*/
-     
 
-    
     /*
     // draw blue circles around fingers
     ofSetColor(ofColor::blue);
@@ -485,8 +478,6 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
         ofCircle(x + itr->x / depthImg.width * width, y + itr->y / depthImg.height * height, 5.0f);
     
     ofSetColor(ofColor::white);
-
-    
     */
     //depthImg.draw(x, y, width, height);
     
@@ -508,9 +499,7 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
     */
     
     //ofSetColor(ofColor::white);
-
 }
-
 
 void KinectTracker::drawColorImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
@@ -518,25 +507,21 @@ void KinectTracker::drawColorImage(int x, int y, int width, int height) {
     colorImg.draw(x,y,width,height);
 }
 
-
 void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
     depthDisplayImage.draw(x,y,width,height);
 }
-
 
 void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
     detectedObjectsDisplayImage.draw(x,y,width,height);
 }
 
-
 void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
     dThresholdedColorDilated.flagImageChanged();
     dThresholdedColorDilated.draw(x,y,width,height);
 }
-
 
 void KinectTracker::drawCornerLikelihoods(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);

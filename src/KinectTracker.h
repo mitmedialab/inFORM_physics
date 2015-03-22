@@ -43,7 +43,7 @@ public:
     vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
     vector<ofPoint>  absFingers;                // fingers detected (z is absolute)
 
-    ofPoint src[4],dst[4];
+    ofPoint src[4], dst[4];
 
     int frameWidth = 190;
     int frameHeight = 190;
