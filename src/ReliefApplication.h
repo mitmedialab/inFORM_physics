@@ -43,6 +43,10 @@ public:
     ofFbo depthInputImage;                      // depth from camera
     ofFbo detectedObjectsImage;                 // objects detected in input images
 
+    // debugging images: write to these temporarily to display image data you're Q/A'ing.
+    // don't push commits that write to them, however; leave them clean for others
+    ofFbo debugImage1, debugImage2, debugImage3;
+
     ofFbo pinDisplayImage;                      // render graphics for projection onto pins here
     ofFbo pinHeightMapImageForDisplay;          // render height map for painting on visual display here
     ofFbo pinHeightMapImageForPins;             // render height map for setting pin height here

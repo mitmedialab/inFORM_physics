@@ -48,6 +48,23 @@ void ReliefApplication::setup(){
     depthInputImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     detectedObjectsImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
+    if (DEBUG) {
+        debugImage1.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+        debugImage2.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+        debugImage3.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+
+        // initialize images to black so unused images aren't distracting
+        debugImage1.begin();
+        ofBackground(0);
+        debugImage1.end();
+        debugImage2.begin();
+        ofBackground(0);
+        debugImage2.end();
+        debugImage3.begin();
+        ofBackground(0);
+        debugImage3.end();
+    }
+
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     pinHeightMapImageForDisplay.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     pinHeightMapImageForPins.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
@@ -151,7 +168,32 @@ void ReliefApplication::update(){
     ofSetColor(255);
     kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     detectedObjectsImage.end();
-    
+
+    // debugging images: write to these temporarily to display image data you're Q/A'ing.
+    // don't push commits that write to them, however; leave them clean for others
+    if (DEBUG) {
+        debugImage1.begin();
+        ofBackground(0);
+        ofSetColor(255);
+        // example:
+        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        debugImage1.end();
+
+        debugImage2.begin();
+        ofBackground(0);
+        ofSetColor(255);
+        // example:
+        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        debugImage2.end();
+
+        debugImage3.begin();
+        ofBackground(0);
+        ofSetColor(255);
+        // example:
+        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        debugImage3.end();
+    }
+
     // render large heightmap
     pinHeightMapImageForDisplay.begin();
     ofBackground(0);
@@ -182,9 +224,20 @@ void ReliefApplication::draw(){
 
     ofRect(609, 1, 302, 302);
     detectedObjectsImage.draw(610, 2, 300, 300);
-    
+
     ofRect(913, 1, 302, 302);
     pinHeightMapImageForPins.draw(914, 2, 300, 300);
+
+    if (DEBUG) {
+        ofRect(305, 331, 302, 302);
+        debugImage1.draw(306, 332, 300, 300);
+        
+        ofRect(609, 331, 302, 302);
+        debugImage2.draw(610, 332, 300, 300);
+        
+        ofRect(913, 331, 302, 302);
+        debugImage3.draw(914, 332, 300, 300);
+    }
 
     // for object detection debugging use
     ofDrawBitmapString(ofToString(kinectTracker.size), 1, 350);
