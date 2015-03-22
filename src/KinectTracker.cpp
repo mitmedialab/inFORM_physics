@@ -75,7 +75,6 @@ void KinectTracker::setup(){
     loadDepthBackground();
 
     depthDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
-    colorDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
     detectedObjectsDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
 }
 
@@ -108,9 +107,7 @@ void KinectTracker::update(){
         cvAnd(depthNearThreshold.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
 
         unsigned char * depthPixels = depthImg.getPixels();
-        unsigned char * colorPixels = colorImg.getPixels();
         unsigned char * depthDisplayPixels = depthDisplayImage.getPixels();
-        unsigned char * colorDisplayPixels = colorDisplayImage.getPixels();
 
         // for human display only, normalize depth pixels to easily visible values
         int displayFloor = 50;
@@ -125,24 +122,15 @@ void KinectTracker::update(){
                 depthDisplayPixels[indexRGB+1] = 0;
                 depthDisplayPixels[indexRGB+2] = 0;
 
-                colorDisplayPixels[indexRGB] = 0;
-                colorDisplayPixels[indexRGB+1] = 0;
-                colorDisplayPixels[indexRGB+2] = 0;
-
             } else {
                 displayNormalizedValue = depthPixels[i] * displayScalar + displayFloor;
 
                 depthDisplayPixels[indexRGB] = displayNormalizedValue;
                 depthDisplayPixels[indexRGB+1] = displayNormalizedValue;
                 depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
-
-                colorDisplayPixels[indexRGB] = (unsigned char)(colorPixels[indexRGB] * 1.0);
-                colorDisplayPixels[indexRGB+1] = (unsigned char)(colorPixels[indexRGB+1] * 1.0);
-                colorDisplayPixels[indexRGB+2] = (unsigned char)(colorPixels[indexRGB+2] * 1.0);
             }
         }
         depthDisplayImage.update();
-        colorDisplayImage.update();
 
         // depth threshold is depth image with all non-black pixels set to white
         depthThreshold = depthImg;

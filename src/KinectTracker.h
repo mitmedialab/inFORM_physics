@@ -70,7 +70,6 @@ public:
     ofxCvFloatImage cornerLikelihoodsRawF;      // pre-normalization corner likelihoods map
 
     ofImage depthDisplayImage;
-    ofImage colorDisplayImage;
     ofImage detectedObjectsDisplayImage;
     ofImage cornerLikelihoodsImage;
 
