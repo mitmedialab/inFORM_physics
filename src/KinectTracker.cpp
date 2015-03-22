@@ -93,13 +93,10 @@ void KinectTracker::update(){
 
         // get color image data in region of interest
         colorImgRaw.setFromPixels(kinect.getPixels(), kinect.width, kinect.height);
-        colorImgRaw.flagImageChanged();
         colorImg.setFromPixels(colorImgRaw.getRoiPixels(), frameWidth, frameHeight);
-        colorImg.flagImageChanged();
 
         // get depth image data in region of interest
 		depthImgRaw.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
-        depthImgRaw.flagImageChanged();
         depthImg.setFromPixels(depthImgRaw.getRoiPixels(), frameWidth, frameHeight);
         depthImg.dilate();
         depthImg.erode();
@@ -110,8 +107,6 @@ void KinectTracker::update(){
         depthNearThreshold.threshold(nearThreshold, true);
         cvAnd(depthNearThreshold.getCvImage(), depthImg.getCvImage(), depthImg.getCvImage(), NULL);
 
-        depthImg.flagImageChanged();
-        
         unsigned char * depthPixels = depthImg.getPixels();
         unsigned char * colorPixels = colorImg.getPixels();
         unsigned char * depthDisplayPixels = depthDisplayImage.getPixels();
@@ -169,7 +164,6 @@ void KinectTracker::update(){
 
         // black out color image regions that are outside the depth range
         cvAnd(colorImg.getCvImage(), depthThresholdC.getCvImage(), dThresholdedColor.getCvImage(), NULL);
-        dThresholdedColor.flagImageChanged();
         cvAnd(colorImg.getCvImage(), depthThresholdDilatedC.getCvImage(), dThresholdedColorDilated.getCvImage(), NULL);
 
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
@@ -300,7 +294,6 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     //hsvImage.warpIntoMe(thresholdedColor, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
-    hsvImage.flagImageChanged();
 
     hue.erode_3x3();
     hue.dilate_3x3();
@@ -318,7 +311,6 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
 
     cvAnd(hueThreshNear.getCvImage(), hueThreshFar.getCvImage(), hueThresh.getCvImage(), NULL);
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
-    hueSatThresh.flagImageChanged();
 
     int imgSize = hueSatThresh.width * hueSatThresh.height;
     ball_contourFinder.findContours(hueSatThresh, imgSize / 400, imgSize / 4, 20, 20.0, false);
@@ -341,12 +333,9 @@ void KinectTracker::findFingers(vector<ofPoint> &points) {
         pix[i] = (filteredPix[i] < nearThreshold && filteredPix[i] > farThreshold)?255:0;
         
     }
-    depthFiltered.flagImageChanged();
-    depthImg.flagImageChanged();
     depthImg.erode_3x3();
     depthImg.dilate_3x3();
-    depthImg.flagImageChanged();
-    
+
     finger_contourFinder.findContours(depthImg,  (2 * 2) + 1, ((640 * 480) * .4) * (100 * .001), 20, 20.0, false);
     
     finger_tracker.track(&finger_contourFinder);
@@ -397,8 +386,6 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
         }
     }
     
-    depthBGPlusSurface.flagImageChanged();
-
     unsigned char * pix = depthImg.getPixels();
     unsigned char * filteredPix = depthFiltered.getPixels();
 
@@ -407,11 +394,8 @@ void KinectTracker::findFingersAboveSurface(vector<ofPoint> &points) {
         pix[i] = (filteredPix[i] < nearThreshold && filteredPix[i] > farThreshold)?255:0;
         
     }
-    depthFiltered.flagImageChanged();
-    depthImg.flagImageChanged();
     depthImg.erode_3x3();
     depthImg.dilate_3x3();
-    depthImg.flagImageChanged();
 
     finger_contourFinder.findContours(depthImg,  (2 * 2) + 1, ((640 * 480) * .4) * (100 * .001), 20, 20.0, false);
     
@@ -480,7 +464,6 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
         if(0 <= coord && coord < 190 * 190) {
             unsigned char * pix = hue.getPixels();
             pix[coord]= 0;
-            hue.flagImageChanged();
 
             int h = hue.getPixels()[coord];
             int s = sat.getPixels()[coord];
@@ -531,6 +514,7 @@ void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int p
 
 void KinectTracker::drawColorImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
+    colorImg.flagImageChanged();
     colorImg.draw(x,y,width,height);
 }
 
@@ -549,6 +533,7 @@ void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
 
 void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
+    dThresholdedColorDilated.flagImageChanged();
     dThresholdedColorDilated.draw(x,y,width,height);
 }
 
