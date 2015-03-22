@@ -250,7 +250,7 @@ void KinectTracker::update(){
                     }
                 }
             }
-            cornerLikelihoodsImage = cornerLikelihoods.getPixelsRef();
+            cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
 
             int xSpread = cubeMaxX - cubeMinX;
             int ySpread = cubeMaxY - cubeMinY;
@@ -512,6 +512,6 @@ void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int 
 
 void KinectTracker::drawCornerLikelihoods(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
-    cornerLikelihoodsImage.update();
-    cornerLikelihoodsImage.draw(x,y,width,height);
+    cornerLikelihoodsDisplayImage.update();
+    cornerLikelihoodsDisplayImage.draw(x,y,width,height);
 }

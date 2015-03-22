@@ -71,7 +71,7 @@ public:
 
     ofImage depthDisplayImage;
     ofImage detectedObjectsDisplayImage;
-    ofImage cornerLikelihoodsImage;
+    ofImage cornerLikelihoodsDisplayImage;
 
     vector<ofPoint> corners;
 
