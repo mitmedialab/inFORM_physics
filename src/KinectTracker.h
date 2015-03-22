@@ -106,6 +106,7 @@ public:
     
 private:
     void updateInputImages();
+    void updateDepthThresholds();
 
 };
 

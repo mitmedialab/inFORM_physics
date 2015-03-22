@@ -92,28 +92,12 @@ void KinectTracker::update(){
         // get color and depth images from kinect
         updateInputImages();
 
-        // depth threshold is depth image with all non-black pixels set to white
-        depthThreshold = depthImg;
-        depthThreshold.threshold(0);
+        // generate depth threshold images in various types
+        updateDepthThresholds();
 
-        // relax thresholding restriction since depth information is noisy
-        depthThreshold.dilate_3x3();
-
-        // create a threshold that's relaxed even further for edge-detecting algorithms.
-        // since some algorithms get confused by the threshold boundary's sharp drop to black, starting
-        // with a dilated threshold lets us later shrink the threshold back to reject boundary points.
-        depthThresholdDilated = depthThreshold;
-        depthThresholdDilated.dilate_3x3();
-
-        // convert grayscale depth thresholds to other image types
-        depthThresholdC.setFromGrayscalePlanarImages(depthThreshold, depthThreshold, depthThreshold);
-        depthThresholdDilatedC.setFromGrayscalePlanarImages(depthThresholdDilated, depthThresholdDilated, depthThresholdDilated);
-        depthThresholdF = depthThresholdC;
-
-        // black out color image regions that are outside the depth range
+        // generate depth-thresholded color images (black out regions outside the depth range)
         cvAnd(colorImg.getCvImage(), depthThresholdC.getCvImage(), dThresholdedColor.getCvImage(), NULL);
         cvAnd(colorImg.getCvImage(), depthThresholdDilatedC.getCvImage(), dThresholdedColorDilated.getCvImage(), NULL);
-
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
@@ -273,6 +257,26 @@ void KinectTracker::updateInputImages(){
             depthDisplayPixels[indexRGB+2] = displayNormalizedValue;
         }
     }
+}
+
+void KinectTracker::updateDepthThresholds(){
+    // depth threshold is depth image with all non-black pixels set to white
+    depthThreshold = depthImg;
+    depthThreshold.threshold(0);
+    
+    // relax thresholding restriction since depth information is noisy
+    depthThreshold.dilate_3x3();
+    
+    // create a threshold that's relaxed even further for edge-detecting algorithms.
+    // since some algorithms get confused by the threshold boundary's sharp drop to black, starting
+    // with a dilated threshold lets us later shrink the threshold back to reject boundary points.
+    depthThresholdDilated = depthThreshold;
+    depthThresholdDilated.dilate_3x3();
+    
+    // convert grayscale depth thresholds to other image types
+    depthThresholdC.setFromGrayscalePlanarImages(depthThreshold, depthThreshold, depthThreshold);
+    depthThresholdDilatedC.setFromGrayscalePlanarImages(depthThresholdDilated, depthThresholdDilated, depthThresholdDilated);
+    depthThresholdF = depthThresholdC;
 }
 
 void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
