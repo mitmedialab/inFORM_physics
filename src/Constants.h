@@ -7,6 +7,8 @@
  *
  */
 
+#include "KeycodeConstants.h"
+
 #ifndef _CONSTANTS
 #define _CONSTANTS	
 
