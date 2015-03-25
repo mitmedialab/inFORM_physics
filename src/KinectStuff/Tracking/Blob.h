@@ -22,6 +22,8 @@ public:
     int					id;
     float               area;
     float               length;
+    float               widthScale;  // width of blob's original image
+    float               heightScale; // height of blob's original image
     float               angle;
     float				maccel;  //distance traveled since last frame
     float				age;     //how long the blob has been at war
@@ -55,7 +57,20 @@ public:
     }
     
     //----------------------------------------
-    void drawContours(float x = 0, float y = 0, float inputWidth = ofGetWidth(), float inputHeight = ofGetHeight(), float outputWidth = ofGetWidth(), float outputHeight = ofGetHeight()) {
+    void drawContours(float x = 0, float y = 0, float inputWidth = -1, float inputHeight = -1, float outputWidth = -1, float outputHeight = -1) {
+        if (inputWidth < 0) {
+            inputWidth = widthScale;
+        }
+        if (inputHeight < 0) {
+            inputHeight = heightScale;
+        }
+        if (outputWidth < 0) {
+            outputWidth = widthScale;
+        }
+        if (outputHeight < 0) {
+            outputHeight = heightScale;
+        }
+
         glPushMatrix();
         glTranslatef(x + angleBoundingRect.x/inputWidth * outputWidth, y + angleBoundingRect.y/inputHeight * outputHeight, 0.0f);
         glRotatef(angle+90, 0.0f, 0.0f, 1.0f);
@@ -80,7 +95,20 @@ public:
         ofEndShape(true);
     }
     
-    void drawCenter(float x = 0, float y = 0, float inputWidth = ofGetWidth(), float inputHeight = ofGetHeight(), float outputWidth = ofGetWidth(), float outputHeight = ofGetHeight()) {
+    void drawCenter(float x = 0, float y = 0, float inputWidth = -1, float inputHeight = -1, float outputWidth = -1, float outputHeight = -1) {
+        if (inputWidth < 0) {
+            inputWidth = widthScale;
+        }
+        if (inputHeight < 0) {
+            inputHeight = heightScale;
+        }
+        if (outputWidth < 0) {
+            outputWidth = widthScale;
+        }
+        if (outputHeight < 0) {
+            outputHeight = heightScale;
+        }
+
         ofSetColor(255,0,0);
         ofFill();
         
@@ -104,7 +132,20 @@ public:
     }
     
     
-    void drawBox(float x = 0, float y = 0, float inputWidth = ofGetWidth(), float inputHeight = ofGetHeight(), float outputWidth = ofGetWidth(), float outputHeight = ofGetHeight()){
+    void drawBox(float x = 0, float y = 0, float inputWidth = -1, float inputHeight = -1, float outputWidth = -1, float outputHeight = -1){
+        if (inputWidth < 0) {
+            inputWidth = widthScale;
+        }
+        if (inputHeight < 0) {
+            inputHeight = heightScale;
+        }
+        if (outputWidth < 0) {
+            outputWidth = widthScale;
+        }
+        if (outputHeight < 0) {
+            outputHeight = heightScale;
+        }
+
         // width and height are mixed up, and angle measures clockwise!
         float width = angleBoundingRect.height;
         float height = angleBoundingRect.width;

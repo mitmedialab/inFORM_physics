@@ -124,6 +124,8 @@ int ContourFinder::findContours(	ofxCvGrayscaleImage&  input,
 
 			// assign other parameters
 			blob.area                = fabs(area);
+			blob.widthScale          = input.width;
+			blob.heightScale         = input.height;
 			blob.hole                = area < 0 ? true : false;
 			blob.length 			 = cvArcLength(contour_ptr);
 		
@@ -168,6 +170,8 @@ int ContourFinder::findContours(	ofxCvGrayscaleImage&  input,
 				
 				// assign other parameters
 				blob.area                = fabs(area);
+				blob.widthScale          = input.width;
+				blob.heightScale         = input.height;
 				blob.hole                = area < 0 ? true : false;
 				blob.length 			 = cvArcLength(contour_ptr);
 				// AlexP
@@ -271,6 +275,8 @@ int ContourFinder::findContours(	ofxCvGrayscaleImage&  input,
 						
 						// assign other parameters
 						//blob.area                = fabs(area);
+						//blob.widthScale          = input.width;
+						//blob.heightScale         = input.height;
 						//blob.hole                = area < 0 ? true : false;
 						//blob.length 			 = cvArcLength(contour_ptr);
 						// AlexP
