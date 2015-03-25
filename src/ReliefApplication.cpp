@@ -105,8 +105,10 @@ void ReliefApplication::update(){
     
     //app timebase, to send to all animatable objets
 	float dt = 1.0f / ofGetFrameRate();
-    
-    myCurrentRenderedObject->update(dt);
+
+    if (!paused) {
+        myCurrentRenderedObject->update(dt);
+    }
     
     //for(int i=0; i < renderableObjects.size(); i++){
     //    renderableObjects[i]->update(dt);
@@ -264,7 +266,11 @@ void ReliefApplication::keyPressed(int key){
     if(key == KEY_DOWN) myCurrentRenderedObject->keyPressed(KEY_DOWN);
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
     if(key == KEY_RIGHT) myCurrentRenderedObject->keyPressed(KEY_RIGHT);
-    
+
+    if(key == ' ') {
+        paused = !paused;
+    }
+
     // other keys
     if(key == 'p') {
         kinectTracker.saveDepthImage();
