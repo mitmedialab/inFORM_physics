@@ -108,10 +108,12 @@ void KinectTracker::update(){
         generateBlobDescriptors(redBlobs);
 
         // detect corners. this computation is expensive! limit it to a small region of interest
+        /* -- Turned Off. this doesn't work well and slows things down. the code might be useful later, so leaving it in for now.
         ofRectangle blobRoi = ofRectangle(cubeMinX, cubeMinY, cubeMaxX - cubeMinX, cubeMaxY - cubeMinY);
         dThresholdedColorDilatedG.setROI(blobRoi);
         detectCorners(dThresholdedColorDilatedG, corners);
         dThresholdedColorDilatedG.resetROI();
+        */
 
         // categorize current state of detected objects
         updateDetectionStatus();
