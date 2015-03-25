@@ -100,19 +100,31 @@ public:
         ofRect(x + (boundingRect.x/inputWidth) * outputWidth, y + ((boundingRect.y - boundingRect.height)/inputHeight) * outputHeight, 1, (boundingRect.height * 2)/inputHeight * outputHeight); //Vertical Plus
         ofRect(x + ((boundingRect.x - boundingRect.width)/inputWidth) * outputWidth, y + (boundingRect.y/inputHeight) * outputHeight, (boundingRect.width * 2)/inputWidth * outputWidth, 1); //Horizontal Plus
         
-        ofPopMatrix();	
+        ofPopMatrix();
     }
     
     
     void drawBox(float x = 0, float y = 0, float inputWidth = ofGetWidth(), float inputHeight = ofGetHeight(), float outputWidth = ofGetWidth(), float outputHeight = ofGetHeight()){
+        // width and height are mixed up, and angle measures clockwise!
+        float width = angleBoundingRect.height;
+        float height = angleBoundingRect.width;
+        float ccwAngle = -angle;
+
         glPushMatrix();
         glTranslatef(x + angleBoundingRect.x/inputWidth * outputWidth, y + angleBoundingRect.y/inputHeight * outputHeight, 0.0f);
-        glRotatef(-angle, 0.0f, 0.0f, 1.0f);
+        glRotatef(-ccwAngle, 0.0f, 0.0f, 1.0f);
         glTranslatef(-(x + angleBoundingRect.x/inputWidth * outputWidth), -(y + angleBoundingRect.y/inputHeight * outputHeight), 0.0f);
         ofNoFill();
         
         ofSetColor(255);
-        ofRect(x + (angleBoundingRect.x - angleBoundingRect.width/2)/inputWidth * outputWidth, y + (angleBoundingRect.y - angleBoundingRect.height/2)/inputHeight * outputHeight, angleBoundingRect.width/inputWidth * outputWidth, angleBoundingRect.height/inputHeight * outputHeight);
+        float left, right, top, bottom;
+        left = x + (angleBoundingRect.x - width/2)/inputWidth * outputWidth;
+        right = x + (angleBoundingRect.x + width/2)/inputWidth * outputWidth;
+        top = y + (angleBoundingRect.y - height/2)/inputHeight * outputHeight;
+        bottom = y + (angleBoundingRect.y + height/2)/inputHeight * outputHeight;
+        ofRect(left, top, right - left, bottom - top);
+        
+        ofFill();
         
         glPopMatrix();
     }
