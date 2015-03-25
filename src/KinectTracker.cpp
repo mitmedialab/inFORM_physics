@@ -301,15 +301,15 @@ void KinectTracker::updateDetectionStatus() {
         int xSpread = cubeMaxX - cubeMinX;
         int ySpread = cubeMaxY - cubeMinY;
         if (xSpread <= 30 && ySpread <= 30) {
-            cubeIsReady = true;
+            cubeIsSquareAligned = true;
             cout << "ready" << endl;
         } else {
-            cubeIsReady = false;
+            cubeIsSquareAligned = false;
             cout << "not ready" << endl;
         }
-        cubeIsReady = true;
+        cubeIsSquareAligned = true;
     } else {
-        cubeIsReady = false;
+        cubeIsSquareAligned = false;
         cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
     }
 }

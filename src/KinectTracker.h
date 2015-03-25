@@ -77,7 +77,7 @@ public:
 
     // blob tracking output
     Blob currentBlob;
-    bool cubeIsReady;
+    bool cubeIsSquareAligned;
     int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY; // cube location descriptors
     ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner; // cube key points
 

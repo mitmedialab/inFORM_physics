@@ -35,7 +35,7 @@ void HybridTokens::update(float dt) {
 
 void HybridTokens::drawSwordsHeightMap() {
     // for now, assume a ready cube is flat and aligned to the coordinate axes
-    if (kinectTracker->cubeIsReady) {
+    if (kinectTracker->cubeIsSquareAligned) {
         // known width and height of our cubes
         int width = 26;
         int height = 26;
