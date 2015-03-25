@@ -260,6 +260,10 @@ void ReliefApplication::keyPressed(int key){
     if(key == 's') myCurrentRenderedObject->keyPressed('s');
     if(key == 'i') myCurrentRenderedObject->keyPressed('i');
     if(key == 'b') myCurrentRenderedObject->keyPressed('b');
+    if(key == KEY_UP) myCurrentRenderedObject->keyPressed(KEY_UP);
+    if(key == KEY_DOWN) myCurrentRenderedObject->keyPressed(KEY_DOWN);
+    if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
+    if(key == KEY_RIGHT) myCurrentRenderedObject->keyPressed(KEY_RIGHT);
     
     // other keys
     if(key == 'p') {
