@@ -81,7 +81,7 @@ public:
     Blob currentBlob;
     Cube currentCube;
     bool cubeIsSquareAligned;
-    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY; // cube location descriptors
+    float cubeMinX, cubeMaxX, cubeMinY, cubeMaxY; // cube location descriptors
 
     // blob tracking images
     ofxCvColorImage hsvImage;                   // input image converted to hsv

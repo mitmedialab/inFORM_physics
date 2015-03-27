@@ -114,7 +114,9 @@ void KinectTracker::update(){
 
         // detect corners. this computation is expensive! limit it to a small region of interest
         /* -- Turned Off. this doesn't work well and slows things down. the code might be useful later, so leaving it in for now.
-        ofRectangle blobRoi = ofRectangle(cubeMinX, cubeMinY, cubeMaxX - cubeMinX, cubeMaxY - cubeMinY);
+        int width = dThresholdedColorDilatedG.width;
+        int height = dThresholdedColorDilatedG.height;
+        ofRectangle blobRoi = ofRectangle(cubeMinX * width, cubeMinY * height, (cubeMaxX - cubeMinX) * width, (cubeMaxY - cubeMinY) * height);
         dThresholdedColorDilatedG.setROI(blobRoi);
         detectCorners(dThresholdedColorDilatedG, corners);
         dThresholdedColorDilatedG.resetROI();
@@ -211,10 +213,10 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
         ofFill();
 
         // corners of axis-aligned bounding rectangle
-        cubeMinX = cubes_itr->absCorners[0].x * imageSize.x;
-        cubeMaxX = cubes_itr->absCorners[2].x * imageSize.x;
-        cubeMinY = cubes_itr->absCorners[1].y * imageSize.y;
-        cubeMaxY = cubes_itr->absCorners[3].y * imageSize.y;
+        cubeMinX = cubes_itr->absCorners[0].x;
+        cubeMaxX = cubes_itr->absCorners[2].x;
+        cubeMinY = cubes_itr->absCorners[1].y;
+        cubeMaxY = cubes_itr->absCorners[3].y;
 
         // draw cube corners
         ofColor cornerColors[4] = {ofColor::red, ofColor::orange, ofColor::green, ofColor::blue};
@@ -312,7 +314,7 @@ void KinectTracker::updateDetectionStatus() {
         currentCube = redCubes[0];
         int xSpread = cubeMaxX - cubeMinX;
         int ySpread = cubeMaxY - cubeMinY;
-        if (xSpread <= 30 && ySpread <= 30) {
+        if (xSpread <= 0.16 && ySpread <= 0.16) {
             cubeIsSquareAligned = true;
             cout << "ready" << endl;
         } else {
