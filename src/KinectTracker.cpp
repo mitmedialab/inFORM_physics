@@ -104,8 +104,14 @@ void KinectTracker::update(){
         //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
         findBlobs(172, 205, 100, redBlobs); // loose threshold
 
+        // populate red cubes with red blobs
+        redCubes.clear();
+        for(vector<Blob>::iterator blobs_itr = redBlobs.begin(); blobs_itr < redBlobs.end(); blobs_itr++) {
+            redCubes.push_back(Cube(&(*blobs_itr)));
+        }
+
         // extract basic information about detected objects
-        generateBlobDescriptors(redBlobs);
+        generateBlobDescriptors(redCubes);
 
         // detect corners. this computation is expensive! limit it to a small region of interest
         /* -- Turned Off. this doesn't work well and slows things down. the code might be useful later, so leaving it in for now.
@@ -180,52 +186,41 @@ void KinectTracker::updateDepthThresholds(){
     depthThresholdF = depthThresholdC;
 }
 
-void KinectTracker::generateBlobDescriptors(vector<Blob> blobs) {
+void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
     detectedObjectsDisplayImage.getPixelsRef().setFromPixels(dThresholdedColor.getPixels(), dThresholdedColor.getWidth(), dThresholdedColor.getHeight(), dThresholdedColor.getPixelsRef().getNumChannels());
     
     int width = detectedObjectsDisplayImage.getPixelsRef().getWidth();
     int height = detectedObjectsDisplayImage.getPixelsRef().getHeight();
     int dx_radius = width/100;
     int dy_radius = height/100;
-    for(vector<Blob>::iterator blobs_itr = blobs.begin(); blobs_itr < blobs.end(); blobs_itr++) {
-        cubeCenterX = blobs_itr->centroid.x;
-        cubeCenterY = blobs_itr->centroid.y;
+    for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
+        int cubeCenterX = cubes_itr->center.x * width;
+        int cubeCenterY = cubes_itr->center.y * height;
         for (int dx = -dx_radius; dx < dx_radius * 2; dx++) {
             for (int dy = -dy_radius; dy < dy_radius * 2; dy++) {
                 detectedObjectsDisplayImage.getPixelsRef().setColor(cubeCenterX + dx, cubeCenterY + dy, ofColor::green);
             }
         }
         
-        // draw corners of bounding rectangle
-        cubeMinX = width, cubeMaxX = 0, cubeMinY = height, cubeMaxY = 0;
-        for(vector<ofPoint>::iterator points_itr = blobs_itr->pts.begin(); points_itr < blobs_itr->pts.end(); points_itr++) {
-            if (cubeMinX > points_itr->x) {
-                cubeMinX = points_itr->x;
-                cubeLeftCorner = *points_itr;
-            }
-            if (cubeMaxX < points_itr->x) {
-                cubeMaxX = points_itr->x;
-                cubeRightCorner = *points_itr;
-            }
-            if (cubeMinY > points_itr->y) {
-                cubeMinY = points_itr->y;
-                cubeTopCorner = *points_itr;
-            }
-            if (cubeMaxY < points_itr->y) {
-                cubeMaxY = points_itr->y;
-                cubeBottomCorner = *points_itr;
-            }
+        // draw blob points
+        for(vector<ofPoint>::iterator points_itr = cubes_itr->blob->pts.begin(); points_itr < cubes_itr->blob->pts.end(); points_itr++) {
             detectedObjectsDisplayImage.getPixelsRef().setColor(points_itr->x, points_itr->y, ofColor::yellow);
         }
+
+        // draw cube corners
+        for (int i = 0; i < 4; i++) {
+            detectedObjectsDisplayImage.getPixelsRef().setColor(cubes_itr->absCorners[i].x * width, cubes_itr->absCorners[i].y * height, ofColor::blue);
+        }
+
+        // draw corners of axis-aligned bounding rectangle
+        cubeMinX = cubes_itr->absCorners[0].x * width;
+        cubeMaxX = cubes_itr->absCorners[2].x * width;
+        cubeMinY = cubes_itr->absCorners[1].y * height;
+        cubeMaxY = cubes_itr->absCorners[3].y * height;
         detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMinX, cubeMinY, ofColor::green);
         detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMaxX, cubeMinY, ofColor::green);
         detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMinX, cubeMaxY, ofColor::green);
         detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMaxX, cubeMaxY, ofColor::green);
-        
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeLeftCorner.x, cubeLeftCorner.y, ofColor::blue);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeRightCorner.x, cubeRightCorner.y, ofColor::blue);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeTopCorner.x, cubeTopCorner.y, ofColor::blue);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeBottomCorner.x, cubeBottomCorner.y, ofColor::blue);
     }
 }
 
@@ -297,7 +292,8 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
 
 void KinectTracker::updateDetectionStatus() {
     if (redBlobs.size() == 1) {
-        currentBlob = *redBlobs.begin();
+        currentBlob = redBlobs[0];
+        currentCube = redCubes[0];
         int xSpread = cubeMaxX - cubeMinX;
         int ySpread = cubeMaxY - cubeMinY;
         if (xSpread <= 30 && ySpread <= 30) {

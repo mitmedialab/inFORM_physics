@@ -9,6 +9,7 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 #include "ofxKCore.h"
+#include "Cube.h"
 
 
 #ifndef __Relief2__KinectTracker__
@@ -40,6 +41,7 @@ public:
     void drawCount(int width, int height);      // for debugging
     
     vector<Blob>  redBlobs;                     // red blobs detected
+    vector<Cube>  redCubes;                     // cube objects using red blobs
     vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
     vector<ofPoint>  absFingers;                // fingers detected (z is absolute)
 
@@ -77,9 +79,9 @@ public:
 
     // blob tracking output
     Blob currentBlob;
+    Cube currentCube;
     bool cubeIsSquareAligned;
-    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY, cubeCenterX, cubeCenterY; // cube location descriptors
-    ofPoint cubeLeftCorner, cubeRightCorner, cubeTopCorner, cubeBottomCorner; // cube key points
+    int cubeMinX, cubeMaxX, cubeMinY, cubeMaxY; // cube location descriptors
 
     // blob tracking images
     ofxCvColorImage hsvImage;                   // input image converted to hsv
@@ -104,7 +106,7 @@ public:
 private:
     void updateInputImages();
     void updateDepthThresholds();
-    void generateBlobDescriptors(vector<Blob> blobs);
+    void generateBlobDescriptors(vector<Cube> cubes);
     void detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>& cornersOut);
     void updateDetectionStatus();
 

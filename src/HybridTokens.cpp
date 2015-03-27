@@ -37,32 +37,32 @@ void HybridTokens::drawSwordsHeightMap() {
     // for now, assume a ready cube is flat and aligned to the coordinate axes
     if (kinectTracker->cubeIsSquareAligned) {
         // known width and height of our cubes
-        int width = 26;
-        int height = 26;
+        float width = 4.0 / 30;
+        float height = 4.0 / 30;
         
         // dynamic cube
-        ofPoint center = kinectTracker->currentBlob.centroid;
+        ofPoint center = kinectTracker->currentCube.center;
         
         // for now, hardcode a description of the static block
-        ofPoint fixedCenter(35, 70);
+        ofPoint fixedCenter(0.17, 0.34);
         
         // draw dynamic sword up
         ofSetColor(140);
         int left, right, top, bottom;
-        left = (kinectTracker->cubeCenterX - 13) * RELIEF_PROJECTOR_SIZE_X / 190;
-        right = (kinectTracker->cubeCenterX + 13) * RELIEF_PROJECTOR_SIZE_X / 190;
-        top = (kinectTracker->cubeCenterY - 13 - 3 * height) * RELIEF_PROJECTOR_SIZE_X / 190;
-        bottom = (kinectTracker->cubeCenterY - 13 - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X / 190;
+        left = (center.x - 0.07) * RELIEF_PROJECTOR_SIZE_X;
+        right = (center.x + 0.07) * RELIEF_PROJECTOR_SIZE_X;
+        top = (center.y - 0.07 - 3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (center.y - 0.07 - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
         ofRect(left, top, right - left, bottom - top);
-        
+
         if (useStaticSecondSword) {
             // draw static sword right
             ofSetColor(140);
             int fixedLeft, fixedRight, fixedTop, fixedBottom;
-            fixedLeft = (fixedCenter.x + 13 + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X / 190;
-            fixedRight = (fixedCenter.x + 13 + 3 * height) * RELIEF_PROJECTOR_SIZE_X / 190;
-            fixedTop = (fixedCenter.y - 13) * RELIEF_PROJECTOR_SIZE_X / 190;
-            fixedBottom = (fixedCenter.y + 13) * RELIEF_PROJECTOR_SIZE_X / 190;
+            fixedLeft = (fixedCenter.x + 0.07 + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+            fixedRight = (fixedCenter.x + 0.07 + 3 * height) * RELIEF_PROJECTOR_SIZE_X;
+            fixedTop = (fixedCenter.y - 0.07) * RELIEF_PROJECTOR_SIZE_X;
+            fixedBottom = (fixedCenter.y + 0.07) * RELIEF_PROJECTOR_SIZE_X;
             ofRect(fixedLeft, fixedTop, fixedRight - fixedLeft, fixedBottom - fixedTop);
             
             // draw sword intersections
@@ -81,11 +81,11 @@ void HybridTokens::drawSwordsHeightMap() {
             // draw blockade
             if (blockadeSword) {
                 ofSetColor(140);
-                int closeDistance = 13 * RELIEF_PROJECTOR_SIZE_X / 190;
+                int closeDistance = 0.07 * RELIEF_PROJECTOR_SIZE_X;
                 if (left < fixedRight + closeDistance) {
-                    int adjWidth = width * RELIEF_PROJECTOR_SIZE_X / 190;
-                    int adjHeight = height * RELIEF_PROJECTOR_SIZE_X / 190;
-                    int cubeBottom = (kinectTracker->cubeCenterY + 13) * RELIEF_PROJECTOR_SIZE_X / 190;
+                    int adjWidth = width * RELIEF_PROJECTOR_SIZE_X;
+                    int adjHeight = height * RELIEF_PROJECTOR_SIZE_X;
+                    int cubeBottom = (kinectTracker->currentCube.center.y + 0.07) * RELIEF_PROJECTOR_SIZE_X;
                     ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
                 }
             }
