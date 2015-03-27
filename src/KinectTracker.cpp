@@ -101,8 +101,7 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        //findBlobs(172, 5, 200, redBlobs); // strict red threshold?
-        findBlobs(172, 205, 100, redBlobs); // loose threshold
+        findBlobs(173, 8, 220, redBlobs);
 
         // populate red cubes with red blobs
         redCubes.clear();
@@ -270,21 +269,34 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
 
-    hue.erode_3x3();
+    // this combination gets the best corners for red cubes
     hue.dilate_3x3();
-
+    hue.erode_3x3();
     sat.erode_3x3();
     sat.dilate_3x3();
 
+    if (hue_tolerance > 128) {
+        hue_tolerance = 128;
+    }
+
+    // thresholds on hue, allowing for zero-boundary wrap-around
     hueThreshHigh = hue;
     hueThreshLow = hue;
-    hueThreshHigh.threshold(hue_target+hue_tolerance, true);
-    hueThreshLow.threshold(hue_target-hue_tolerance);
-    
+    hueThreshHigh.threshold((hue_target + hue_tolerance) % 256, CV_THRESH_BINARY_INV);
+    hueThreshLow.threshold((hue_target - hue_tolerance + 256) % 256 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
+
+    // if thresholds wrap around zero, take their union instead of their intersection
+    bool wrapAround = (hue_target - hue_tolerance < 0) || (hue_target + hue_tolerance > 255);
+    if (wrapAround) {
+        cvOr(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
+    } else {
+        cvAnd(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
+    }
+
+    // threshold saturation
     satThresh = sat;
     satThresh.threshold(sat_limit);
 
-    cvAnd(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
 
     int imgSize = hueSatThresh.width * hueSatThresh.height;
