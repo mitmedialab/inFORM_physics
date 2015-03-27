@@ -211,16 +211,11 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
         ofEndShape();
         ofFill();
 
-        // draw corners of axis-aligned bounding rectangle
-        ofSetColor(ofColor::lightBlue);
+        // corners of axis-aligned bounding rectangle
         cubeMinX = cubes_itr->absCorners[0].x * imageSize.x;
         cubeMaxX = cubes_itr->absCorners[2].x * imageSize.x;
         cubeMinY = cubes_itr->absCorners[1].y * imageSize.y;
         cubeMaxY = cubes_itr->absCorners[3].y * imageSize.y;
-        ofCircle(cubeMinX, cubeMinY, 1);
-        ofCircle(cubeMaxX, cubeMinY, 1);
-        ofCircle(cubeMinX, cubeMaxY, 1);
-        ofCircle(cubeMaxX, cubeMaxY, 1);
 
         // draw cube corners
         ofColor cornerColors[4] = {ofColor::red, ofColor::orange, ofColor::green, ofColor::blue};
