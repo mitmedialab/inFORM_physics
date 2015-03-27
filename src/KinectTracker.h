@@ -72,7 +72,7 @@ public:
     ofxCvFloatImage cornerLikelihoodsRawF;      // pre-normalization corner likelihoods map
 
     ofImage depthDisplayImage;
-    ofImage detectedObjectsDisplayImage;
+    ofFbo detectedObjectsDisplayFbo;
     ofImage cornerLikelihoodsDisplayImage;
 
     vector<ofPoint> corners;

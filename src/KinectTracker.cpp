@@ -75,7 +75,7 @@ void KinectTracker::setup(){
     loadDepthBackground();
 
     depthDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
-    detectedObjectsDisplayImage.allocate(frameWidth, frameHeight, OF_IMAGE_COLOR);
+    detectedObjectsDisplayFbo.allocate(frameWidth, frameHeight);
 }
 
 void KinectTracker::exit() {
@@ -187,41 +187,50 @@ void KinectTracker::updateDepthThresholds(){
 }
 
 void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
-    detectedObjectsDisplayImage.getPixelsRef().setFromPixels(dThresholdedColor.getPixels(), dThresholdedColor.getWidth(), dThresholdedColor.getHeight(), dThresholdedColor.getPixelsRef().getNumChannels());
-    
-    int width = detectedObjectsDisplayImage.getPixelsRef().getWidth();
-    int height = detectedObjectsDisplayImage.getPixelsRef().getHeight();
-    int dx_radius = width/100;
-    int dy_radius = height/100;
-    for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
-        int cubeCenterX = cubes_itr->center.x * width;
-        int cubeCenterY = cubes_itr->center.y * height;
-        for (int dx = -dx_radius; dx < dx_radius * 2; dx++) {
-            for (int dy = -dy_radius; dy < dy_radius * 2; dy++) {
-                detectedObjectsDisplayImage.getPixelsRef().setColor(cubeCenterX + dx, cubeCenterY + dy, ofColor::green);
-            }
-        }
-        
-        // draw blob points
-        for(vector<ofPoint>::iterator points_itr = cubes_itr->blob->pts.begin(); points_itr < cubes_itr->blob->pts.end(); points_itr++) {
-            detectedObjectsDisplayImage.getPixelsRef().setColor(points_itr->x, points_itr->y, ofColor::yellow);
-        }
+    detectedObjectsDisplayFbo.begin();
+    ofBackground(0);
+    ofSetColor(255);
 
-        // draw cube corners
-        for (int i = 0; i < 4; i++) {
-            detectedObjectsDisplayImage.getPixelsRef().setColor(cubes_itr->absCorners[i].x * width, cubes_itr->absCorners[i].y * height, ofColor::blue);
-        }
+    dThresholdedColor.flagImageChanged();
+    dThresholdedColor.draw(0, 0);
+
+    ofPoint imageSize = ofPoint(detectedObjectsDisplayFbo.getWidth(), detectedObjectsDisplayFbo.getHeight());
+    glDisable(GL_LINE_STIPPLE);
+
+    for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
+        // draw center
+        ofSetColor(ofColor::lightBlue);
+        ofCircle(cubes_itr->center * imageSize, 1);
+        
+        // draw blob contour
+        ofSetColor(255, 255, 0, 100); // yellow with alpha=0.4
+        ofSetLineWidth(1);
+        ofNoFill();
+        ofBeginShape();
+        ofVertices(cubes_itr->blob->pts);
+        ofEndShape();
+        ofFill();
 
         // draw corners of axis-aligned bounding rectangle
-        cubeMinX = cubes_itr->absCorners[0].x * width;
-        cubeMaxX = cubes_itr->absCorners[2].x * width;
-        cubeMinY = cubes_itr->absCorners[1].y * height;
-        cubeMaxY = cubes_itr->absCorners[3].y * height;
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMinX, cubeMinY, ofColor::green);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMaxX, cubeMinY, ofColor::green);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMinX, cubeMaxY, ofColor::green);
-        detectedObjectsDisplayImage.getPixelsRef().setColor(cubeMaxX, cubeMaxY, ofColor::green);
+        ofSetColor(ofColor::lightBlue);
+        cubeMinX = cubes_itr->absCorners[0].x * imageSize.x;
+        cubeMaxX = cubes_itr->absCorners[2].x * imageSize.x;
+        cubeMinY = cubes_itr->absCorners[1].y * imageSize.y;
+        cubeMaxY = cubes_itr->absCorners[3].y * imageSize.y;
+        ofCircle(cubeMinX, cubeMinY, 1);
+        ofCircle(cubeMaxX, cubeMinY, 1);
+        ofCircle(cubeMinX, cubeMaxY, 1);
+        ofCircle(cubeMaxX, cubeMaxY, 1);
+
+        // draw cube corners
+        ofColor cornerColors[4] = {ofColor::red, ofColor::orange, ofColor::green, ofColor::blue};
+        for (int i = 0; i < 4; i++) {
+            ofSetColor(cornerColors[i]);
+            ofCircle(cubes_itr->absCorners[i] * imageSize, 1);
+        }
     }
+
+    detectedObjectsDisplayFbo.end();
 }
 
 void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>& cornersOut) {
@@ -506,8 +515,7 @@ void KinectTracker::drawDepthImage(int x, int y, int width, int height) {
 
 void KinectTracker::drawDetectedObjects(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
-    detectedObjectsDisplayImage.update();
-    detectedObjectsDisplayImage.draw(x,y,width,height);
+    detectedObjectsDisplayFbo.draw(x,y,width,height);
 }
 
 void KinectTracker::drawDepthThresholdedColorImage(int x, int y, int width, int height) {
