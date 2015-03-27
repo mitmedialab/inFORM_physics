@@ -7,9 +7,10 @@
 #include "RWell.h"
 #include "RRectangle.h"
 #include "RBitmap.h"
-#include "KinectTracker.h"
 #include "RRipple.h"
+#include "KinectTracker.h"
 #include "HybridTokens.h"
+#include "StaticManipulator.h"
 #include <memory>
 #include "R3DModel.h"
 
@@ -59,7 +60,8 @@ public:
     vector< RenderableObject *> renderableObjects;
     RenderableObject * myCurrentRenderedObject;
     HybridTokens * myHybridTokens;
-    
+    StaticManipulator * myStaticManipulator;
+
     KinectTracker kinectTracker;
         
     ofx3DModelLoader model;

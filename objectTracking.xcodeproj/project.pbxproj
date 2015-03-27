@@ -36,6 +36,7 @@
 		63020F16C7E8DED980111241 /* ofxCvImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6151136D101F857DAE12722 /* ofxCvImage.cpp */; };
 		63B57AC5BF4EF088491E0317 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DF87D612C5AAE17AAFA6C0 /* ofxXmlSettings.cpp */; };
 		640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */; };
+		651E0EA21AC34E8E00669265 /* StaticManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */; };
 		651E0EB21AC58ED500669265 /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EB11AC58ED400669265 /* Cube.cpp */; };
 		65E6EA641AA4D7F500520937 /* R3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA221AA4D7F500520937 /* R3DModel.cpp */; };
 		65E6EA651AA4D7F500520937 /* RBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA241AA4D7F500520937 /* RBitmap.cpp */; };
@@ -241,6 +242,8 @@
 		603F2267D449084A4187A049 /* ofxCvBlob.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxCvBlob.h; path = ../../../addons/ofxOpenCv/src/ofxCvBlob.h; sourceTree = SOURCE_ROOT; };
 		61339778C58D921474B5729E /* features2d.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = features2d.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/features2d/features2d.hpp; sourceTree = SOURCE_ROOT; };
 		63A47AC60FFAFC3BF093EC0F /* OscOutboundPacketStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscOutboundPacketStream.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.cpp; sourceTree = SOURCE_ROOT; };
+		651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticManipulator.cpp; sourceTree = "<group>"; };
+		651E0EA31AC34E9700669265 /* StaticManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticManipulator.h; sourceTree = "<group>"; };
 		651E0EA41AC350C500669265 /* KeycodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeycodeConstants.h; sourceTree = "<group>"; };
 		651E0EA61AC35F0B00669265 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
 		651E0EB11AC58ED400669265 /* Cube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cube.cpp; sourceTree = "<group>"; };
@@ -848,6 +851,8 @@
 				65E6ECAE1AA4EBD300520937 /* main.cpp */,
 				65FDDE651ABA383900649421 /* HybridTokens.cpp */,
 				65FDDE641ABA382400649421 /* HybridTokens.h */,
+				651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */,
+				651E0EA31AC34E9700669265 /* StaticManipulator.h */,
 				65E6ECC11AAA478800520937 /* ofxKCore.h */,
 				65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */,
 				65E6ECB51AA4EBD300520937 /* ReliefApplication.h */,
@@ -1633,6 +1638,7 @@
 				BC054B7D3B48B395B1D87F2E /* ofxAnimatableOfPoint.cpp in Sources */,
 				D1395DD979998DCFFA40ACAC /* ofxMSAInteractiveObject.cpp in Sources */,
 				65E6EC951AA4E85300520937 /* ofxGuiSwitch.cpp in Sources */,
+				651E0EA21AC34E8E00669265 /* StaticManipulator.cpp in Sources */,
 				65E6EC881AA4E85300520937 /* ofxGui.cpp in Sources */,
 				65E6EC861AA4E85300520937 /* CalibrationUtils.cpp in Sources */,
 				266D230E3D454A6B4FB7D2A9 /* ofxObjLoader.cpp in Sources */,

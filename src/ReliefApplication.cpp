@@ -70,6 +70,7 @@ void ReliefApplication::setup(){
     pinHeightMapImageForPins.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
     myHybridTokens = new HybridTokens(&kinectTracker);
+    myStaticManipulator = new StaticManipulator(&kinectTracker);
 
     myCurrentRenderedObject = myHybridTokens;
     
