@@ -58,8 +58,8 @@ void KinectTracker::setup(){
     bri.allocate(frameWidth, frameHeight);
     hueSatThresh.allocate(frameWidth, frameHeight);
 
-    hueThreshNear.allocate(frameWidth, frameHeight);
-    hueThreshFar.allocate(frameWidth, frameHeight);
+    hueThreshHigh.allocate(frameWidth, frameHeight);
+    hueThreshLow.allocate(frameWidth, frameHeight);
     satThresh.allocate(frameWidth, frameHeight);
     hueThresh.allocate(frameWidth, frameHeight);
 
@@ -276,15 +276,15 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     sat.erode_3x3();
     sat.dilate_3x3();
 
-    hueThreshNear = hue;
-    hueThreshFar = hue;
-    hueThreshNear.threshold(hue_target+hue_tolerance, true);
-    hueThreshFar.threshold(hue_target-hue_tolerance);
+    hueThreshHigh = hue;
+    hueThreshLow = hue;
+    hueThreshHigh.threshold(hue_target+hue_tolerance, true);
+    hueThreshLow.threshold(hue_target-hue_tolerance);
     
     satThresh = sat;
     satThresh.threshold(sat_limit);
 
-    cvAnd(hueThreshNear.getCvImage(), hueThreshFar.getCvImage(), hueThresh.getCvImage(), NULL);
+    cvAnd(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
 
     int imgSize = hueSatThresh.width * hueSatThresh.height;

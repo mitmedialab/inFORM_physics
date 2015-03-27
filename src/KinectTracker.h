@@ -88,8 +88,8 @@ public:
     ofxCvGrayscaleImage hue;                    // hue component
     ofxCvGrayscaleImage sat;                    // saturation component
     ofxCvGrayscaleImage bri;                    // brilliance component
-    ofxCvGrayscaleImage hueThreshNear;          // hue high boundary threshold
-    ofxCvGrayscaleImage hueThreshFar;           // hue low boundary threshold
+    ofxCvGrayscaleImage hueThreshHigh;          // hue high boundary threshold
+    ofxCvGrayscaleImage hueThreshLow;           // hue low boundary threshold
     ofxCvGrayscaleImage hueThresh;              // hue band threshold
     ofxCvGrayscaleImage satThresh;              // saturation threshold
     ofxCvGrayscaleImage hueSatThresh;           // combined hue and saturation threshold
