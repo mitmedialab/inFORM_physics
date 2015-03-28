@@ -64,4 +64,10 @@ void Cube::update() {
     absCorners[1] = center + corners[1];
     absCorners[2] = center + corners[2];
     absCorners[3] = center + corners[3];
+
+    // cube boundary descriptors
+    minX = absCorners[0].x;
+    maxX = absCorners[2].x;
+    minY = absCorners[1].y;
+    maxY = absCorners[3].y;
 }

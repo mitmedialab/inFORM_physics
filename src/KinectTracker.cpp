@@ -116,7 +116,7 @@ void KinectTracker::update(){
         /* -- Turned Off. this doesn't work well and slows things down. the code might be useful later, so leaving it in for now.
         int width = dThresholdedColorDilatedG.width;
         int height = dThresholdedColorDilatedG.height;
-        ofRectangle blobRoi = ofRectangle(cubeMinX * width, cubeMinY * height, (cubeMaxX - cubeMinX) * width, (cubeMaxY - cubeMinY) * height);
+        ofRectangle blobRoi = ofRectangle(redCubes[0].minX * width, redCubes[0].minY * height, (redCubes[0].maxX - redCubes[0].minX) * width, (redCubes[0].maxY - redCubes[0].minY) * height);
         dThresholdedColorDilatedG.setROI(blobRoi);
         detectCorners(dThresholdedColorDilatedG, corners);
         dThresholdedColorDilatedG.resetROI();
@@ -212,12 +212,6 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
         ofEndShape();
         ofFill();
 
-        // corners of axis-aligned bounding rectangle
-        cubeMinX = cubes_itr->absCorners[0].x;
-        cubeMaxX = cubes_itr->absCorners[2].x;
-        cubeMinY = cubes_itr->absCorners[1].y;
-        cubeMaxY = cubes_itr->absCorners[3].y;
-
         // draw cube corners
         ofColor cornerColors[4] = {ofColor::red, ofColor::orange, ofColor::green, ofColor::blue};
         for (int i = 0; i < 4; i++) {
@@ -312,8 +306,8 @@ void KinectTracker::updateDetectionStatus() {
     if (redBlobs.size() == 1) {
         currentBlob = redBlobs[0];
         currentCube = redCubes[0];
-        int xSpread = cubeMaxX - cubeMinX;
-        int ySpread = cubeMaxY - cubeMinY;
+        int xSpread = currentCube.maxX - currentCube.minX;
+        int ySpread = currentCube.maxY - currentCube.minY;
         if (xSpread <= 0.16 && ySpread <= 0.16) {
             cubeIsSquareAligned = true;
             cout << "ready" << endl;

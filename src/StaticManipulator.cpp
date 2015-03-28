@@ -46,15 +46,17 @@ void StaticManipulator::drawDirectionMover() {
     float width = 4.0 / 30;
     float height = 4.0 / 30;
 
-    ofPoint center = kinectTracker->currentCube.center;
+    Cube cube = kinectTracker->currentCube;
+
+    ofPoint center = cube.center;
     
     int left, right, top, bottom;
 
     if (currentDirection == LEFT) {
-        left = (kinectTracker->cubeMinX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (kinectTracker->cubeMaxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (kinectTracker->cubeMinY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (kinectTracker->cubeMaxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
         int sliceWidth = (right - left) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(30 + 10 * i);
@@ -64,10 +66,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == RIGHT) {
-        left = (kinectTracker->cubeMinX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (kinectTracker->cubeMaxX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (kinectTracker->cubeMinY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (kinectTracker->cubeMaxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        right = (cube.maxX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
         int sliceWidth = (right - left) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(120 - 10 * i);
@@ -77,10 +79,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == UP) {
-        left = (kinectTracker->cubeMinX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (kinectTracker->cubeMaxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (kinectTracker->cubeMinY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (kinectTracker->cubeMaxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        top = (cube.minY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
         int sliceHeight = (bottom - top) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(30 + 10 * i);
@@ -90,10 +92,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == DOWN) {
-        left = (kinectTracker->cubeMinX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (kinectTracker->cubeMaxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (kinectTracker->cubeMinY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (kinectTracker->cubeMaxY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
+        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (cube.maxY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
         int sliceHeight = (bottom - top) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(120 - 10 * i);
