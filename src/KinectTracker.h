@@ -38,8 +38,6 @@ public:
     void saveDepthImage();
     void loadDepthBackground();
 
-    void drawCount(int width, int height);      // for debugging
-    
     vector<Blob>  redBlobs;                     // red blobs detected
     vector<Cube>  redCubes;                     // cube objects using red blobs
     vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
