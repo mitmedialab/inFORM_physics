@@ -85,7 +85,7 @@ void HybridTokens::drawSwordsHeightMap() {
                 if (left < fixedRight + closeDistance) {
                     int adjWidth = width * RELIEF_PROJECTOR_SIZE_X;
                     int adjHeight = height * RELIEF_PROJECTOR_SIZE_X;
-                    int cubeBottom = (kinectTracker->currentCube.center.y + 0.07) * RELIEF_PROJECTOR_SIZE_X;
+                    int cubeBottom = (center.y + 0.07) * RELIEF_PROJECTOR_SIZE_X;
                     ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
                 }
             }
