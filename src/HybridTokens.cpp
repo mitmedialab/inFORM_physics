@@ -29,8 +29,31 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawSwordsHeightMap();
+    drawAngleSwordsHeightMap();
     pinHeightMapImage.end();
+}
+
+void HybridTokens::drawAngleSwordsHeightMap() {
+    // known width and height of our cubes
+    float width = 4.0 / 30;
+    float height = 4.0 / 30;
+
+    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
+        // sword attributes
+        ofSetColor(140);
+        int left, right, top, bottom;
+        left = -0.07 * RELIEF_PROJECTOR_SIZE_X;
+        right = 0.07 * RELIEF_PROJECTOR_SIZE_X;
+        top = (-0.07 - 3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        bottom = (-0.07 - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+
+        // draw sword appropriately rotated
+        glPushMatrix();
+        glTranslatef(cube->center.x * RELIEF_PROJECTOR_SIZE_X, cube->center.y * RELIEF_PROJECTOR_SIZE_X, 0.0f);
+        glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
+        ofRect(left, top, right - left, bottom - top);
+        glPopMatrix();
+    }
 }
 
 void HybridTokens::drawSwordsHeightMap() {
