@@ -46,8 +46,8 @@ public:
     void drawCornerLikelihoods(int x, int y, int width, int height);
     void update();
 
-    void findCubes(ColorBand cubeColor, vector<Cube>& cubes);
-    void findBlobs(ColorBand blobColor, vector<Blob>& blobs);
+    void findCubes(ColorBand cubeColor, ColorBand dotColor, vector<Cube>& cubes);
+    void findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue=false);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
 
@@ -63,6 +63,9 @@ public:
 
     int frameWidth = 190;
     int frameHeight = 190;
+
+    // unclear why, but the natural calculation for pinArea significantly overestimates pin sizes, so multiply by 0.8
+    float pinArea = 0.8 * frameWidth * frameHeight / (RELIEF_SIZE_X * RELIEF_SIZE_Y);
 
     ofxCvColorImage colorImgRaw;                // color straight from kinect
     ofxCvColorImage colorImg;                   // color restricted to inFORM ROI

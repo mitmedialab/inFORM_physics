@@ -101,7 +101,9 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        findCubes(ColorBand(173, 8, 220), redCubes);
+        ColorBand redBand = ColorBand(173, 8, 150);
+        ColorBand yellowBand = ColorBand(25, 15, 150);
+        findCubes(redBand, yellowBand, redCubes);
 
         // extract basic information about detected objects
         generateBlobDescriptors(redCubes);
@@ -250,25 +252,82 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
     cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
 }
 
-void KinectTracker::findCubes(ColorBand cubeColor, vector<Cube>& cubes) {
-    findBlobs(cubeColor, cubeBlobs);
-    
-    // populate cubes with blobs
+void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector<Cube>& cubes) {
+    findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true);
+
+    vector<Blob> markerBlobs;
+    findBlobs(markerColor, pinArea * 0.5, pinArea * 1.7, markerBlobs);
+
+    // create cubes from blobs
     cubes.clear();
-    for(vector<Blob>::iterator blobs_itr = cubeBlobs.begin(); blobs_itr < cubeBlobs.end(); blobs_itr++) {
-        cubes.push_back(Cube(&(*blobs_itr)));
+    for(vector<Blob>::iterator cubes_itr = cubeBlobs.begin(); cubes_itr < cubeBlobs.end(); cubes_itr++) {
+        // construct a cube from this blob
+        Cube cube = Cube(&(*cubes_itr));
+
+        // use the cube's marker to determine its orientation
+        if (markerBlobs.size()) {
+
+            // determine the correct marker. since the true marker is internal to the cube
+            // and most noise is external, select the marker closest to the cube's center
+            Blob closestMarker = markerBlobs[0];
+            ofPoint markerScalar(1 / closestMarker.widthScale, 1 / closestMarker.heightScale);
+            for(vector<Blob>::iterator markers_itr = markerBlobs.begin() + 1; markers_itr < markerBlobs.end(); markers_itr++) {
+                // n.b. square distance avoids taking square roots so it's faster than distance
+                float championDistance = cube.center.squareDistance(closestMarker.centroid * markerScalar);
+                float challengerDistance = cube.center.squareDistance(markers_itr->centroid * markerScalar);
+                if (challengerDistance < championDistance) {
+                    closestMarker = *markers_itr;
+                }
+            }
+
+            // determine which two cube corners the marker is closest to
+            ofPoint markerCenter = closestMarker.centroid * markerScalar;
+            vector<pair<float, int> > distances;
+            for (int i = 0; i < 4; i++) {
+                float distance = markerCenter.squareDistance(cube.absCorners[i]);
+                distances.push_back(pair<float, int>(distance, i));
+            }
+            sort(distances.begin(), distances.end());
+            int cornerA = min(distances[0].second, distances[1].second);
+            int cornerB = max(distances[0].second, distances[1].second);
+            if (cornerA == 0 && cornerB == 3) {
+                cornerA = 3;
+                cornerB = 0;
+            }
+
+            // adjust the cube angle appropriately
+            if (cornerA == 1) {
+                cube.theta += 270;
+                cube.thetaRadians += 3 * pi / 2;
+            }
+            if (cornerA == 2) {
+                cube.theta += 180;
+                cube.thetaRadians += pi;
+            }
+            if (cornerA == 3) {
+                cube.theta += 90;
+                cube.thetaRadians += pi / 2;
+            }
+        }
+
+        cubes.push_back(cube);
     }
 }
 
-void KinectTracker::findBlobs(ColorBand blobColor, vector<Blob>& blobs){
+void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue){
     hsvImage.setFromPixels(dThresholdedColor.getPixelsRef());
     //hsvImage.warpIntoMe(thresholdedColor, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
     hsvImage.convertToGrayscalePlanarImages(hue, sat, bri);
 
-    // this combination gets the best corners for red cubes
-    hue.dilate_3x3();
-    hue.erode_3x3();
+    if (dilateHue) {
+        // this combination gets the best corners for red cubes but is probably otherwise undesirable
+        hue.dilate_3x3();
+        hue.erode_3x3();
+    } else {
+        hue.erode_3x3();
+        hue.dilate_3x3();
+    }
     sat.erode_3x3();
     sat.dilate_3x3();
 
@@ -292,10 +351,7 @@ void KinectTracker::findBlobs(ColorBand blobColor, vector<Blob>& blobs){
 
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
 
-    float pinArea = hueSatThresh.width * hueSatThresh.height / (RELIEF_SIZE_X * RELIEF_SIZE_Y);
-    pinArea *= 0.8; // unclear why, but the calculated pinArea seems to significantly overestimate pin sizes
-
-    ball_contourFinder.findContours(hueSatThresh, pinArea * 8, pinArea * 26, 20, 20.0, false);
+    ball_contourFinder.findContours(hueSatThresh, minArea, maxArea, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;
