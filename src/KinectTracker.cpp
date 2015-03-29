@@ -121,9 +121,6 @@ void KinectTracker::update(){
         detectCorners(dThresholdedColorDilatedG, corners);
         dThresholdedColorDilatedG.resetROI();
         */
-
-        // categorize current state of detected objects
-        updateDetectionStatus();
     }
 }
 
@@ -298,26 +295,6 @@ void KinectTracker::findBlobs(ColorBand blobColor, vector<Blob>& blobs){
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;
-}
-
-void KinectTracker::updateDetectionStatus() {
-    if (redBlobs.size() == 1) {
-        currentBlob = redBlobs[0];
-        currentCube = redCubes[0];
-        int xSpread = currentCube.maxX - currentCube.minX;
-        int ySpread = currentCube.maxY - currentCube.minY;
-        if (xSpread <= 0.16 && ySpread <= 0.16) {
-            cubeIsSquareAligned = true;
-            cout << "ready" << endl;
-        } else {
-            cubeIsSquareAligned = false;
-            cout << "not ready" << endl;
-        }
-        cubeIsSquareAligned = true;
-    } else {
-        cubeIsSquareAligned = false;
-        cout << "WARNING: detected " << redBlobs.size() << " objects, expected 1"<< endl;
-    }
 }
 
 void KinectTracker::findFingers(vector<ofPoint> &points) {

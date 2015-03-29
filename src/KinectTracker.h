@@ -91,11 +91,6 @@ public:
 
     vector<ofPoint> corners;
 
-    // blob tracking output
-    Blob currentBlob;
-    Cube currentCube;
-    bool cubeIsSquareAligned;
-
     // blob tracking images
     ofxCvColorImage hsvImage;                   // input image converted to hsv
     ofxCvGrayscaleImage hue;                    // hue component
@@ -121,7 +116,6 @@ private:
     void updateDepthThresholds();
     void generateBlobDescriptors(vector<Cube> cubes);
     void detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>& cornersOut);
-    void updateDetectionStatus();
 
 };
 

@@ -46,9 +46,11 @@ void StaticManipulator::drawDirectionMover() {
     float width = 4.0 / 30;
     float height = 4.0 / 30;
 
-    Cube cube = kinectTracker->currentCube;
+    if (kinectTracker->redCubes.size() != 1) {
+        return;
+    }
 
-    ofPoint center = cube.center;
+    Cube cube = kinectTracker->redCubes[0];
     
     int left, right, top, bottom;
 
