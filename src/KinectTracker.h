@@ -45,7 +45,8 @@ public:
     void drawDepthThresholdedColorImage(int x, int y, int width, int height);
     void drawCornerLikelihoods(int x, int y, int width, int height);
     void update();
-    
+
+    void findCubes(ColorBand cubeColor, vector<Cube>& cubes);
     void findBlobs(ColorBand blobColor, vector<Blob>& blobs);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
@@ -53,10 +54,10 @@ public:
     void saveDepthImage();
     void loadDepthBackground();
 
-    vector<Blob>  redBlobs;                     // red blobs detected
-    vector<Cube>  redCubes;                     // cube objects using red blobs
-    vector<ofPoint>  fingers;                   // fingers detected (z is relative above height map)
-    vector<ofPoint>  absFingers;                // fingers detected (z is absolute)
+    vector<Blob> cubeBlobs;                     // blobs detected in the search for cubes
+    vector<Cube> redCubes;                      // cube objects using red blobs
+    vector<ofPoint> fingers;                    // fingers detected (z is relative above height map)
+    vector<ofPoint> absFingers;                 // fingers detected (z is absolute)
 
     ofPoint src[4], dst[4];
 

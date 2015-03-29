@@ -101,13 +101,7 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        findBlobs(ColorBand(173, 8, 220), redBlobs);
-
-        // populate red cubes with red blobs
-        redCubes.clear();
-        for(vector<Blob>::iterator blobs_itr = redBlobs.begin(); blobs_itr < redBlobs.end(); blobs_itr++) {
-            redCubes.push_back(Cube(&(*blobs_itr)));
-        }
+        findCubes(ColorBand(173, 8, 220), redCubes);
 
         // extract basic information about detected objects
         generateBlobDescriptors(redCubes);
@@ -254,6 +248,16 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
         }
     }
     cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
+}
+
+void KinectTracker::findCubes(ColorBand cubeColor, vector<Cube>& cubes) {
+    findBlobs(cubeColor, cubeBlobs);
+    
+    // populate cubes with blobs
+    cubes.clear();
+    for(vector<Blob>::iterator blobs_itr = cubeBlobs.begin(); blobs_itr < cubeBlobs.end(); blobs_itr++) {
+        cubes.push_back(Cube(&(*blobs_itr)));
+    }
 }
 
 void KinectTracker::findBlobs(ColorBand blobColor, vector<Blob>& blobs){
