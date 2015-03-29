@@ -295,8 +295,10 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
 
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
 
-    int imgSize = hueSatThresh.width * hueSatThresh.height;
-    ball_contourFinder.findContours(hueSatThresh, imgSize / 400, imgSize / 4, 20, 20.0, false);
+    float pinArea = hueSatThresh.width * hueSatThresh.height / (RELIEF_SIZE_X * RELIEF_SIZE_Y);
+    pinArea *= 0.8; // unclear why, but the calculated pinArea seems to significantly overestimate pin sizes
+
+    ball_contourFinder.findContours(hueSatThresh, pinArea * 8, pinArea * 26, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;

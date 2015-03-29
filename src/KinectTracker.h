@@ -9,6 +9,7 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 #include "ofxKCore.h"
+#include "Constants.h"
 #include "Cube.h"
 
 
