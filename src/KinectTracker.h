@@ -18,6 +18,21 @@
 
 #include <iostream>
 
+
+class ColorBand {
+public:
+    ColorBand(int _hueTarget, int _hueTolerance, int _saturationThreshold) {
+        hueTarget = min(_hueTarget, 255);
+        hueTolerance = min(_hueTolerance, 128);
+        saturationThreshold = min(_saturationThreshold, 255);
+    };
+
+    int hueTarget;
+    int hueTolerance;
+    int saturationThreshold;
+};
+
+
 class KinectTracker {
 public:
     ofxKinect kinect;
@@ -32,7 +47,7 @@ public:
     void drawCornerLikelihoods(int x, int y, int width, int height);
     void update();
     
-    void findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs);
+    void findBlobs(ColorBand blobColor, vector<Blob>& blobs);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
 

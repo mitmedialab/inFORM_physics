@@ -101,7 +101,7 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        findBlobs(173, 8, 220, redBlobs);
+        findBlobs(ColorBand(173, 8, 220), redBlobs);
 
         // populate red cubes with red blobs
         redCubes.clear();
@@ -259,7 +259,7 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
     cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
 }
 
-void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, vector<Blob>& blobs){
+void KinectTracker::findBlobs(ColorBand blobColor, vector<Blob>& blobs){
     hsvImage.setFromPixels(dThresholdedColor.getPixelsRef());
     //hsvImage.warpIntoMe(thresholdedColor, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
@@ -271,18 +271,14 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
     sat.erode_3x3();
     sat.dilate_3x3();
 
-    if (hue_tolerance > 128) {
-        hue_tolerance = 128;
-    }
-
     // thresholds on hue, allowing for zero-boundary wrap-around
     hueThreshHigh = hue;
     hueThreshLow = hue;
-    hueThreshHigh.threshold((hue_target + hue_tolerance) % 256, CV_THRESH_BINARY_INV);
-    hueThreshLow.threshold((hue_target - hue_tolerance + 256) % 256 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
+    hueThreshHigh.threshold((blobColor.hueTarget + blobColor.hueTolerance) % 256, CV_THRESH_BINARY_INV);
+    hueThreshLow.threshold((blobColor.hueTarget - blobColor.hueTolerance + 256) % 256 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
 
     // if thresholds wrap around zero, take their union instead of their intersection
-    bool wrapAround = (hue_target - hue_tolerance < 0) || (hue_target + hue_tolerance > 255);
+    bool wrapAround = (blobColor.hueTarget - blobColor.hueTolerance < 0) || (blobColor.hueTarget + blobColor.hueTolerance > 255);
     if (wrapAround) {
         cvOr(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
     } else {
@@ -291,7 +287,7 @@ void KinectTracker::findBlobs(int hue_target, int hue_tolerance, int sat_limit, 
 
     // threshold saturation
     satThresh = sat;
-    satThresh.threshold(sat_limit);
+    satThresh.threshold(blobColor.saturationThreshold);
 
     cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
 
