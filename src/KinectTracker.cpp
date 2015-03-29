@@ -420,65 +420,6 @@ void KinectTracker::loadDepthBackground(){
     depthBGPlusSurface.setFromPixels(tempBG.getPixels(), kinect.width, kinect.height);
 }
 
-void KinectTracker::draw(int x, int y, int width, int height, int probe_x, int probe_y) {
-    
-    ofSetColor(255, 255, 255);
-    depthDisplayImage.draw(x,y,width,height);
-
-    /*
-    hueSatThresh.draw(x,y,width,height);
-    // draw red circles around balls
-    ofSetColor(ofColor::red);
-    for(vector<ofPoint>::iterator itr = redBlobs.begin();itr < redBlobs.end();itr++) {
-        ofCircle(x + itr->x / 900.0 * width, y + itr->y / 900.0 * height, 5.0f);
-        
-        int coord =((int)(itr->y * 190.0 / 900.0) * 190) + (int)(itr->x * 190.0 / 900.0);
-
-        if(0 <= coord && coord < 190 * 190) {
-            unsigned char * pix = hue.getPixels();
-            pix[coord]= 0;
-
-            int h = hue.getPixels()[coord];
-            int s = sat.getPixels()[coord];
-            int v = bri.getPixels()[coord];
-            //int f = hue.getPixels()[coord];
-            char idStr[1024];
-            sprintf(idStr, "id: %f %f %f", itr->x, itr->y, itr->z);
-            verdana.drawString(idStr, x + itr->x / 900.0 * width, y + itr->y / 900.0 * height);
-        }
-    }*/
-
-    /*
-    // draw blue circles around fingers
-    ofSetColor(ofColor::blue);
-    
-    for(vector<ofPoint>::iterator itr = fingers.begin();itr < fingers.end();itr++)
-        ofCircle(x + itr->x / depthImg.width * width, y + itr->y / depthImg.height * height, 5.0f);
-    
-    ofSetColor(ofColor::white);
-    */
-    //depthImg.draw(x, y, width, height);
-    
-    /*
-    // pass in a probe x,y coordinate pair to paint that location green for comparison
-    kinect.draw(x,y,width,height);
-    ofSetColor(ofColor::green);
-    ofCircle(probe_x, probe_y, 5.0f);
-
-    int x_c = (probe_x - x) * kinect.width / width;
-    int y_c = (probe_y - y) * kinect.height / height;
-
-    if(0 <= x_c && x_c < kinect.width && 0 <= y_c && y_c < kinect.height) {
-        char idStr[1024];
-        ofVec3f point = kinect.getWorldCoordinateAt(x_c, y_c);
-        sprintf(idStr, "%f %f %f", point.x, point.y, point.z);
-        verdana.drawString(idStr, probe_x + 10, probe_y);
-    }
-    */
-    
-    //ofSetColor(ofColor::white);
-}
-
 void KinectTracker::drawColorImage(int x, int y, int width, int height) {
     ofSetColor(255, 255, 255);
     colorImg.flagImageChanged();

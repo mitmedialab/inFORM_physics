@@ -39,7 +39,6 @@ public:
     
     void setup();
     void exit();
-    void draw(int x, int y, int width, int height, int probe_x=NULL, int probe_y=NULL);
     void drawColorImage(int x, int y, int width, int height);
     void drawDepthImage(int x, int y, int width, int height);
     void drawDetectedObjects(int x, int y, int width, int height);
