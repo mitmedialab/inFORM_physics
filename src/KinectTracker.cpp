@@ -260,9 +260,9 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
 
     // create cubes from blobs
     cubes.clear();
-    for(vector<Blob>::iterator cubes_itr = cubeBlobs.begin(); cubes_itr < cubeBlobs.end(); cubes_itr++) {
+    for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
         // construct a cube from this blob
-        Cube cube = Cube(&(*cubes_itr));
+        Cube cube = Cube(&(*cubeBlobs_itr));
 
         // use the cube's marker to determine its orientation
         if (markerBlobs.size()) {
@@ -271,12 +271,12 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
             // and most noise is external, select the marker closest to the cube's center
             Blob closestMarker = markerBlobs[0];
             ofPoint markerScalar(1 / closestMarker.widthScale, 1 / closestMarker.heightScale);
-            for(vector<Blob>::iterator markers_itr = markerBlobs.begin() + 1; markers_itr < markerBlobs.end(); markers_itr++) {
+            for(vector<Blob>::iterator markerBlobs_itr = markerBlobs.begin() + 1; markerBlobs_itr < markerBlobs.end(); markerBlobs_itr++) {
                 // n.b. square distance avoids taking square roots so it's faster than distance
                 float championDistance = cube.center.squareDistance(closestMarker.centroid * markerScalar);
-                float challengerDistance = cube.center.squareDistance(markers_itr->centroid * markerScalar);
+                float challengerDistance = cube.center.squareDistance(markerBlobs_itr->centroid * markerScalar);
                 if (challengerDistance < championDistance) {
-                    closestMarker = *markers_itr;
+                    closestMarker = *markerBlobs_itr;
                 }
             }
 
