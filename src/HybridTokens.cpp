@@ -35,16 +35,16 @@ void HybridTokens::update(float dt) {
 
 void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
     // known width and height of our cubes
-    float width = 4.0 / 30;
-    float height = 4.0 / 30;
+    float cubeWidth = 4 * pinSize;
+    float cubeHeight = 4 * pinSize;
 
     // sword attributes
     ofSetColor(140);
     int left, right, top, bottom;
     left = -0.07 * lengthScale;
     right = 0.07 * lengthScale;
-    top = (-0.07 - 3 * height) * lengthScale;
-    bottom = (-0.07 - 0.3 * height) * lengthScale;
+    top = (-0.07 - 3 * cubeHeight) * lengthScale;
+    bottom = (-0.07 - 0.3 * cubeHeight) * lengthScale;
     
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
         // draw sword appropriately rotated
@@ -57,12 +57,12 @@ void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
 }
 
 void HybridTokens::drawSwordsHeightMap(float lengthScale) {
+    // known width and height of our cubes
+    float cubeWidth = 4 * pinSize;
+    float cubeHeight = 4 * pinSize;
+    
     // for now, assume a ready cube is flat and aligned to the coordinate axes
     if (kinectTracker->redCubes.size() == 1) {
-        // known width and height of our cubes
-        float width = 4.0 / 30;
-        float height = 4.0 / 30;
-        
         // dynamic cube
         Cube cube = kinectTracker->redCubes[0];
         
@@ -74,16 +74,16 @@ void HybridTokens::drawSwordsHeightMap(float lengthScale) {
         int left, right, top, bottom;
         left = (cube.center.x - 0.07) * lengthScale;
         right = (cube.center.x + 0.07) * lengthScale;
-        top = (cube.center.y - 0.07 - 3 * height) * lengthScale;
-        bottom = (cube.center.y - 0.07 - 0.3 * height) * lengthScale;
+        top = (cube.center.y - 0.07 - 3 * cubeHeight) * lengthScale;
+        bottom = (cube.center.y - 0.07 - 0.3 * cubeHeight) * lengthScale;
         ofRect(left, top, right - left, bottom - top);
 
         if (useStaticSecondSword) {
             // draw static sword right
             ofSetColor(140);
             int fixedLeft, fixedRight, fixedTop, fixedBottom;
-            fixedLeft = (fixedCenter.x + 0.07 + 0.3 * height) * lengthScale;
-            fixedRight = (fixedCenter.x + 0.07 + 3 * height) * lengthScale;
+            fixedLeft = (fixedCenter.x + 0.07 + 0.3 * cubeHeight) * lengthScale;
+            fixedRight = (fixedCenter.x + 0.07 + 3 * cubeHeight) * lengthScale;
             fixedTop = (fixedCenter.y - 0.07) * lengthScale;
             fixedBottom = (fixedCenter.y + 0.07) * lengthScale;
             ofRect(fixedLeft, fixedTop, fixedRight - fixedLeft, fixedBottom - fixedTop);
@@ -106,8 +106,8 @@ void HybridTokens::drawSwordsHeightMap(float lengthScale) {
                 ofSetColor(140);
                 int closeDistance = 0.07 * lengthScale;
                 if (left < fixedRight + closeDistance) {
-                    int adjWidth = width * lengthScale;
-                    int adjHeight = height * lengthScale;
+                    int adjWidth = cubeWidth * lengthScale;
+                    int adjHeight = cubeHeight * lengthScale;
                     int cubeBottom = (cube.center.y + 0.07) * lengthScale;
                     ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
                 }

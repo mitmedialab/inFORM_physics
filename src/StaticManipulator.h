@@ -41,6 +41,8 @@ private:
     void drawDirectionMover(float lengthScale);
     void drawFence(float lengthScale);
 
+    const float pinSize = 1.0 / RELIEF_SIZE_X;
+    
 };
 
 #endif /* defined(__Relief2__StaticManipulator__) */

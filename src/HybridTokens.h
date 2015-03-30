@@ -41,6 +41,8 @@ private:
     void drawAngleSwordsHeightMap(float lengthScale);
     void drawSwordsHeightMap(float lengthScale);
 
+    const float pinSize = 1.0 / RELIEF_SIZE_X;
+
 };
 
 #endif /* defined(__Relief2__HybridTokens__) */
