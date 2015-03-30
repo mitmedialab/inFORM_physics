@@ -27,21 +27,21 @@ void StaticManipulator::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawDirectionMover();
-    drawFence();
+    drawDirectionMover(RELIEF_PROJECTOR_SIZE_X);
+    drawFence(RELIEF_PROJECTOR_SIZE_X);
     pinHeightMapImage.end();
 }
 
-void StaticManipulator::drawFence() {
+void StaticManipulator::drawFence(float lengthScale) {
     ofSetColor(255);
-    int pinLength = RELIEF_PROJECTOR_SIZE_X / 30;
-    ofRect(0, 0, RELIEF_PROJECTOR_SIZE_X, pinLength); // top bar
-    ofRect(0, 0, pinLength, RELIEF_PROJECTOR_SIZE_X); // left bar
-    ofRect(RELIEF_PROJECTOR_SIZE_X - pinLength, 0, pinLength, RELIEF_PROJECTOR_SIZE_X); // right bar
-    ofRect(0, RELIEF_PROJECTOR_SIZE_X - pinLength, RELIEF_PROJECTOR_SIZE_X, pinLength); // bottom bar
+    int pinLength = lengthScale / 30;
+    ofRect(0, 0, lengthScale, pinLength); // top bar
+    ofRect(0, 0, pinLength, lengthScale); // left bar
+    ofRect(lengthScale - pinLength, 0, pinLength, lengthScale); // right bar
+    ofRect(0, lengthScale - pinLength, lengthScale, pinLength); // bottom bar
 }
 
-void StaticManipulator::drawDirectionMover() {
+void StaticManipulator::drawDirectionMover(float lengthScale) {
     // simple description of cube dimensions
     float width = 4.0 / 30;
     float height = 4.0 / 30;
@@ -55,10 +55,10 @@ void StaticManipulator::drawDirectionMover() {
     int left, right, top, bottom;
 
     if (currentDirection == LEFT) {
-        left = (cube.minX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX + 0.3 * width) * lengthScale;
+        right = (cube.maxX + 0.3 * width) * lengthScale;
+        top = (cube.minY - 0.3 * height) * lengthScale;
+        bottom = (cube.maxY + 0.3 * height) * lengthScale;
         int sliceWidth = (right - left) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(30 + 10 * i);
@@ -68,10 +68,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == RIGHT) {
-        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (cube.maxX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * lengthScale;
+        right = (cube.maxX - 0.3 * width) * lengthScale;
+        top = (cube.minY - 0.3 * height) * lengthScale;
+        bottom = (cube.maxY + 0.3 * height) * lengthScale;
         int sliceWidth = (right - left) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(120 - 10 * i);
@@ -81,10 +81,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == UP) {
-        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (cube.minY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (cube.maxY + 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * lengthScale;
+        right = (cube.maxX + 0.3 * width) * lengthScale;
+        top = (cube.minY + 0.3 * height) * lengthScale;
+        bottom = (cube.maxY + 0.3 * height) * lengthScale;
         int sliceHeight = (bottom - top) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(30 + 10 * i);
@@ -94,10 +94,10 @@ void StaticManipulator::drawDirectionMover() {
     }
 
     if (currentDirection == DOWN) {
-        left = (cube.minX - 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        right = (cube.maxX + 0.3 * width) * RELIEF_PROJECTOR_SIZE_X;
-        top = (cube.minY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (cube.maxY - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+        left = (cube.minX - 0.3 * width) * lengthScale;
+        right = (cube.maxX + 0.3 * width) * lengthScale;
+        top = (cube.minY - 0.3 * height) * lengthScale;
+        bottom = (cube.maxY - 0.3 * height) * lengthScale;
         int sliceHeight = (bottom - top) / 10;
         for (int i = 0; i < 10; i++) {
             ofSetColor(120 - 10 * i);

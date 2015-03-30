@@ -38,8 +38,8 @@ private:
 
     Direction currentDirection;
 
-    void drawDirectionMover();
-    void drawFence();
+    void drawDirectionMover(float lengthScale);
+    void drawFence(float lengthScale);
 
 };
 

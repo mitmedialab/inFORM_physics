@@ -38,8 +38,8 @@ private:
     KinectTracker *kinectTracker;
     ofFbo pinHeightMapImage; //FBO where we render height map
 
-    void drawAngleSwordsHeightMap();
-    void drawSwordsHeightMap();
+    void drawAngleSwordsHeightMap(float lengthScale);
+    void drawSwordsHeightMap(float lengthScale);
 
 };
 
