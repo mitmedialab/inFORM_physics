@@ -32,6 +32,7 @@ public:
     void update(Blob *_blob);
 
     Blob *blob;
+    ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
     float theta;            // measured counterclockwise
     float thetaRadians;     // theta in radians
     float width;

@@ -43,11 +43,13 @@ void Cube::update() {
     theta = -blob->angle;
     thetaRadians = theta * 3.14 / 180;
 
-    // a blob's angleBoundingRect's variables are wonky. furthermore, blob units are scaled by the size of the image they were found in. fix these mistakes.
-    width = blob->angleBoundingRect.height / blob->widthScale;
-    height = blob->angleBoundingRect.width / blob->heightScale;
-    center.x = blob->angleBoundingRect.x / blob->widthScale;
-    center.y = blob->angleBoundingRect.y / blob->heightScale;
+    // a blob's angleBoundingRect height and width variables are flipped. furthermore, blob
+    // units are scaled by the size of the image they were found in. fix these mistakes.
+    normalizationVector.set(1.0 / blob->widthScale, 1.0 / blob->heightScale);
+    width = blob->angleBoundingRect.height * normalizationVector.x;
+    height = blob->angleBoundingRect.width * normalizationVector.y;
+    center.set(blob->angleBoundingRect.x, blob->angleBoundingRect.y);
+    center *= normalizationVector;
 
     // relative corner coordinates
     corners[0].x = -width/2 * cos(thetaRadians) - height/2 * sin(thetaRadians);
