@@ -28,8 +28,8 @@ public:
     Cube();
     Cube(Blob *_blob);
     bool isValid();         // test if cube is set up; cube only has meaning when it owns a blob
-    void updateBlob(Blob *_blob);
     void update();
+    void update(Blob *_blob);
 
     Blob *blob;
     float theta;            // measured counterclockwise

@@ -23,14 +23,14 @@ Cube::Cube() {
 }
 
 Cube::Cube(Blob *_blob) {
-    updateBlob(_blob);
+    update(_blob);
 }
 
 bool Cube::isValid() {
     return blob != NULL;
 }
 
-void Cube::updateBlob(Blob *_blob) {
+void Cube::update(Blob *_blob) {
     blob = _blob;
     update();
 }
