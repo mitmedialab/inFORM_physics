@@ -260,57 +260,36 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
 
     // create cubes from blobs
     cubes.clear();
-    for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
-        // construct a cube from this blob
-        Cube cube = Cube(&(*cubeBlobs_itr));
-
-        // use the cube's marker to determine its orientation
-        if (markerBlobs.size()) {
+    
+    // if markers exist, create marked cubes
+    if (markerBlobs.size()) {
+        for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
+            // unnormalized cube center
+            ofPoint cubeCenter(cubeBlobs_itr->angleBoundingRect.x, cubeBlobs_itr->angleBoundingRect.y);
 
             // determine the correct marker. since the true marker is internal to the cube
             // and most noise is external, select the marker closest to the cube's center
             Blob closestMarker = markerBlobs[0];
-            ofPoint markerScalar(1 / closestMarker.widthScale, 1 / closestMarker.heightScale);
             for(vector<Blob>::iterator markerBlobs_itr = markerBlobs.begin() + 1; markerBlobs_itr < markerBlobs.end(); markerBlobs_itr++) {
                 // n.b. square distance avoids taking square roots so it's faster than distance
-                float championDistance = cube.center.squareDistance(closestMarker.centroid * markerScalar);
-                float challengerDistance = cube.center.squareDistance(markerBlobs_itr->centroid * markerScalar);
+                float championDistance = cubeCenter.squareDistance(closestMarker.centroid);
+                float challengerDistance = cubeCenter.squareDistance(markerBlobs_itr->centroid);
                 if (challengerDistance < championDistance) {
                     closestMarker = *markerBlobs_itr;
                 }
             }
 
-            // determine which two cube corners the marker is closest to
-            ofPoint markerCenter = closestMarker.centroid * markerScalar;
-            vector<pair<float, int> > distances;
-            for (int i = 0; i < 4; i++) {
-                float distance = markerCenter.squareDistance(cube.absCorners[i]);
-                distances.push_back(pair<float, int>(distance, i));
-            }
-            sort(distances.begin(), distances.end());
-            int cornerA = min(distances[0].second, distances[1].second);
-            int cornerB = max(distances[0].second, distances[1].second);
-            if (cornerA == 0 && cornerB == 3) {
-                cornerA = 3;
-                cornerB = 0;
-            }
-
-            // adjust the cube angle appropriately
-            if (cornerA == 1) {
-                cube.theta += 270;
-                cube.thetaRadians += 3 * pi / 2;
-            }
-            if (cornerA == 2) {
-                cube.theta += 180;
-                cube.thetaRadians += pi;
-            }
-            if (cornerA == 3) {
-                cube.theta += 90;
-                cube.thetaRadians += pi / 2;
-            }
+            // construct a marked cube
+            Cube cube = Cube(&(*cubeBlobs_itr), closestMarker.centroid);
+            cubes.push_back(cube);
         }
-
-        cubes.push_back(cube);
+        
+    // else create unmarked cubes
+    } else {
+        for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
+            Cube cube = Cube(&(*cubeBlobs_itr));
+            cubes.push_back(cube);
+        }
     }
 }
 
