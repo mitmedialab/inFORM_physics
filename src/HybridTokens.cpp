@@ -38,15 +38,15 @@ void HybridTokens::drawAngleSwordsHeightMap() {
     float width = 4.0 / 30;
     float height = 4.0 / 30;
 
+    // sword attributes
+    ofSetColor(140);
+    int left, right, top, bottom;
+    left = -0.07 * RELIEF_PROJECTOR_SIZE_X;
+    right = 0.07 * RELIEF_PROJECTOR_SIZE_X;
+    top = (-0.07 - 3 * height) * RELIEF_PROJECTOR_SIZE_X;
+    bottom = (-0.07 - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
+    
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        // sword attributes
-        ofSetColor(140);
-        int left, right, top, bottom;
-        left = -0.07 * RELIEF_PROJECTOR_SIZE_X;
-        right = 0.07 * RELIEF_PROJECTOR_SIZE_X;
-        top = (-0.07 - 3 * height) * RELIEF_PROJECTOR_SIZE_X;
-        bottom = (-0.07 - 0.3 * height) * RELIEF_PROJECTOR_SIZE_X;
-
         // draw sword appropriately rotated
         glPushMatrix();
         glTranslatef(cube->center.x * RELIEF_PROJECTOR_SIZE_X, cube->center.y * RELIEF_PROJECTOR_SIZE_X, 0.0f);
