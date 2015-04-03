@@ -33,6 +33,15 @@ public:
 };
 
 
+// construct a predicate for testing whether a blob has the specified id; useful with find_if
+struct blobHasId {
+    blobHasId(int id) : id(id) {}
+    bool operator()(const Blob &blob) { return blob.id == id; }
+private:
+    int id;
+};
+
+
 class KinectTracker {
 public:
     ofxKinect kinect;

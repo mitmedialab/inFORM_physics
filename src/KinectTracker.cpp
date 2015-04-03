@@ -259,14 +259,48 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
     findBlobs(markerColor, pinArea * 0.5, pinArea * 1.7, markerBlobs);
     bool markersFound = markerBlobs.size();
 
-    // create cubes from blobs
-    cubes.clear();
-    for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
-        // don't update cubes if we're about to add markers
-        Cube cube = Cube(&(*cubeBlobs_itr), !markersFound);
-        cubes.push_back(cube);
+    // create a map of the new cube blobs with blobs keyed by id
+    map<int, Blob *> newCubeBlobs;
+    for (vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++){
+        newCubeBlobs.insert(pair<int, Blob *>(cubeBlobs_itr->id, &(*cubeBlobs_itr)));
     }
-    
+
+    // cubes with unmatched blobs will be moved to a holding pen
+    vector<Cube> unmatchedCubes;
+
+    for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); /* conditional increment */) {
+        // if a new cube blob exists with an id matching this cube's, set the cube to use it
+        if (newCubeBlobs.count(cubes_itr->blob->id)) {
+            cubes_itr->setBlob(newCubeBlobs[cubes_itr->blob->id], false);
+            newCubeBlobs.erase(cubes_itr->blob->id);
+            cubes_itr++;
+        // else, move this cube to the holding pen
+        } else {
+            unmatchedCubes.push_back(*cubes_itr);
+            cubes_itr = cubes.erase(cubes_itr);
+        }
+    }
+
+    // assign leftover blobs to leftover cubes, constructing new cubes if necessary
+    vector<Cube>::iterator cubes_itr = unmatchedCubes.begin();
+    for (map<int, Blob *>::iterator cubeBlobs_itr = newCubeBlobs.begin(); cubeBlobs_itr != newCubeBlobs.end(); cubeBlobs_itr++) {
+        if (cubes_itr < unmatchedCubes.end()) {
+            vector<Cube>::reverse_iterator lastCube = unmatchedCubes.rbegin();
+            cubes_itr->setBlob(cubeBlobs_itr->second, false);
+            cubes.push_back(*cubes_itr);
+        } else {
+            Cube cube = Cube(cubeBlobs_itr->second, false);
+            cubes.push_back(cube);
+        }
+    }
+
+    // clear temporary containers, deleting remaining unmatched cubes
+    for (; cubes_itr < unmatchedCubes.end(); cubes_itr++) {
+        cubes_itr->~Cube();
+    }
+    newCubeBlobs.clear();
+    unmatchedCubes.clear();
+
     // if markers exist, mark cubes
     if (markersFound) {
         for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
@@ -287,6 +321,12 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
 
             // mark the cube and update
             cubes_itr->setMarker(closestMarker.centroid);
+        }
+
+    // else just update all cubes
+    } else {
+        for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
+            cubes_itr->update();
         }
     }
 }
