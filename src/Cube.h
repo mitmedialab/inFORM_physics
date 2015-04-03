@@ -26,12 +26,14 @@
 class Cube {
 public:
     Cube();
-    Cube(Blob *_blob);
-    Cube(Blob *_blob, ofPoint _marker);
+    Cube(Blob *_blob, bool _update=true);
+    Cube(Blob *_blob, ofPoint _marker, bool _update=true);
     bool isValid();         // test if cube is set up; cube only has meaning when it owns a blob
     void update();
-    void update(Blob *_blob);
-    void update(Blob *_blob, ofPoint _marker);
+    void setBlob(Blob *_blob, bool _update=true);
+    void setMarker(ofPoint _marker, bool _update=true);
+    void setBlobAndMarker(Blob *_blob, ofPoint _marker, bool _update=true);
+    void clearMarker(bool _update=true);
 
     Blob *blob;
     ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units

@@ -257,15 +257,21 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
 
     vector<Blob> markerBlobs;
     findBlobs(markerColor, pinArea * 0.5, pinArea * 1.7, markerBlobs);
+    bool markersFound = markerBlobs.size();
 
     // create cubes from blobs
     cubes.clear();
+    for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
+        // don't update cubes if we're about to add markers
+        Cube cube = Cube(&(*cubeBlobs_itr), !markersFound);
+        cubes.push_back(cube);
+    }
     
-    // if markers exist, create marked cubes
-    if (markerBlobs.size()) {
-        for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
-            // unnormalized cube center
-            ofPoint cubeCenter(cubeBlobs_itr->angleBoundingRect.x, cubeBlobs_itr->angleBoundingRect.y);
+    // if markers exist, mark cubes
+    if (markersFound) {
+        for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
+            // unnormalized blob center
+            ofPoint cubeCenter(cubes_itr->blob->angleBoundingRect.x, cubes_itr->blob->angleBoundingRect.y);
 
             // determine the correct marker. since the true marker is internal to the cube
             // and most noise is external, select the marker closest to the cube's center
@@ -279,16 +285,8 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
                 }
             }
 
-            // construct a marked cube
-            Cube cube = Cube(&(*cubeBlobs_itr), closestMarker.centroid);
-            cubes.push_back(cube);
-        }
-        
-    // else create unmarked cubes
-    } else {
-        for(vector<Blob>::iterator cubeBlobs_itr = cubeBlobs.begin(); cubeBlobs_itr < cubeBlobs.end(); cubeBlobs_itr++) {
-            Cube cube = Cube(&(*cubeBlobs_itr));
-            cubes.push_back(cube);
+            // mark the cube and update
+            cubes_itr->setMarker(closestMarker.centroid);
         }
     }
 }

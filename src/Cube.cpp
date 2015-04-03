@@ -18,34 +18,63 @@
 // all cube distances are in fractions of a containing unit-square; the image
 // frame the cube comes from is interpreted as having units width = height = 1
 
+
+// Constructors
+
 Cube::Cube() {
     blob = NULL;
+    hasMarker = false;
 }
 
-Cube::Cube(Blob *_blob) {
-    update(_blob);
+Cube::Cube(Blob *_blob, bool _update) {
+    hasMarker = false;
+    setBlob(_blob, _update);
 }
 
-Cube::Cube(Blob *_blob, ofPoint _marker) {
-    update(_blob, _marker);
+Cube::Cube(Blob *_blob, ofPoint _marker, bool _update) {
+    setBlobAndMarker(_blob, _marker, _update);
 }
 
 bool Cube::isValid() {
     return blob != NULL;
 }
 
-void Cube::update(Blob *_blob) {
+
+// Setters
+
+void Cube::setBlob(Blob *_blob, bool _update) {
     blob = _blob;
-    hasMarker = false;
-    update();
+    if (_update) {
+        update();
+    }
 }
 
-void Cube::update(Blob *_blob, ofPoint _marker) {
+void Cube::setMarker(ofPoint _marker, bool _update) {
+    rawMarker = _marker;
+    hasMarker = true;
+    if (_update) {
+        update();
+    }
+}
+
+void Cube::setBlobAndMarker(Blob *_blob, ofPoint _marker, bool _update) {
     blob = _blob;
     rawMarker = _marker;
     hasMarker = true;
-    update();
+    if (_update) {
+        update();
+    }
 }
+
+void Cube::clearMarker(bool _update) {
+    hasMarker = false;
+    if (_update) {
+        update();
+    }
+}
+
+
+// Update
 
 void Cube::update() {
     if (!isValid()) {
