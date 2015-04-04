@@ -143,6 +143,21 @@ void Cube::calculateCandidateUpdates() {
     }
 }
 
+bool Cube::candidateUpdatesAreSignificant() {
+    // locally use a shorthand alias for the candidate updates object
+    CubeUpdatesBuffer &cand = candidateUpdates;
+
+    if (!blob || hasMarker != cand.hasMarker || blob->id != cand.blob->id) {
+        return true;
+    } else if (center.distance(cand.center) > 0.5 * pinSize) {
+        return true;
+    } else if (abs(theta - cand.theta) > 10) {
+        return true;
+    }
+
+    return false;
+}
+
 void Cube::update() {
     if (!candidateUpdates.blob) {
         return;
@@ -152,6 +167,9 @@ void Cube::update() {
     // therefore, calculate updates into a candidate buffer and only propagating them if their
     // difference compared to current values passes a hysteresis threshold
     calculateCandidateUpdates();
+    if (!candidateUpdatesAreSignificant()) {
+        return;
+    }
 
     // locally use a shorthand alias for the candidate updates object
     CubeUpdatesBuffer &cand = candidateUpdates;

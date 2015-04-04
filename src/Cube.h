@@ -6,6 +6,7 @@
 //
 //
 
+#include "Constants.h"
 #include "ofxKCore.h"
 #include <vector>
 
@@ -22,6 +23,8 @@
 //
 // all cube distances are in fractions of a containing unit-square; the image
 // frame the cube comes from is interpreted as having units width = height = 1
+
+const float pinSize = 1.0 / RELIEF_SIZE_X;
 
 class CubeUpdatesBuffer {
 public:
@@ -75,6 +78,7 @@ private:
     CubeUpdatesBuffer candidateUpdates;
 
     void calculateCandidateUpdates();
+    bool candidateUpdatesAreSignificant();
 
 };
 #endif /* defined(__Relief2__Cube__) */
