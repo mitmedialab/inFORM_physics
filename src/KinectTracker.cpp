@@ -305,7 +305,7 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
     if (markersFound) {
         for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
             // unnormalized blob center
-            ofPoint cubeCenter(cubes_itr->blob->angleBoundingRect.x, cubes_itr->blob->angleBoundingRect.y);
+            ofPoint cubeCenter(cubes_itr->getCandidateBlob()->angleBoundingRect.x, cubes_itr->getCandidateBlob()->angleBoundingRect.y);
 
             // determine the correct marker. since the true marker is internal to the cube
             // and most noise is external, select the marker closest to the cube's center

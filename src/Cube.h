@@ -23,17 +23,40 @@
 // all cube distances are in fractions of a containing unit-square; the image
 // frame the cube comes from is interpreted as having units width = height = 1
 
+class CubeUpdatesBuffer {
+public:
+    CubeUpdatesBuffer() {};
+
+    Blob *blob;
+    ofPoint rawMarker;
+    bool hasMarker;
+    ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
+    float width;
+    float height;
+    ofPoint center;
+    ofPoint marker;
+    float rawTheta;
+    float rawThetaRadians;
+    ofPoint rawCorners[4];
+    float theta;            // measured counterclockwise
+    float thetaRadians;     // theta in radians
+    ofPoint corners[4];     // coordinates relative to center
+
+};
+
 class Cube {
 public:
     Cube();
     Cube(Blob *_blob, bool _update=true);
     Cube(Blob *_blob, ofPoint _marker, bool _update=true);
+    ~Cube();
     bool isValid();         // test if cube is set up; cube only has meaning when it owns a blob
     void update();
     void setBlob(Blob *_blob, bool _update=true);
     void setMarker(ofPoint _marker, bool _update=true);
     void setBlobAndMarker(Blob *_blob, ofPoint _marker, bool _update=true);
     void clearMarker(bool _update=true);
+    Blob *getCandidateBlob();
 
     Blob *blob;
     ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
@@ -49,10 +72,9 @@ public:
     float minX, maxX, minY, maxY; // cube boundary descriptors (absolute coordinates)
 
 private:
-    ofPoint rawMarker;
-    float rawTheta;
-    float rawThetaRadians;
-    ofPoint rawCorners[4];
+    CubeUpdatesBuffer candidateUpdates;
+
+    void calculateCandidateUpdates();
 
 };
 #endif /* defined(__Relief2__Cube__) */
