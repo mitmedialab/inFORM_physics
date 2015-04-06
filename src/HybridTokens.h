@@ -41,6 +41,7 @@ private:
     void drawCubeRisers(float lengthScale);
     void drawAngleSwordsHeightMap(float lengthScale);
     void drawSwordsHeightMap(float lengthScale);
+    void drawSword(float lengthScale, int height=140);
 
     const float pinSize = 1.0 / RELIEF_SIZE_X;
 

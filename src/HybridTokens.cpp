@@ -44,25 +44,31 @@ void HybridTokens::drawCubeRisers(float lengthScale) {
     }
 }
 
-void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
+// height value default is 140, the height of our cubes
+void HybridTokens::drawSword(float lengthScale, int height) {
     // known width and height of our cubes
     float cubeWidth = 4 * pinSize;
     float cubeHeight = 4 * pinSize;
 
     // sword attributes
-    ofSetColor(140);
+    ofSetColor(height);
     int left, right, top, bottom;
     left = -0.07 * lengthScale;
     right = 0.07 * lengthScale;
     top = (-0.07 - 3 * cubeHeight) * lengthScale;
     bottom = (-0.07 - 0.3 * cubeHeight) * lengthScale;
-    
+
+    // draw sword
+    ofRect(left, top, right - left, bottom - top);
+}
+
+void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
         // draw sword appropriately rotated
         glPushMatrix();
         glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
         glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
-        ofRect(left, top, right - left, bottom - top);
+        drawSword(lengthScale);
         glPopMatrix();
     }
 }
