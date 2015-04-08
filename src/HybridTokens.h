@@ -38,12 +38,15 @@ private:
     KinectTracker *kinectTracker;
     ofFbo pinHeightMapImage; //FBO where we render height map
 
+    void setCubeHeight(Cube *cube, int height, float lengthScale);
+    void setAllCubeHeights(int height, float lengthScale);
     void drawCubeRisers(float lengthScale);
     void drawAngleSwordsHeightMap(float lengthScale);
     void drawSwordsHeightMap(float lengthScale);
     void drawSword(float lengthScale, int height=140);
 
     const float pinSize = 1.0 / RELIEF_SIZE_X;
+    const float cubeEdgeLength = 4 * pinSize;
 
 };
 

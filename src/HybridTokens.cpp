@@ -35,6 +35,26 @@ void HybridTokens::update(float dt) {
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
+void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale) {
+    ofSetColor(height);
+
+    // draw cube footprint
+    glPushMatrix();
+    glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
+    glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
+    float scaledEdgeLength = cubeEdgeLength * lengthScale;
+    ofRect(-scaledEdgeLength / 2, -scaledEdgeLength / 2, scaledEdgeLength, scaledEdgeLength);
+    glPopMatrix();
+}
+
+// lift cubes slightly above neighboring pins to facilitate smooth sliding
+void HybridTokens::setAllCubeHeights(int height, float lengthScale) {
+    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
+        setCubeHeight(&(*cube), height, lengthScale);
+    }
+}
+
+// lift cubes slightly above neighboring pins to facilitate smooth sliding
 void HybridTokens::drawCubeRisers(float lengthScale) {
     ofSetColor(40);
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
