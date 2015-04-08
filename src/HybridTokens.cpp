@@ -13,9 +13,7 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
     // swords schema default
-    useStaticSecondSword = true;
-    intersectSwords = false;
-    blockadeSword = true;
+    SwordsSchema outputType = SUM;
 }
 
 void HybridTokens::drawHeightMap() {
@@ -29,9 +27,29 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawAngleSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
+    drawSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
     drawCubeRisers(RELIEF_PROJECTOR_SIZE_X);
     pinHeightMapImage.end();
+}
+
+// lift cubes slightly above neighboring pins to facilitate smooth sliding
+void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale) {
+    ofSetColor(height);
+
+    // draw cube footprint
+    glPushMatrix();
+    glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
+    glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
+    float scaledEdgeLength = cubeEdgeLength * lengthScale;
+    ofRect(-scaledEdgeLength / 2, -scaledEdgeLength / 2, scaledEdgeLength, scaledEdgeLength);
+    glPopMatrix();
+}
+
+// lift cubes slightly above neighboring pins to facilitate smooth sliding
+void HybridTokens::setAllCubeHeights(int height, float lengthScale) {
+    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
+        setCubeHeight(&(*cube), height, lengthScale);
+    }
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
@@ -44,99 +62,127 @@ void HybridTokens::drawCubeRisers(float lengthScale) {
     }
 }
 
-void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
-    // known width and height of our cubes
-    float cubeWidth = 4 * pinSize;
-    float cubeHeight = 4 * pinSize;
-
+// height value default is 140, the height of our cubes
+void HybridTokens::drawSword(float lengthScale, int height) {
     // sword attributes
-    ofSetColor(140);
+    ofSetColor(height);
     int left, right, top, bottom;
     left = -0.07 * lengthScale;
     right = 0.07 * lengthScale;
-    top = (-0.07 - 3 * cubeHeight) * lengthScale;
-    bottom = (-0.07 - 0.3 * cubeHeight) * lengthScale;
-    
-    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        // draw sword appropriately rotated
-        glPushMatrix();
-        glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
-        glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
-        ofRect(left, top, right - left, bottom - top);
-        glPopMatrix();
-    }
+    top = (-0.07 - 3 * cubeEdgeLength) * lengthScale;
+    bottom = (-0.07 - 0.3 * cubeEdgeLength) * lengthScale;
+
+    // draw sword
+    ofRect(left, top, right - left, bottom - top);
 }
 
 void HybridTokens::drawSwordsHeightMap(float lengthScale) {
-    // known width and height of our cubes
-    float cubeWidth = 4 * pinSize;
-    float cubeHeight = 4 * pinSize;
-    
-    // for now, assume a ready cube is flat and aligned to the coordinate axes
-    if (kinectTracker->redCubes.size() == 1) {
-        // dynamic cube
-        Cube cube = kinectTracker->redCubes[0];
-        
-        // for now, hardcode a description of the static block
-        ofPoint fixedCenter(0.17, 0.34);
-        
-        // draw dynamic sword up
-        ofSetColor(140);
-        int left, right, top, bottom;
-        left = (cube.center.x - 0.07) * lengthScale;
-        right = (cube.center.x + 0.07) * lengthScale;
-        top = (cube.center.y - 0.07 - 3 * cubeHeight) * lengthScale;
-        bottom = (cube.center.y - 0.07 - 0.3 * cubeHeight) * lengthScale;
-        ofRect(left, top, right - left, bottom - top);
+    if (!kinectTracker->redCubes.size()) {
+        return;
+    }
 
-        if (useStaticSecondSword) {
-            // draw static sword right
-            ofSetColor(140);
-            int fixedLeft, fixedRight, fixedTop, fixedBottom;
-            fixedLeft = (fixedCenter.x + 0.07 + 0.3 * cubeHeight) * lengthScale;
-            fixedRight = (fixedCenter.x + 0.07 + 3 * cubeHeight) * lengthScale;
-            fixedTop = (fixedCenter.y - 0.07) * lengthScale;
-            fixedBottom = (fixedCenter.y + 0.07) * lengthScale;
-            ofRect(fixedLeft, fixedTop, fixedRight - fixedLeft, fixedBottom - fixedTop);
-            
-            // draw sword intersections
-            if (intersectSwords) {
-                ofSetColor(255);
-                if (fixedLeft < right && fixedRight > left && fixedTop < bottom && fixedBottom > top) {
-                    int overlapLeft, overlapRight, overlapTop, overlapBottom;
-                    overlapLeft = left < fixedLeft ? fixedLeft : left;
-                    overlapRight = right < fixedRight ? right : fixedRight;
-                    overlapTop = top < fixedTop ? fixedTop : top;
-                    overlapBottom = bottom < fixedBottom ? bottom : fixedBottom;
-                    ofRect(overlapLeft, overlapTop, overlapRight - overlapLeft, overlapBottom - overlapTop);
+    // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
+    ofFbo swordBuffer;
+    ofPixels swordPixels;
+    swordBuffer.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+
+    // pixels objects used to calculate the swords' intersection and union
+    ofPixels swordsIntersection, swordsUnion;
+    swordsIntersection.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
+    swordsUnion.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
+    swordsIntersection.set(255);
+    swordsUnion.set(0);
+
+    // draw each cube's sword and update the swords' intersection and union
+    for (int i = 0; i < kinectTracker->redCubes.size(); i++) {
+        Cube *cube = &kinectTracker->redCubes[i];
+
+        // open sword buffer and transition to the cube's reference frame
+        swordBuffer.begin();
+        ofBackground(0);
+        glPushMatrix();
+        glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
+        glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
+
+        // draw sword
+        drawSword(lengthScale);
+
+        // reset coordinate system and close buffer target
+        glPopMatrix();
+        swordBuffer.end();
+
+        // extract sword data as grayscale pixels
+        swordBuffer.readToPixels(swordPixels);
+        swordPixels.setNumChannels(1);
+
+        for (int j = 0; j < swordPixels.size(); j++) {
+            // update intersection pixel
+            if (swordsIntersection[j]) {
+                swordsIntersection[j] = swordPixels[j];
+            }
+            // update union pixel
+            if (swordPixels[j]) {
+                swordsUnion[j] = swordPixels[j];
+            }
+        }
+    }
+
+    // calculate appropriate output drawing given the active schema
+    ofPixels swordsOutput;
+
+    // union of swords
+    if (swordsSchema == UNION) {
+        swordsOutput = swordsUnion;
+
+    // intersection of swords
+    } else if (swordsSchema == INTERSECTION) {
+        swordsOutput = swordsIntersection;
+
+    // sum of swords (add intersection on top of union)
+    } else if (swordsSchema == SUM) {
+        swordsOutput = swordsUnion;
+        if (kinectTracker->redCubes.size() > 1) {
+            for (int j = 0; j < swordsOutput.size(); j++) {
+                if (swordsIntersection[j]) {
+                    swordsOutput[j] = 255; //swordsOutput[j] += swordsIntersection[j];
                 }
             }
-            
-            // draw blockade
-            if (blockadeSword) {
-                ofSetColor(140);
-                int closeDistance = 0.07 * lengthScale;
-                if (left < fixedRight + closeDistance) {
-                    int adjWidth = cubeWidth * lengthScale;
-                    int adjHeight = cubeHeight * lengthScale;
-                    int cubeBottom = (cube.center.y + 0.07) * lengthScale;
-                    ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
+        }
+
+    // xor of swords (subtract intersection from union)
+    } else if (swordsSchema == XOR) {
+        swordsOutput = swordsUnion;
+        if (kinectTracker->redCubes.size() > 1) {
+            for (int j = 0; j < swordsOutput.size(); j++) {
+                if (swordsIntersection[j]) {
+                    swordsOutput[j] = 0;
                 }
             }
         }
     }
+
+    // draw the swords
+    ofSetColor(255);
+    ofImage(swordsOutput).draw(0,0);
+
+    // but don't draw anything under the cubes
+    setAllCubeHeights(0, lengthScale);
 }
 
 void HybridTokens::keyPressed(int key) {
+    if(key == 'a') {
+        swordsSchema = UNION;
+    }
+
     if(key == 's') {
-        useStaticSecondSword = !useStaticSecondSword;
+        swordsSchema = INTERSECTION;
     }
 
-    if(key == 'i') {
-        intersectSwords = !intersectSwords;
+    if(key == 'd') {
+        swordsSchema = SUM;
     }
 
-    if(key == 'b') {
-        blockadeSword = !blockadeSword;
+    if(key == 'f') {
+        swordsSchema = XOR;
     }
 }

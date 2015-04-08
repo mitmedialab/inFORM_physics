@@ -260,9 +260,10 @@ void ReliefApplication::draw(){
 void ReliefApplication::keyPressed(int key){
 
     // keys reserved for rendered objects' use
+    if(key == 'a') myCurrentRenderedObject->keyPressed('a');
     if(key == 's') myCurrentRenderedObject->keyPressed('s');
-    if(key == 'i') myCurrentRenderedObject->keyPressed('i');
-    if(key == 'b') myCurrentRenderedObject->keyPressed('b');
+    if(key == 'd') myCurrentRenderedObject->keyPressed('d');
+    if(key == 'f') myCurrentRenderedObject->keyPressed('f');
     if(key == KEY_UP) myCurrentRenderedObject->keyPressed(KEY_UP);
     if(key == KEY_DOWN) myCurrentRenderedObject->keyPressed(KEY_DOWN);
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
