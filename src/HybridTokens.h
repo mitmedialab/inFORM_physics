@@ -18,6 +18,8 @@
 #include "ofFbo.h"
 
 
+enum SwordsSchema {SUM, XOR, UNION, INTERSECTION};
+
 class HybridTokens : public RenderableObject {
 public:
     
@@ -29,11 +31,9 @@ public:
     
     void keyPressed(int key);
 
-    // swords schema specifiers
-    bool useStaticSecondSword;
-    bool intersectSwords;
-    bool blockadeSword;
-    
+    // swords schema specifier
+    SwordsSchema swordsSchema;
+
 private:
     KinectTracker *kinectTracker;
     ofFbo pinHeightMapImage; //FBO where we render height map
