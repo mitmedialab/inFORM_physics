@@ -27,7 +27,7 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawAngleSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
+    drawSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
     drawCubeRisers(RELIEF_PROJECTOR_SIZE_X);
     pinHeightMapImage.end();
 }
@@ -74,17 +74,6 @@ void HybridTokens::drawSword(float lengthScale, int height) {
 
     // draw sword
     ofRect(left, top, right - left, bottom - top);
-}
-
-void HybridTokens::drawAngleSwordsHeightMap(float lengthScale) {
-    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        // draw sword appropriately rotated
-        glPushMatrix();
-        glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
-        glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
-        drawSword(lengthScale);
-        glPopMatrix();
-    }
 }
 
 void HybridTokens::drawSwordsHeightMap(float lengthScale) {
