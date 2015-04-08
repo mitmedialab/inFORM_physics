@@ -66,17 +66,13 @@ void HybridTokens::drawCubeRisers(float lengthScale) {
 
 // height value default is 140, the height of our cubes
 void HybridTokens::drawSword(float lengthScale, int height) {
-    // known width and height of our cubes
-    float cubeWidth = 4 * pinSize;
-    float cubeHeight = 4 * pinSize;
-
     // sword attributes
     ofSetColor(height);
     int left, right, top, bottom;
     left = -0.07 * lengthScale;
     right = 0.07 * lengthScale;
-    top = (-0.07 - 3 * cubeHeight) * lengthScale;
-    bottom = (-0.07 - 0.3 * cubeHeight) * lengthScale;
+    top = (-0.07 - 3 * cubeEdgeLength) * lengthScale;
+    bottom = (-0.07 - 0.3 * cubeEdgeLength) * lengthScale;
 
     // draw sword
     ofRect(left, top, right - left, bottom - top);
