@@ -33,22 +33,22 @@ void HybridTokens::update(float dt) {
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale) {
+void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier) {
     ofSetColor(height);
 
     // draw cube footprint
     glPushMatrix();
     glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
     glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
-    float scaledEdgeLength = cubeEdgeLength * lengthScale;
+    float scaledEdgeLength = cubeEdgeLength * lengthScale * edgeLengthMultiplier;
     ofRect(-scaledEdgeLength / 2, -scaledEdgeLength / 2, scaledEdgeLength, scaledEdgeLength);
     glPopMatrix();
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setAllCubeHeights(int height, float lengthScale) {
+void HybridTokens::setAllCubeHeights(int height, float lengthScale, float edgeLengthMultiplier) {
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        setCubeHeight(&(*cube), height, lengthScale);
+        setCubeHeight(&(*cube), height, lengthScale, edgeLengthMultiplier);
     }
 }
 
@@ -166,7 +166,7 @@ void HybridTokens::drawSwordsHeightMap(float lengthScale) {
     ofImage(swordsOutput).draw(0,0);
 
     // but don't draw anything under the cubes
-    setAllCubeHeights(0, lengthScale);
+    setAllCubeHeights(0, lengthScale, 1.5);
 }
 
 void HybridTokens::keyPressed(int key) {
