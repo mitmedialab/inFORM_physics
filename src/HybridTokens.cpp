@@ -28,7 +28,10 @@ void HybridTokens::update(float dt) {
     ofBackground(0);
     ofSetColor(255);
     drawSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
-    drawCubeRisers(RELIEF_PROJECTOR_SIZE_X);
+
+    // life cubes slightly off the surface for a smooth dragging experience
+    setAllCubeHeights(40, RELIEF_PROJECTOR_SIZE_X);
+
     pinHeightMapImage.end();
 }
 
