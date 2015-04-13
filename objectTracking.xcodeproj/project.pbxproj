@@ -81,6 +81,7 @@
 		65E6ECB71AA4EBD300520937 /* KinectTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */; };
 		65E6ECB81AA4EBD300520937 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECAE1AA4EBD300520937 /* main.cpp */; };
 		65E6ECBB1AA4EBD300520937 /* ReliefApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */; };
+		65E96FAA1ADC4CD600A77ABD /* CameraCalibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */; };
 		65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FDDE651ABA383900649421 /* HybridTokens.cpp */; };
 		66CA411C5A9664E27326BF36 /* ofxTCPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C085E327DAB912CFA2A443D /* ofxTCPServer.cpp */; };
 		67FE4C7B15C2F0478C8126C2 /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B361208CD4107E479F04E7B /* NetworkingUtils.cpp */; };
@@ -343,6 +344,8 @@
 		65E6ECB41AA4EBD300520937 /* ReliefApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReliefApplication.cpp; sourceTree = "<group>"; };
 		65E6ECB51AA4EBD300520937 /* ReliefApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReliefApplication.h; sourceTree = "<group>"; };
 		65E6ECC11AAA478800520937 /* ofxKCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKCore.h; sourceTree = "<group>"; };
+		65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraCalibration.cpp; sourceTree = "<group>"; };
+		65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraCalibration.h; sourceTree = "<group>"; };
 		65EEFA3DA3526E9CDD9C21F9 /* ofxOscBundle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscBundle.cpp; path = ../../../addons/ofxOsc/src/ofxOscBundle.cpp; sourceTree = SOURCE_ROOT; };
 		65FDDE641ABA382400649421 /* HybridTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridTokens.h; sourceTree = "<group>"; };
 		65FDDE651ABA383900649421 /* HybridTokens.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HybridTokens.cpp; sourceTree = "<group>"; };
@@ -844,6 +847,8 @@
 			children = (
 				65E6ECA91AA4EBD300520937 /* Constants.h */,
 				651E0EA41AC350C500669265 /* KeycodeConstants.h */,
+				65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */,
+				65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */,
 				651E0EB11AC58ED400669265 /* Cube.cpp */,
 				651E0EA61AC35F0B00669265 /* Cube.h */,
 				65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */,
@@ -1663,6 +1668,7 @@
 				65E6EC9A1AA4E85300520937 /* BlobManager.cpp in Sources */,
 				06980FF65ED01AFE2BCAAD5E /* ofxSimpleGuiConfig.cpp in Sources */,
 				8CE60C8F4001811D5B27D0F8 /* ofxSimpleGuiControl.cpp in Sources */,
+				65E96FAA1ADC4CD600A77ABD /* CameraCalibration.cpp in Sources */,
 				1F910DCF02326B0E25059352 /* ofxSimpleGuiPage.cpp in Sources */,
 				65E6EA681AA4D7F500520937 /* RExtrusion.cpp in Sources */,
 				65E6EC8D1AA4E85300520937 /* ofxGuiKnob.cpp in Sources */,
