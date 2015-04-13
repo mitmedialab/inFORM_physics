@@ -97,6 +97,15 @@ void Cube::calculateCandidateUpdates() {
         cand.marker = cand.rawMarker * cand.normalizationVector - cand.center;
     }
 
+    // the camera sees a cube's front corners on the ground and rear corners in the air, making
+    // the raw center an average between grounded corners and corners that need reprojection,
+    // i.e. 50% reprojected. it therefore needs only a half reprojection. (do this after
+    // calculating the marker's center-relative location, however, since the marker's importance
+    // is its relation to the half-reprojected corners.)
+    ofPoint doublyCorrectedCenter;
+    reprojectColorCameraCoordinateFromHeight(cand.center, doublyCorrectedCenter);
+    cand.center = (cand.center + doublyCorrectedCenter) / 2;
+
     // range is 0 <= rawTheta < 90; raw theta does not take cube orientation into account
     cand.rawTheta = -cand.blob->angle;
     cand.rawThetaRadians = cand.rawTheta * pi / 180;

@@ -7,6 +7,7 @@
 //
 
 #include "Constants.h"
+#include "CameraCalibration.h"
 #include "ofxKCore.h"
 #include <vector>
 
