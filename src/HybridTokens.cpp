@@ -132,6 +132,7 @@ void HybridTokens::drawSwordsHeightMap(float lengthScale) {
 
     // calculate appropriate output drawing given the active schema
     ofPixels swordsOutput;
+    swordsOutput.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
 
     // union of swords
     if (swordsSchema == UNION) {
