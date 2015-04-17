@@ -55,16 +55,6 @@ void HybridTokens::setAllCubeHeights(int height, float lengthScale, float edgeLe
     }
 }
 
-// lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::drawCubeRisers(float lengthScale) {
-    ofSetColor(40);
-    for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        int left = (cube->center.x - pinSize) * lengthScale;
-        int top = (cube->center.y - pinSize) * lengthScale;
-        ofRect(left, top, pinSize * 2 * lengthScale, pinSize * 2 * lengthScale);
-    }
-}
-
 // height value default is 140, the height of our cubes
 void HybridTokens::drawSword(float lengthScale, int height) {
     // sword attributes

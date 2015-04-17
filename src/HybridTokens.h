@@ -40,7 +40,6 @@ private:
 
     void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
     void setAllCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0);
-    void drawCubeRisers(float lengthScale);
     void drawSword(float lengthScale, int height=140);
     void drawSwordsHeightMap(float lengthScale);
 
