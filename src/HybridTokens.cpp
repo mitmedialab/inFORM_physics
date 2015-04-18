@@ -32,7 +32,7 @@ void HybridTokens::update(float dt) {
     ofSetColor(255);
     drawBooleanSwords(RELIEF_PROJECTOR_SIZE_X);
 
-    // life cubes slightly off the surface for a smooth dragging experience
+    // lift cubes slightly off the surface for a smooth dragging experience
     setAllCubeHeights(40, RELIEF_PROJECTOR_SIZE_X);
 
     pinHeightMapImage.end();
