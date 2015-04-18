@@ -13,7 +13,7 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
     // swords schema default
-    SwordsSchema outputType = SUM;
+    swordsSchema = SUM;
 
     // flexible swords extension parameter
     flexibleExtensionSize = 0.8;
