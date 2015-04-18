@@ -11,6 +11,8 @@
 HybridTokens::HybridTokens(KinectTracker *tracker) {
     kinectTracker = tracker;
     pinHeightMapImage.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    pinHeightMapContentPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    pinGraphicsPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
     mode = BOOLEAN_SWORDS;
 
@@ -30,9 +32,11 @@ void HybridTokens::drawHeightMap() {
 }
 
 void HybridTokens::drawGraphics() {
+    ofImage(pinGraphicsPixels).draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
 }
 
 void HybridTokens::update(float dt) {
+    // draw height map content
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
@@ -43,11 +47,45 @@ void HybridTokens::update(float dt) {
     } else if (mode == FLEXIBLE_SWORDS) {
         drawFlexibleSwords(RELIEF_SIZE_X);
     }
+    pinHeightMapImage.end();
+
+    // store height map content for graphics computations
+    pinHeightMapImage.readToPixels(pinHeightMapContentPixels);
 
     // lift cubes slightly off the surface for a smooth dragging experience
+    pinHeightMapImage.begin();
     setAllCubeHeights(40, RELIEF_SIZE_X);
-
     pinHeightMapImage.end();
+
+    updateGraphics();
+}
+
+// paint pins according to their heights
+void HybridTokens::updateGraphics() {
+    // some bug in ofPixels causes it to break without this initialization; only necessary once
+    if (!initializedInUpdate) {
+        pinHeightMapImage.readToPixels(pinGraphicsPixels);
+        initializedInUpdate = true;
+    }
+
+    int numChannels = pinGraphicsPixels.getNumChannels(); // this should be 4
+    for (int i = 0; i < pinGraphicsPixels.size(); i += numChannels) {
+        // since the height map rgba pixels are grayscale, the first channel is sufficient
+        // to distinguish pin height
+        if (pinHeightMapContentPixels[i] > 150) {
+            pinGraphicsPixels[i + 0] = pinColorIfHigh[0];
+            pinGraphicsPixels[i + 1] = pinColorIfHigh[1];
+            pinGraphicsPixels[i + 2] = pinColorIfHigh[2];
+        } else if (pinHeightMapContentPixels[i] > 0) {
+            pinGraphicsPixels[i + 0] = pinColorIfOn[0];
+            pinGraphicsPixels[i + 1] = pinColorIfOn[1];
+            pinGraphicsPixels[i + 2] = pinColorIfOn[2];
+        } else {
+            pinGraphicsPixels[i + 0] = pinColorIfOff[0];
+            pinGraphicsPixels[i + 1] = pinColorIfOff[1];
+            pinGraphicsPixels[i + 2] = pinColorIfOff[2];
+        }
+    }
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding

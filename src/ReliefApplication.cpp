@@ -209,6 +209,13 @@ void ReliefApplication::update(){
     myCurrentRenderedObject->drawHeightMap();
     pinHeightMapImageForPins.end();
 
+    // render graphics
+    pinDisplayImage.begin();
+    ofBackground(0);
+    ofSetColor(255);
+    myCurrentRenderedObject->drawGraphics();
+    pinDisplayImage.end();
+
     sendHeightToRelief();
 }
 

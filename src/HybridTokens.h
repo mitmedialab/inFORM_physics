@@ -29,7 +29,7 @@ public:
     void drawHeightMap();
     void drawGraphics();
     void update(float dt);
-    
+
     void keyPressed(int key);
 
     void setMode(HybridTokensMode mode);
@@ -42,18 +42,27 @@ public:
 
 private:
     KinectTracker *kinectTracker;
-    ofFbo pinHeightMapImage; //FBO where we render height map
+    ofFbo pinHeightMapImage;                  // FBO where we render height map
+    ofPixels pinHeightMapContentPixels;       // pixels object for computing on pin height map content
+    ofPixels pinGraphicsPixels;               // pixels object where we render graphics
 
+    void updateGraphics();
     void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
     void setAllCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0);
     void drawSword(float lengthScale, int height=140);
     void drawBooleanSwords(float lengthScale);
     void drawFlexibleSwords(float lengthScale, int height=140);
 
+    char pinColorIfHigh[3] = {255, 135, 0}; // yellow
+    char pinColorIfOn[3] = {255, 12, 16}; // red
+    char pinColorIfOff[3] = {0, 0, 0}; // black
+
     const float pinSize = 1.0 / RELIEF_SIZE_X;
     const float cubeEdgeLength = 4 * pinSize;
 
     float flexibleExtensionSize;
+
+    bool initializedInUpdate = false; // hack to fix an ofPixels bug. see .cpp for details
 
 };
 
