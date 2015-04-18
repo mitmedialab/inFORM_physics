@@ -13,7 +13,7 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
     // swords schema default
-    swordsSchema = SUM;
+    booleanSwordsSchema = SUM;
 
     // flexible swords extension parameter
     flexibleExtensionSize = 0.8;
@@ -128,15 +128,15 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     swordsOutput.allocate(lengthScale, lengthScale, 1);
 
     // union of swords
-    if (swordsSchema == UNION) {
+    if (booleanSwordsSchema == UNION) {
         swordsOutput = swordsUnion;
 
     // intersection of swords
-    } else if (swordsSchema == INTERSECTION) {
+    } else if (booleanSwordsSchema == INTERSECTION) {
         swordsOutput = swordsIntersection;
 
     // sum of swords (add intersection on top of union)
-    } else if (swordsSchema == SUM) {
+    } else if (booleanSwordsSchema == SUM) {
         swordsOutput = swordsUnion;
         if (kinectTracker->redCubes.size() > 1) {
             for (int j = 0; j < swordsOutput.size(); j++) {
@@ -147,7 +147,7 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
         }
 
     // xor of swords (subtract intersection from union)
-    } else if (swordsSchema == XOR) {
+    } else if (booleanSwordsSchema == XOR) {
         swordsOutput = swordsUnion;
         if (kinectTracker->redCubes.size() > 1) {
             for (int j = 0; j < swordsOutput.size(); j++) {
@@ -229,19 +229,19 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
 
 void HybridTokens::keyPressed(int key) {
     if(key == 'a') {
-        swordsSchema = UNION;
+        booleanSwordsSchema = UNION;
     }
 
     if(key == 's') {
-        swordsSchema = INTERSECTION;
+        booleanSwordsSchema = INTERSECTION;
     }
 
     if(key == 'd') {
-        swordsSchema = SUM;
+        booleanSwordsSchema = SUM;
     }
 
     if(key == 'f') {
-        swordsSchema = XOR;
+        booleanSwordsSchema = XOR;
     }
 
     if(key == '-') {

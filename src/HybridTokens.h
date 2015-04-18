@@ -18,7 +18,7 @@
 #include "ofFbo.h"
 
 
-enum SwordsSchema {SUM, XOR, UNION, INTERSECTION};
+enum BooleanSwordsSchema {SUM, XOR, UNION, INTERSECTION};
 
 class HybridTokens : public RenderableObject {
 public:
@@ -31,8 +31,8 @@ public:
     
     void keyPressed(int key);
 
-    // swords schema specifier
-    SwordsSchema swordsSchema;
+    // boolean swords schema specifier
+    BooleanSwordsSchema booleanSwordsSchema;
 
 private:
     KinectTracker *kinectTracker;
