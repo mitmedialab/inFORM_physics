@@ -12,11 +12,17 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
     kinectTracker = tracker;
     pinHeightMapImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
+    mode = BOOLEAN_SWORDS;
+
     // swords schema default
     booleanSwordsSchema = SUM;
 
     // flexible swords extension parameter
     flexibleExtensionSize = 0.8;
+}
+
+void HybridTokens::setMode(HybridTokensMode mode) {
+    this->mode = mode;
 }
 
 void HybridTokens::drawHeightMap() {
@@ -30,7 +36,13 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawBooleanSwords(RELIEF_PROJECTOR_SIZE_X);
+
+    if (mode == BOOLEAN_SWORDS) {
+        drawBooleanSwords(RELIEF_PROJECTOR_SIZE_X);
+
+    } else if (mode == FLEXIBLE_SWORDS) {
+        drawFlexibleSwords(RELIEF_PROJECTOR_SIZE_X);
+    }
 
     // lift cubes slightly off the surface for a smooth dragging experience
     setAllCubeHeights(40, RELIEF_PROJECTOR_SIZE_X);

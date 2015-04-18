@@ -18,6 +18,7 @@
 #include "ofFbo.h"
 
 
+enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS};
 enum BooleanSwordsSchema {SUM, XOR, UNION, INTERSECTION};
 
 class HybridTokens : public RenderableObject {
@@ -30,6 +31,11 @@ public:
     void update(float dt);
     
     void keyPressed(int key);
+
+    void setMode(HybridTokensMode mode);
+
+    // application mode
+    HybridTokensMode mode;
 
     // boolean swords schema specifier
     BooleanSwordsSchema booleanSwordsSchema;
