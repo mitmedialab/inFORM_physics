@@ -272,6 +272,14 @@ void ReliefApplication::keyPressed(int key){
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
     if(key == KEY_RIGHT) myCurrentRenderedObject->keyPressed(KEY_RIGHT);
 
+    if(key == 'b') {
+        myHybridTokens->setMode(BOOLEAN_SWORDS);
+    }
+
+    if(key == 'n') {
+        myHybridTokens->setMode(FLEXIBLE_SWORDS);
+    }
+
     if(key == ' ') {
         paused = !paused;
     }
