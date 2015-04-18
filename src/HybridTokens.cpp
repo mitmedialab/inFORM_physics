@@ -14,6 +14,9 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
 
     // swords schema default
     SwordsSchema outputType = SUM;
+
+    // flexible swords extension parameter
+    flexibleExtensionSize = 0.8;
 }
 
 void HybridTokens::drawHeightMap() {
@@ -163,6 +166,67 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     setAllCubeHeights(0, lengthScale, 1.5);
 }
 
+
+void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
+    if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
+        return;
+    }
+
+    // if there's just one cube, draw a standard sword
+    if (kinectTracker->redCubes.size() == 1) {
+        drawBooleanSwords(lengthScale);
+        return;
+    }
+
+    // construct control points for the bezier curve from the cubes
+    ofPoint controlPoints[4];
+    controlPoints[0].set(kinectTracker->redCubes[0].center * lengthScale);
+    controlPoints[3].set(kinectTracker->redCubes[1].center * lengthScale);
+    float angle0 = kinectTracker->redCubes[0].thetaRadians;
+    float angle1 = kinectTracker->redCubes[1].thetaRadians;
+    int cubeSeparation = controlPoints[0].distance(controlPoints[3]);
+    controlPoints[1].set(controlPoints[0] + ofPoint(-sin(angle0), -cos(angle0)) * cubeSeparation * flexibleExtensionSize);
+    controlPoints[2].set(controlPoints[3] + ofPoint(-sin(angle1), -cos(angle1)) * cubeSeparation * flexibleExtensionSize);
+
+    // calculate points along the 1D bezier curve and corresponding boundary vertices for the 2D shape
+    const int sampleSize = 1000;
+    ofPoint interpolationPoints[sampleSize];
+    ofPoint boundaryVertices[2 * sampleSize];
+    ofPoint *previousPoint = &controlPoints[0];
+    for (int i = 0; i < sampleSize; i++) {
+        // calculate the cubic bezier interpolation point
+        float t = 1.0 * (i + 1) / sampleSize;
+        float c0 = (1 - t) * (1 - t) * (1 - t);
+        float c1 = (1 - t) * (1 - t) * t * 3;
+        float c2 = (1 - t) * t * t * 3;
+        float c3 = t * t * t;
+        interpolationPoints[i] = c0 * controlPoints[0] + c1 * controlPoints[1] + c2 * controlPoints[2] + c3 * controlPoints[3];
+
+        // find the normalized vectors tangent to the interpolation path at this point
+        ofPoint offsetDirection((interpolationPoints[i] - *previousPoint).getNormalized());
+        ofPoint leftDirection(offsetDirection.y, -offsetDirection.x);
+        ofPoint rightDirection(-offsetDirection.y, offsetDirection.x);
+
+        // add vertex points at the boundaries of a cube tracing the interpolation points
+        boundaryVertices[i].set(interpolationPoints[i] + leftDirection * cubeEdgeLength * lengthScale / 2);
+        boundaryVertices[2 * sampleSize - 1 - i].set(interpolationPoints[i] + rightDirection * cubeEdgeLength * lengthScale / 2);
+
+        // update the previous point pointer
+        previousPoint = &interpolationPoints[i];
+    }
+
+    // draw the 2D curve
+    ofSetColor(height);
+    ofSetLineWidth(0);
+    ofFill();
+    ofBeginShape();
+    ofVertices(vector<ofPoint>(boundaryVertices, boundaryVertices + 2 * sampleSize));
+    ofEndShape();
+
+    // but don't draw anything under the cubes
+    setAllCubeHeights(0, lengthScale, 1.5);
+}
+
 void HybridTokens::keyPressed(int key) {
     if(key == 'a') {
         swordsSchema = UNION;
@@ -178,5 +242,13 @@ void HybridTokens::keyPressed(int key) {
 
     if(key == 'f') {
         swordsSchema = XOR;
+    }
+
+    if(key == '-') {
+        flexibleExtensionSize -= 0.1;
+    }
+
+    if(key == '=' || key == '+') {
+        flexibleExtensionSize += 0.1;
     }
 }

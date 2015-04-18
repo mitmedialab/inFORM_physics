@@ -264,6 +264,9 @@ void ReliefApplication::keyPressed(int key){
     if(key == 's') myCurrentRenderedObject->keyPressed('s');
     if(key == 'd') myCurrentRenderedObject->keyPressed('d');
     if(key == 'f') myCurrentRenderedObject->keyPressed('f');
+    if(key == '-') myCurrentRenderedObject->keyPressed('-');
+    if(key == '=') myCurrentRenderedObject->keyPressed('=');
+    if(key == '+') myCurrentRenderedObject->keyPressed('+');
     if(key == KEY_UP) myCurrentRenderedObject->keyPressed(KEY_UP);
     if(key == KEY_DOWN) myCurrentRenderedObject->keyPressed(KEY_DOWN);
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
