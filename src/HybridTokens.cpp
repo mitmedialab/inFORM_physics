@@ -77,12 +77,12 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
     ofFbo swordBuffer;
     ofPixels swordPixels;
-    swordBuffer.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+    swordBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
 
     // pixels objects used to calculate the swords' intersection and union
     ofPixels swordsIntersection, swordsUnion;
-    swordsIntersection.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
-    swordsUnion.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
+    swordsIntersection.allocate(lengthScale, lengthScale, 1);
+    swordsUnion.allocate(lengthScale, lengthScale, 1);
     swordsIntersection.set(255);
     swordsUnion.set(0);
 
@@ -122,7 +122,7 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
 
     // calculate appropriate output drawing given the active schema
     ofPixels swordsOutput;
-    swordsOutput.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, 1);
+    swordsOutput.allocate(lengthScale, lengthScale, 1);
 
     // union of swords
     if (swordsSchema == UNION) {
