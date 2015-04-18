@@ -242,6 +242,24 @@ void ReliefApplication::draw(){
         debugImage3.draw(914, 332, 300, 300);
     }
 
+    if (myCurrentRenderedObject == myHybridTokens) {
+        ofDrawBitmapString("Application:", 1, 350);
+        ofDrawBitmapString(" 'b' : boolean swords", 1, 380);
+        ofDrawBitmapString(" 'n' : flexible swords", 1, 400);
+        
+        if (myHybridTokens->mode == BOOLEAN_SWORDS) {
+            ofDrawBitmapString("Sub-Application:", 1, 450);
+            ofDrawBitmapString(" 'a' : union", 1, 480);
+            ofDrawBitmapString(" 's' : intersect", 1, 500);
+            ofDrawBitmapString(" 'd' : sum", 1, 520);
+            ofDrawBitmapString(" 'f' : xor", 1, 540);
+        } else if (myHybridTokens->mode == FLEXIBLE_SWORDS) {
+            ofDrawBitmapString("Sub-Application:", 1, 450);
+            ofDrawBitmapString(" '-' : decrease extension", 1, 480);
+            ofDrawBitmapString(" '+' : increase extension", 1, 500);
+        }
+    }
+
 
     //Draw Graphics onto projector
     pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);
