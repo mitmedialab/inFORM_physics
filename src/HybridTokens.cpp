@@ -27,7 +27,7 @@ void HybridTokens::update(float dt) {
     pinHeightMapImage.begin();
     ofBackground(0);
     ofSetColor(255);
-    drawSwordsHeightMap(RELIEF_PROJECTOR_SIZE_X);
+    drawBooleanSwords(RELIEF_PROJECTOR_SIZE_X);
 
     // life cubes slightly off the surface for a smooth dragging experience
     setAllCubeHeights(40, RELIEF_PROJECTOR_SIZE_X);
@@ -69,7 +69,7 @@ void HybridTokens::drawSword(float lengthScale, int height) {
     ofRect(left, top, right - left, bottom - top);
 }
 
-void HybridTokens::drawSwordsHeightMap(float lengthScale) {
+void HybridTokens::drawBooleanSwords(float lengthScale) {
     if (!kinectTracker->redCubes.size()) {
         return;
     }
