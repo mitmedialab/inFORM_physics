@@ -5,8 +5,14 @@ void ReliefApplication::setup(){
     if (USE_KINECT) {
         kinectTracker.setup();
     }
-    
-    if(SEAN_SCREEN){
+
+    if(SCREEN_IN_USE == 0){
+        //For Acer Screen
+        ofSetWindowShape(ACER_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
+        projectorOffsetX=ACER_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
+        ofSetWindowPosition(0, 0);
+    }
+    else if(SCREEN_IN_USE == 1){
         //For Sean Screen
         ofSetWindowShape(SEAN_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=SEAN_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
