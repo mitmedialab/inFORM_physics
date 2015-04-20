@@ -58,6 +58,7 @@ void ReliefApplication::setup(){
         debugImage1.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
         debugImage2.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
         debugImage3.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
+        debugImage4.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
 
         // initialize images to black so unused images aren't distracting
         debugImage1.begin();
@@ -69,6 +70,9 @@ void ReliefApplication::setup(){
         debugImage3.begin();
         ofBackground(0);
         debugImage3.end();
+        debugImage4.begin();
+        ofBackground(0);
+        debugImage4.end();
     }
 
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
@@ -184,22 +188,29 @@ void ReliefApplication::update(){
         ofBackground(0);
         ofSetColor(255);
         // example:
-        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        // kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
         debugImage1.end();
 
         debugImage2.begin();
         ofBackground(0);
         ofSetColor(255);
         // example:
-        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        // kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
         debugImage2.end();
 
         debugImage3.begin();
         ofBackground(0);
         ofSetColor(255);
         // example:
-        // kinectTracker.drawCornerLikelihoods(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        // kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
         debugImage3.end();
+
+        debugImage4.begin();
+        ofBackground(0);
+        ofSetColor(255);
+        // example:
+        // kinectTracker.drawDetectedObjects(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+        debugImage4.end();
     }
 
     // render heightmap
@@ -224,6 +235,8 @@ void ReliefApplication::draw(){
     ofBackground(0,0,0);
     ofSetColor(255);
 
+
+    // draw image processing images
     ofRect(1, 1, 302, 302);
     colorInputImage.draw(2, 2, 300, 300);
 
@@ -233,9 +246,16 @@ void ReliefApplication::draw(){
     ofRect(609, 1, 302, 302);
     detectedObjectsImage.draw(610, 2, 300, 300);
 
+
+    // draw output images
     ofRect(913, 1, 302, 302);
     pinHeightMapImageForPins.draw(914, 2, 300, 300);
+    
+    ofRect(1217, 1, 302, 302);
+    pinDisplayImage.draw(1218, 2, 300, 300);
 
+
+    // draw debug images
     if (DEBUG) {
         ofRect(305, 331, 302, 302);
         debugImage1.draw(306, 332, 300, 300);
@@ -245,6 +265,9 @@ void ReliefApplication::draw(){
         
         ofRect(913, 331, 302, 302);
         debugImage3.draw(914, 332, 300, 300);
+        
+        ofRect(1217, 331, 302, 302);
+        debugImage4.draw(1218, 332, 300, 300);
     }
 
 

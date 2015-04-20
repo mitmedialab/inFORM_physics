@@ -50,7 +50,7 @@ public:
 
     // debugging images: write to these temporarily to display image data you're Q/A'ing.
     // don't push commits that write to them, however; leave them clean for others
-    ofFbo debugImage1, debugImage2, debugImage3;
+    ofFbo debugImage1, debugImage2, debugImage3, debugImage4;
 
     ofFbo pinDisplayImage;                      // render graphics for projection onto pins here
     ofFbo pinHeightMapImageForPins;             // render height map for setting pin height here
