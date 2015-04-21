@@ -72,7 +72,6 @@ void ReliefApplication::setup(){
     }
 
     pinDisplayImage.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
-    pinHeightMapImageForDisplay.allocate(RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X, GL_RGBA);
     pinHeightMapImageForPins.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
     myHybridTokens = new HybridTokens(&kinectTracker);
@@ -203,18 +202,11 @@ void ReliefApplication::update(){
         debugImage3.end();
     }
 
-    // render large heightmap
-    pinHeightMapImageForDisplay.begin();
-    ofBackground(0);
-    ofSetColor(255);
-    myCurrentRenderedObject->drawHeightMap();
-    pinHeightMapImageForDisplay.end();
-
-    // render small heightmap
+    // render heightmap
     pinHeightMapImageForPins.begin();
     ofBackground(0);
     ofSetColor(255);
-    pinHeightMapImageForDisplay.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
+    myCurrentRenderedObject->drawHeightMap();
     pinHeightMapImageForPins.end();
 
     sendHeightToRelief();

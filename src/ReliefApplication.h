@@ -51,7 +51,6 @@ public:
     ofFbo debugImage1, debugImage2, debugImage3;
 
     ofFbo pinDisplayImage;                      // render graphics for projection onto pins here
-    ofFbo pinHeightMapImageForDisplay;          // render height map for painting on visual display here
     ofFbo pinHeightMapImageForPins;             // render height map for setting pin height here
 
     int projectorOffsetX;

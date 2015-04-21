@@ -17,7 +17,7 @@ StaticManipulator::StaticManipulator(KinectTracker *tracker) {
 }
 
 void StaticManipulator::drawHeightMap() {
-    pinHeightMapImage.draw(0, 0);
+    pinHeightMapImage.draw(0, 0, RELIEF_SIZE_X, RELIEF_SIZE_Y);
 }
 
 void StaticManipulator::drawGraphics() {
