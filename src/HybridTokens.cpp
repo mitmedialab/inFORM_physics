@@ -32,7 +32,9 @@ void HybridTokens::drawHeightMap() {
 }
 
 void HybridTokens::drawGraphics() {
-    ofImage(pinGraphicsPixels).draw(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
+    int minX = RELIEF_PROJECTOR_SIZE_X * projectorMinXCoordinateBoundaryAtCubeHeight;
+    int minY = RELIEF_PROJECTOR_SIZE_Y * projectorMinYCoordinateBoundaryAtCubeHeight;
+    ofImage(reprojectedPinGraphicsPixels).draw(minX, minY);
 }
 
 void HybridTokens::update(float dt) {
@@ -68,6 +70,7 @@ void HybridTokens::updateGraphics() {
         initializedInUpdate = true;
     }
 
+    // paint pins for 2D display
     int numChannels = pinGraphicsPixels.getNumChannels(); // this should be 4
     for (int i = 0; i < pinGraphicsPixels.size(); i += numChannels) {
         // since the height map rgba pixels are grayscale, the first channel is sufficient
@@ -86,6 +89,9 @@ void HybridTokens::updateGraphics() {
             pinGraphicsPixels[i + 2] = pinColorIfOff[2];
         }
     }
+
+    // paint pins for projection onto 2.5D surface
+    reprojectProjectorPixelsForHeightMap(pinGraphicsPixels, pinHeightMapContentPixels, reprojectedPinGraphicsPixels);
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding

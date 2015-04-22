@@ -10,11 +10,8 @@
 #define __Relief2__HybridTokens__
 
 #include "RenderableObject.h"
-#include "RWell.h"
-#include "RRectangle.h"
-#include "RRamp.h"
-#include "RBitmap.h"
 #include "KinectTracker.h"
+#include "CameraCalibration.h"
 #include "ofFbo.h"
 
 
@@ -45,6 +42,7 @@ private:
     ofFbo pinHeightMapImage;                  // FBO where we render height map
     ofPixels pinHeightMapContentPixels;       // pixels object for computing on pin height map content
     ofPixels pinGraphicsPixels;               // pixels object where we render graphics
+    ofPixels reprojectedPinGraphicsPixels;    // pixels object whose graphics account for the underlying pin heights
 
     void updateGraphics();
     void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
