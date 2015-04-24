@@ -38,6 +38,7 @@
 		640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */; };
 		651E0EA21AC34E8E00669265 /* StaticManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */; };
 		651E0EB21AC58ED500669265 /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EB11AC58ED400669265 /* Cube.cpp */; };
+		65DDC6611AEA8D0500AD8D80 /* ColorBand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */; };
 		65E6EA641AA4D7F500520937 /* R3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA221AA4D7F500520937 /* R3DModel.cpp */; };
 		65E6EA651AA4D7F500520937 /* RBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA241AA4D7F500520937 /* RBitmap.cpp */; };
 		65E6EA661AA4D7F500520937 /* RButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA261AA4D7F500520937 /* RButton.cpp */; };
@@ -248,6 +249,8 @@
 		651E0EA41AC350C500669265 /* KeycodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeycodeConstants.h; sourceTree = "<group>"; };
 		651E0EA61AC35F0B00669265 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
 		651E0EB11AC58ED400669265 /* Cube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cube.cpp; sourceTree = "<group>"; };
+		65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorBand.cpp; sourceTree = "<group>"; };
+		65DDC6621AEA8D1400AD8D80 /* ColorBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorBand.h; sourceTree = "<group>"; };
 		65E6EA221AA4D7F500520937 /* R3DModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = R3DModel.cpp; sourceTree = "<group>"; };
 		65E6EA231AA4D7F500520937 /* R3DModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = R3DModel.h; sourceTree = "<group>"; };
 		65E6EA241AA4D7F500520937 /* RBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RBitmap.cpp; sourceTree = "<group>"; };
@@ -851,6 +854,8 @@
 				65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */,
 				651E0EB11AC58ED400669265 /* Cube.cpp */,
 				651E0EA61AC35F0B00669265 /* Cube.h */,
+				65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */,
+				65DDC6621AEA8D1400AD8D80 /* ColorBand.h */,
 				65E6ECAC1AA4EBD300520937 /* KinectTracker.cpp */,
 				65E6ECAD1AA4EBD300520937 /* KinectTracker.h */,
 				65E6ECAE1AA4EBD300520937 /* main.cpp */,
@@ -1602,6 +1607,7 @@
 				E212C821D1064B92DD953A42 /* ofxCvHaarFinder.cpp in Sources */,
 				65E6EC931AA4E85300520937 /* ofxGuiScope.cpp in Sources */,
 				63020F16C7E8DED980111241 /* ofxCvImage.cpp in Sources */,
+				65DDC6611AEA8D0500AD8D80 /* ColorBand.cpp in Sources */,
 				D3301F6A0B43BB293ED97C1D /* ofxCvShortImage.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
 				65E6EC991AA4E85300520937 /* TemplateUtils.cpp in Sources */,

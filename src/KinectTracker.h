@@ -10,6 +10,7 @@
 #include "ofxKinect.h"
 #include "ofxKCore.h"
 #include "Constants.h"
+#include "ColorBand.h"
 #include "Cube.h"
 
 
@@ -17,20 +18,6 @@
 #define __Relief2__KinectTracker__
 
 #include <iostream>
-
-
-class ColorBand {
-public:
-    ColorBand(int _hueTarget, int _hueTolerance, int _saturationThreshold) {
-        hueTarget = min(_hueTarget, 255);
-        hueTolerance = min(_hueTolerance, 128);
-        saturationThreshold = min(_saturationThreshold, 255);
-    };
-
-    int hueTarget;
-    int hueTolerance;
-    int saturationThreshold;
-};
 
 
 // construct a predicate for testing whether a blob has the specified id; useful with find_if
