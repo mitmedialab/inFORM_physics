@@ -58,11 +58,6 @@ void KinectTracker::setup(){
     bri.allocate(frameWidth, frameHeight);
     hueSatThresh.allocate(frameWidth, frameHeight);
 
-    hueThreshHigh.allocate(frameWidth, frameHeight);
-    hueThreshLow.allocate(frameWidth, frameHeight);
-    satThresh.allocate(frameWidth, frameHeight);
-    hueThresh.allocate(frameWidth, frameHeight);
-
     finger_contourFinder.bTrackBlobs = true;
     finger_contourFinder.bTrackFingers = true;
     ball_contourFinder.bTrackBlobs = true;
@@ -348,25 +343,7 @@ void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea,
     sat.erode_3x3();
     sat.dilate_3x3();
 
-    // thresholds on hue, allowing for zero-boundary wrap-around
-    hueThreshHigh = hue;
-    hueThreshLow = hue;
-    hueThreshHigh.threshold((blobColor.hueTarget + blobColor.hueTolerance) % 256, CV_THRESH_BINARY_INV);
-    hueThreshLow.threshold((blobColor.hueTarget - blobColor.hueTolerance + 256) % 256 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
-
-    // if thresholds wrap around zero, take their union instead of their intersection
-    bool wrapAround = (blobColor.hueTarget - blobColor.hueTolerance < 0) || (blobColor.hueTarget + blobColor.hueTolerance > 255);
-    if (wrapAround) {
-        cvOr(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
-    } else {
-        cvAnd(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
-    }
-
-    // threshold saturation
-    satThresh = sat;
-    satThresh.threshold(blobColor.saturationThreshold);
-
-    cvAnd(hueThresh.getCvImage(), satThresh.getCvImage(), hueSatThresh.getCvImage(), NULL);
+    blobColor.hsThreshold(hue, sat, hueSatThresh);
 
     ball_contourFinder.findContours(hueSatThresh, minArea, maxArea, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
