@@ -8,7 +8,6 @@
 
 #include "Constants.h"
 #include "ofxOpenCv.h"
-//#include "ofxKCore.h"
 
 
 #ifndef __Relief2__ColorBand__
