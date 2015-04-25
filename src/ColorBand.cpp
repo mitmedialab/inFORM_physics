@@ -9,8 +9,8 @@
 #include "ColorBand.h"
 
 ColorBand::ColorBand(int _hueTarget, int _hueTolerance, int _saturationThreshold) {
-    hueTarget = min(_hueTarget, 255);
-    hueTolerance = min(_hueTolerance, 128);
+    hueTarget = min(_hueTarget, 180);
+    hueTolerance = min(_hueTolerance, 90);
     saturationThreshold = min(_saturationThreshold, 255);
 };
 
@@ -33,11 +33,11 @@ void ColorBand::hsThreshold(ofxCvGrayscaleImage &hue, ofxCvGrayscaleImage &sat, 
     // thresholds on hue, allowing for zero-boundary wrap-around
     hueThreshHigh = hue;
     hueThreshLow = hue;
-    hueThreshHigh.threshold((hueTarget + hueTolerance) % 256, CV_THRESH_BINARY_INV);
-    hueThreshLow.threshold((hueTarget - hueTolerance + 256) % 256 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
+    hueThreshHigh.threshold((hueTarget + hueTolerance) % 181, CV_THRESH_BINARY_INV);
+    hueThreshLow.threshold((hueTarget - hueTolerance + 181) % 181 - 1, CV_THRESH_BINARY); // the "- 1" makes the low boundary inclusive
 
     // if thresholds wrap around zero, take their union instead of their intersection
-    bool wrapAround = (hueTarget - hueTolerance < 0) || (hueTarget + hueTolerance > 255);
+    bool wrapAround = (hueTarget - hueTolerance < 0) || (hueTarget + hueTolerance > 180);
     if (wrapAround) {
         cvOr(hueThreshHigh.getCvImage(), hueThreshLow.getCvImage(), hueThresh.getCvImage(), NULL);
     } else {
