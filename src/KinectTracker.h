@@ -95,7 +95,7 @@ public:
     ofxCvGrayscaleImage hue;                    // hue component
     ofxCvGrayscaleImage sat;                    // saturation component
     ofxCvGrayscaleImage bri;                    // brilliance component
-    ofxCvGrayscaleImage hueSatThresh;           // combined hue and saturation threshold
+    ofxCvGrayscaleImage colorThreshold;         // combined hue and saturation threshold
 
     // tracking objects
     ContourFinder finger_contourFinder;

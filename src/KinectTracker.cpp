@@ -56,7 +56,7 @@ void KinectTracker::setup(){
     hue.allocate(frameWidth, frameHeight);
     sat.allocate(frameWidth, frameHeight);
     bri.allocate(frameWidth, frameHeight);
-    hueSatThresh.allocate(frameWidth, frameHeight);
+    colorThreshold.allocate(frameWidth, frameHeight);
 
     finger_contourFinder.bTrackBlobs = true;
     finger_contourFinder.bTrackFingers = true;
@@ -96,8 +96,8 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        ColorBand redBand = ColorBand(173, 8, 150);
-        ColorBand yellowBand = ColorBand(25, 15, 150);
+        ColorBand redBand = ColorBand(165, 180, 150);
+        ColorBand yellowBand = ColorBand(10, 40, 150);
         findCubes(redBand, yellowBand, redCubes);
 
         // extract basic information about detected objects
@@ -346,9 +346,9 @@ void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea,
     sat.erode_3x3();
     sat.dilate_3x3();
 
-    blobColor.hsThreshold(hue, sat, hueSatThresh);
+    blobColor.hsvThreshold(hue, sat, bri, colorThreshold);
 
-    ball_contourFinder.findContours(hueSatThresh, minArea, maxArea, 20, 20.0, false);
+    ball_contourFinder.findContours(colorThreshold, minArea, maxArea, 20, 20.0, false);
     ball_tracker.track(&ball_contourFinder);
     
     blobs = ball_contourFinder.blobs;
