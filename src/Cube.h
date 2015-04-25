@@ -62,7 +62,7 @@ public:
     void clearMarker(bool _update=true);
     Blob *getCandidateBlob();
 
-    Blob *blob;
+    int blobId;
     ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
     ofPoint marker;
     bool hasMarker;

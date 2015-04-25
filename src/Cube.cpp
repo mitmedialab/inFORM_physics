@@ -40,7 +40,7 @@ Cube::~Cube() {
 }
 
 bool Cube::isValid() {
-    return blob != NULL;
+    return candidateUpdates.blob != NULL;
 }
 
 
@@ -156,7 +156,7 @@ bool Cube::candidateUpdatesAreSignificant() {
     // locally use a shorthand alias for the candidate updates object
     CubeUpdatesBuffer &cand = candidateUpdates;
 
-    if (!blob || hasMarker != cand.hasMarker || blob->id != cand.blob->id) {
+    if (hasMarker != cand.hasMarker || blobId != cand.blob->id) {
         return true;
     } else if (center.distance(cand.center) > 0.5 * pinSize) {
         return true;
@@ -183,7 +183,16 @@ void Cube::update() {
     // locally use a shorthand alias for the candidate updates object
     CubeUpdatesBuffer &cand = candidateUpdates;
 
-    blob = cand.blob;
+    // hopefully this will return again, but memory management redesign is
+    // needed to prevent early deallocation. currently, accessing this later is
+    // illegal. using the new/delete paradigm and storing a local copy of the
+    // candidate blob should fix this, but I believe the new/delete paradigm
+    // needs to be propagated throughout the code base; just injecting it here
+    // leads to other bugs.
+    //
+    // blob = cand.blob;
+
+    blobId = cand.blob->id;
     hasMarker = cand.hasMarker;
     normalizationVector = cand.normalizationVector;
     width = cand.width;

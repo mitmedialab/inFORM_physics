@@ -192,6 +192,8 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
         ofCircle(cubes_itr->center * imageSize, 1);
         
         // draw blob contour
+        /*
+        // for now, this is no longer available as the original blob has been removed from the Cube object
         ofSetColor(255, 255, 0, 100); // yellow with alpha=0.4
         ofSetLineWidth(1);
         ofNoFill();
@@ -199,6 +201,7 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
         ofVertices(cubes_itr->blob->pts);
         ofEndShape();
         ofFill();
+         */
 
         // draw cube corners
         ofColor cornerColors[4] = {ofColor::red, ofColor::orange, ofColor::green, ofColor::blue};
@@ -265,9 +268,9 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
 
     for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); /* conditional increment */) {
         // if a new cube blob exists with an id matching this cube's, set the cube to use it
-        if (newCubeBlobs.count(cubes_itr->blob->id)) {
-            cubes_itr->setBlob(newCubeBlobs[cubes_itr->blob->id], false);
-            newCubeBlobs.erase(cubes_itr->blob->id);
+        if (newCubeBlobs.count(cubes_itr->blobId)) {
+            cubes_itr->setBlob(newCubeBlobs[cubes_itr->blobId], false);
+            newCubeBlobs.erase(cubes_itr->blobId);
             cubes_itr++;
         // else, move this cube to the holding pen
         } else {
