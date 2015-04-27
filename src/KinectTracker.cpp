@@ -96,9 +96,9 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red objects
-        ColorBand redBand = ColorBand(165, 4, 150);
-        ColorBand yellowBand = ColorBand(10, 40, 80);
-        findCubes(redBand, yellowBand, redCubes);
+        ColorBand redColor = ColorBand(165, 4, 150);
+        ColorBand yellowColor = ColorBand(10, 40, 80);
+        findCubes(redColor, yellowColor, redCubes);
 
         // extract basic information about detected objects
         generateBlobDescriptors(redCubes);
