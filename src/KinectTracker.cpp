@@ -61,6 +61,7 @@ void KinectTracker::setup(){
     // cube detection colors
     redColor.set(165, 4, 150);
     yellowColor.set(10, 40, 80);
+    excludePaintedPinsColor.set(0, 180, 0, 255, 1, 200);
 
     finger_contourFinder.bTrackBlobs = true;
     finger_contourFinder.bTrackFingers = true;
@@ -100,7 +101,7 @@ void KinectTracker::update(){
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
         // find red cubes with yellow markers
-        findCubes(redColor, yellowColor, redCubes);
+        findCubes(redColor, yellowColor, excludePaintedPinsColor, redCubes);
 
         // extract basic information about detected objects
         generateBlobDescriptors(redCubes);
@@ -190,8 +191,12 @@ void KinectTracker::generateBlobDescriptors(vector<Cube> cubes) {
 
     for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
         // draw center
-        ofSetColor(ofColor::lightBlue);
-        ofCircle(cubes_itr->center * imageSize, 1);
+        if (cubes_itr->isTouched) {
+            ofSetColor(ofColor::orange);
+        } else {
+            ofSetColor(ofColor::lightBlue);
+        }
+        ofCircle(cubes_itr->center * imageSize, 2);
         
         // draw blob contour
         /*
@@ -252,11 +257,10 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
     cornerLikelihoodsDisplayImage = cornerLikelihoods.getPixelsRef();
 }
 
-void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector<Cube>& cubes) {
+void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, ColorBand cubePlusHandColor, vector<Cube>& cubes) {
     // get cube blobs
     vector<Blob> cubeBlobs;
     findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true);
-
 
     // create a map of the new cube blobs with blobs keyed by id
     map<int, Blob *> newCubeBlobs;
@@ -299,6 +303,36 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
     }
     newCubeBlobs.clear();
     unmatchedCubes.clear();
+
+    // get blobs that match cubes, hands, or both; reject blobs too much larger than a cube.
+    // since hands are much larger than cubes, this will only match previously found cubes
+    // if those cubes are not being touched by hands.
+    vector<Blob> untouchedCubeBlobs;
+    findBlobs(cubePlusHandColor, pinArea * 8, pinArea * 26 * 1.5, untouchedCubeBlobs, true);
+
+    // for each cube, mark it as untouched if it is within a target distance from an untouched cube blob
+    for(vector<Cube>::iterator cubes_itr = cubes.begin(); cubes_itr < cubes.end(); cubes_itr++) {
+        // unnormalized cube center
+        ofPoint cubeCentroid = cubes_itr->getCandidateBlob()->centroid;
+
+        // use `area / 4` as an approximation for the radius distance squared; points within this
+        // square distance from the cube center probably lie inside the blob
+        float radiusSquared = cubes_itr->getCandidateBlob()->area / 4;
+
+        // if an untouched center is less than half a cube radius from the cube center, they are
+        // probably the same object
+        float targetDistanceSquared = radiusSquared / 4;
+        bool isTouched = true;
+        for (vector<Blob>::iterator untouchedCubeBlobs_itr = untouchedCubeBlobs.begin(); untouchedCubeBlobs_itr < untouchedCubeBlobs.end(); untouchedCubeBlobs_itr++) {
+            // n.b. square distance avoids taking square roots so it's faster than distance
+            float squareDistance = cubeCentroid.squareDistance(untouchedCubeBlobs_itr->centroid);
+            if (squareDistance < targetDistanceSquared) {
+                isTouched = false;
+                break;
+            }
+        }
+        cubes_itr->isTouched = isTouched;
+    }
 
     // look for cube markers
     vector<Blob> markerBlobs;

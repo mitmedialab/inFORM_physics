@@ -66,6 +66,7 @@ public:
     ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
     ofPoint marker;
     bool hasMarker;
+    bool isTouched = false; // whether someone is touching this cube; cube managers should assign this directly
     float theta;            // measured counterclockwise
     float thetaRadians;     // theta in radians
     float width;

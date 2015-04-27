@@ -42,7 +42,7 @@ public:
     void drawCornerLikelihoods(int x, int y, int width, int height);
     void update();
 
-    void findCubes(ColorBand cubeColor, ColorBand markerColor, vector<Cube>& cubes);
+    void findCubes(ColorBand cubeColor, ColorBand markerColor, ColorBand cubePlusHandColor, vector<Cube>& cubes);
     void findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue=false);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
@@ -114,6 +114,7 @@ private:
     // cube detection colors
     ColorBand redColor;
     ColorBand yellowColor;
+    ColorBand excludePaintedPinsColor;
 
 };
 
