@@ -50,7 +50,6 @@ public:
     void saveDepthImage();
     void loadDepthBackground();
 
-    vector<Blob> cubeBlobs;                     // blobs detected in the search for cubes
     vector<Cube> redCubes;                      // cube objects using red blobs
     vector<ofPoint> fingers;                    // fingers detected (z is relative above height map)
     vector<ofPoint> absFingers;                 // fingers detected (z is absolute)

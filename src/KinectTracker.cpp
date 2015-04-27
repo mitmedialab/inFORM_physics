@@ -253,6 +253,8 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
 }
 
 void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector<Cube>& cubes) {
+    // get cube blobs
+    vector<Blob> cubeBlobs;
     findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true);
 
     vector<Blob> markerBlobs;
