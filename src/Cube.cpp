@@ -173,7 +173,7 @@ void Cube::update() {
     }
 
     // to filter out image noise, only update cube values when the blob changes substantially.
-    // therefore, calculate updates into a candidate buffer and only propagating them if their
+    // therefore, calculate updates into a candidate buffer and only propagate them if their
     // difference compared to current values passes a hysteresis threshold
     calculateCandidateUpdates();
     if (!candidateUpdatesAreSignificant()) {
