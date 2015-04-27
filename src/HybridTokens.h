@@ -17,6 +17,7 @@
 
 enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS};
 enum BooleanSwordsSchema {SUM, XOR, UNION, INTERSECTION};
+enum TouchCondition {TOUCHED, NOT_TOUCHED, UNDEFINED};
 
 class HybridTokens : public RenderableObject {
 public:
@@ -46,7 +47,7 @@ private:
 
     void updateGraphics();
     void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
-    void setAllCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0);
+    void setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
     void drawSword(float lengthScale, int height=140);
     void drawBooleanSwords(float lengthScale);
     void drawFlexibleSwords(float lengthScale, int height=140);

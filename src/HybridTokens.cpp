@@ -56,7 +56,7 @@ void HybridTokens::update(float dt) {
 
     // lift cubes slightly off the surface for a smooth dragging experience
     pinHeightMapImage.begin();
-    setAllCubeHeights(40, RELIEF_SIZE_X);
+    setCubeHeights(40, RELIEF_SIZE_X);
     pinHeightMapImage.end();
 
     updateGraphics();
@@ -108,9 +108,12 @@ void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale, floa
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setAllCubeHeights(int height, float lengthScale, float edgeLengthMultiplier) {
+void HybridTokens::setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier, TouchCondition touchCondition) {
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
-        setCubeHeight(&(*cube), height, lengthScale, edgeLengthMultiplier);
+        if (touchCondition == UNDEFINED || (touchCondition == TOUCHED && cube->isTouched) ||
+                (touchCondition == NOT_TOUCHED && !cube->isTouched)) {
+            setCubeHeight(&(*cube), height, lengthScale, edgeLengthMultiplier);
+        }
     }
 }
 
@@ -219,7 +222,7 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     ofImage(swordsOutput).draw(0,0);
 
     // but don't draw anything under the cubes
-    setAllCubeHeights(0, lengthScale, 1.5);
+    setCubeHeights(0, lengthScale, 1.5);
 }
 
 
@@ -280,7 +283,7 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
     ofEndShape();
 
     // but don't draw anything under the cubes
-    setAllCubeHeights(0, lengthScale, 1.5);
+    setCubeHeights(0, lengthScale, 1.5);
 }
 
 void HybridTokens::keyPressed(int key) {
