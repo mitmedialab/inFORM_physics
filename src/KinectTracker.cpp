@@ -257,9 +257,6 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
     vector<Blob> cubeBlobs;
     findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true);
 
-    vector<Blob> markerBlobs;
-    findBlobs(markerColor, pinArea * 0.5, pinArea * 1.7, markerBlobs);
-    bool markersFound = markerBlobs.size();
 
     // create a map of the new cube blobs with blobs keyed by id
     map<int, Blob *> newCubeBlobs;
@@ -302,6 +299,11 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, vector
     }
     newCubeBlobs.clear();
     unmatchedCubes.clear();
+
+    // look for cube markers
+    vector<Blob> markerBlobs;
+    findBlobs(markerColor, pinArea * 0.5, pinArea * 1.7, markerBlobs);
+    bool markersFound = markerBlobs.size();
 
     // if markers exist, mark cubes
     if (markersFound) {
