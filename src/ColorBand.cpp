@@ -10,6 +10,10 @@
 
 // each hsv input parameter is automatically adjusted to fit its allowed range. wrap-around is supported.
 ColorBand::ColorBand(int _minHue, int _maxHue, int _minSat, int _maxSat, int _minBri, int _maxBri) {
+    set(_minHue, _maxHue, _minSat, _maxSat, _minBri, _maxBri);
+};
+
+void ColorBand::set(int _minHue, int _maxHue, int _minSat, int _maxSat, int _minBri, int _maxBri) {
     minHue = _minHue % allowedHueRange[1];
     maxHue = _maxHue % allowedHueRange[1];
     minSat = _minSat % allowedSatRange[1];
@@ -31,7 +35,6 @@ ColorBand::ColorBand(int _minHue, int _maxHue, int _minSat, int _maxSat, int _mi
     useMinBri = (minBri != allowedBriRange[0]);
     useMaxBri = (maxBri != allowedBriRange[1]);
 }
-
 
 void ColorBand::hsvThreshold(ofxCvGrayscaleImage &hue, ofxCvGrayscaleImage &sat, ofxCvGrayscaleImage &bri, ofxCvGrayscaleImage &dst) {
     if (hue.width != sat.width || hue.height != sat.height) {

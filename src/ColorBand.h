@@ -17,7 +17,8 @@
 class ColorBand {
 public:
     // each hsv input parameter is automatically adjusted to fit its allowed range. wrap-around is supported.
-    ColorBand(int _minHue, int _maxHue, int _minSat=0, int _maxSat=255, int _minBri=0, int _maxBri=255);
+    ColorBand(int _minHue=0, int _maxHue=180, int _minSat=0, int _maxSat=255, int _minBri=0, int _maxBri=255);
+    void set(int _minHue=0, int _maxHue=180, int _minSat=0, int _maxSat=255, int _minBri=0, int _maxBri=255);
     void hsvThreshold(ofxCvGrayscaleImage &hue, ofxCvGrayscaleImage &sat, ofxCvGrayscaleImage &bri, ofxCvGrayscaleImage &dst);
 
     int minHue, maxHue, minSat, maxSat, minBri, maxBri;
