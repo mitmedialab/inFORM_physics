@@ -112,6 +112,10 @@ private:
     void generateBlobDescriptors(vector<Cube> cubes);
     void detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>& cornersOut);
 
+    // cube detection colors
+    ColorBand redColor;
+    ColorBand yellowColor;
+
 };
 
 #endif /* defined(__Relief2__KinectTracker__) */

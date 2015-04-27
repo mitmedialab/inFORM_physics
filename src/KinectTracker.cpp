@@ -58,6 +58,10 @@ void KinectTracker::setup(){
     bri.allocate(frameWidth, frameHeight);
     colorThreshold.allocate(frameWidth, frameHeight);
 
+    // cube detection colors
+    redColor.set(165, 4, 150);
+    yellowColor.set(10, 40, 80);
+
     finger_contourFinder.bTrackBlobs = true;
     finger_contourFinder.bTrackFingers = true;
     ball_contourFinder.bTrackBlobs = true;
@@ -95,9 +99,7 @@ void KinectTracker::update(){
         cvAnd(colorImg.getCvImage(), depthThresholdDilatedC.getCvImage(), dThresholdedColorDilated.getCvImage(), NULL);
         dThresholdedColorDilatedG.setFromColorImage(dThresholdedColorDilated);
 
-        // find red objects
-        ColorBand redColor = ColorBand(165, 4, 150);
-        ColorBand yellowColor = ColorBand(10, 40, 80);
+        // find red cubes with yellow markers
         findCubes(redColor, yellowColor, redCubes);
 
         // extract basic information about detected objects
