@@ -39,6 +39,7 @@
 		651E0EA21AC34E8E00669265 /* StaticManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */; };
 		651E0EB21AC58ED500669265 /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EB11AC58ED400669265 /* Cube.cpp */; };
 		65DDC6611AEA8D0500AD8D80 /* ColorBand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */; };
+		65DDC66C1AEFE23900AD8D80 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC66B1AEFE23900AD8D80 /* Utils.cpp */; };
 		65E6EA641AA4D7F500520937 /* R3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA221AA4D7F500520937 /* R3DModel.cpp */; };
 		65E6EA651AA4D7F500520937 /* RBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA241AA4D7F500520937 /* RBitmap.cpp */; };
 		65E6EA661AA4D7F500520937 /* RButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA261AA4D7F500520937 /* RButton.cpp */; };
@@ -251,6 +252,8 @@
 		651E0EB11AC58ED400669265 /* Cube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cube.cpp; sourceTree = "<group>"; };
 		65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorBand.cpp; sourceTree = "<group>"; };
 		65DDC6621AEA8D1400AD8D80 /* ColorBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorBand.h; sourceTree = "<group>"; };
+		65DDC66B1AEFE23900AD8D80 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		65DDC66D1AEFE24200AD8D80 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		65E6EA221AA4D7F500520937 /* R3DModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = R3DModel.cpp; sourceTree = "<group>"; };
 		65E6EA231AA4D7F500520937 /* R3DModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = R3DModel.h; sourceTree = "<group>"; };
 		65E6EA241AA4D7F500520937 /* RBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RBitmap.cpp; sourceTree = "<group>"; };
@@ -850,6 +853,8 @@
 			children = (
 				65E6ECA91AA4EBD300520937 /* Constants.h */,
 				651E0EA41AC350C500669265 /* KeycodeConstants.h */,
+				65DDC66B1AEFE23900AD8D80 /* Utils.cpp */,
+				65DDC66D1AEFE24200AD8D80 /* Utils.h */,
 				65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */,
 				65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */,
 				651E0EB11AC58ED400669265 /* Cube.cpp */,
@@ -1592,6 +1597,7 @@
 				65E6EC971AA4E85300520937 /* TouchMessenger.cpp in Sources */,
 				65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */,
 				65E6EC901AA4E85300520937 /* ofxGuiPanel.cpp in Sources */,
+				65DDC66C1AEFE23900AD8D80 /* Utils.cpp in Sources */,
 				65E6EC8C1AA4E85300520937 /* ofxGuiGlobals.cpp in Sources */,
 				E2564CF7DDB3713772BB682E /* ofxUDPManager.cpp in Sources */,
 				250A95BA26587BE85DB0A353 /* ofxCvColorImage.cpp in Sources */,
