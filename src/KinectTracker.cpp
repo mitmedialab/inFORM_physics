@@ -331,7 +331,14 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, ColorB
                 break;
             }
         }
+
+        // update cube's touch status
         cubes_itr->isTouched = isTouched;
+        if (isTouched) {
+            cubes_itr->timeWhenLastTouched = clockInSeconds();
+        } else {
+            cubes_itr->timeWhenLastNotTouched = clockInSeconds();
+        }
     }
 
     // look for cube markers

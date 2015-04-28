@@ -69,6 +69,8 @@ public:
     ofPoint marker;
     bool hasMarker;
     bool isTouched = false; // whether someone is touching this cube; cube managers should assign this directly
+    double timeWhenLastTouched;
+    double timeWhenLastNotTouched;
     float theta;            // measured counterclockwise
     float thetaRadians;     // theta in radians
     float width;
