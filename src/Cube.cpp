@@ -21,17 +21,26 @@
 
 // Constructors
 
-Cube::Cube() : candidateUpdates(*new CubeUpdatesBuffer) {
+Cube::Cube() :
+    candidateUpdates(*new CubeUpdatesBuffer),
+    timeOfInitialization(clockInSeconds())
+{
     candidateUpdates.blob = NULL;
     candidateUpdates.hasMarker = false;
 }
 
-Cube::Cube(Blob *_blob, bool _update) : candidateUpdates(*new CubeUpdatesBuffer) {
+Cube::Cube(Blob *_blob, bool _update) :
+    candidateUpdates(*new CubeUpdatesBuffer),
+    timeOfInitialization(clockInSeconds())
+{
     candidateUpdates.hasMarker = false;
     setBlob(_blob, _update);
 }
 
-Cube::Cube(Blob *_blob, ofPoint _marker, bool _update) : candidateUpdates(*new CubeUpdatesBuffer) {
+Cube::Cube(Blob *_blob, ofPoint _marker, bool _update) :
+    candidateUpdates(*new CubeUpdatesBuffer),
+    timeOfInitialization(clockInSeconds())
+{
     setBlobAndMarker(_blob, _marker, _update);
 }
 

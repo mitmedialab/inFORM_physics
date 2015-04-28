@@ -7,6 +7,7 @@
 //
 
 #include "Constants.h"
+#include "utils.h"
 #include "CameraCalibration.h"
 #include "ofxKCore.h"
 #include <vector>
@@ -63,6 +64,7 @@ public:
     Blob *getCandidateBlob();
 
     int blobId;
+    double timeOfInitialization; // the time at which this object was created
     ofPoint normalizationVector; // x- and y-direction scaling to normalize blob units
     ofPoint marker;
     bool hasMarker;
