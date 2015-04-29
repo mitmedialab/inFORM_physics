@@ -28,6 +28,9 @@ float reprojectProjectorYCoordinateFromHeight(float y, int height) {
 }
 
 // reproject 2D pixels for projection onto a height map
+//
+// NOTE: this function approximates all heights as being either 255, 140, or 0.
+// An efficient correct implementation of this functionality would be nice to have.
 void reprojectProjectorPixelsForHeightMap(ofPixels &pixels2D, ofPixels &heightMap, ofPixels &reprojectedPixels) {
     // get input dimensions
     int width2D = pixels2D.getWidth();
@@ -93,7 +96,9 @@ void reprojectProjectorPixelsForHeightMap(ofPixels &pixels2D, ofPixels &heightMa
             indexInRangeAt0 = 0 <= xyAt0.x && xyAt0.x < width2D && 0 <= xyAt0.y && xyAt0.y < height2D;
 
             // since the height map pixels are grayscale regardless of image type, the first channel
-            // is sufficient to gauge pin height
+            // is sufficient to gauge pin height.
+            //
+            // NOTE: this approximates all heights as being either 255, 140, or 0
             if (indexInRangeAt255 && heightMap[indexAt255] > 200) {
                 reprojectedPixels[iRP + 0] = pixels2D[indexAt255 + 0];
                 reprojectedPixels[iRP + 1] = pixels2D[indexAt255 + 1];
