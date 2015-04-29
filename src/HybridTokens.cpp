@@ -235,7 +235,7 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     setCubeHeights(0, lengthScale, 1.5);
 }
 
-
+// for now, this function assumes a maximum of two cubes to deal with
 void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
     if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
         return;
