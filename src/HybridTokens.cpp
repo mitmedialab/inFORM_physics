@@ -11,6 +11,8 @@
 HybridTokens::HybridTokens(KinectTracker *tracker) {
     kinectTracker = tracker;
     pinHeightMapImage.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    cubeFootprintsFbo.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    cubeFootprintPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
     pinHeightMapContentPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
     pinGraphicsPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
 
@@ -59,6 +61,14 @@ void HybridTokens::update(float dt) {
     setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
     pinHeightMapImage.end();
 
+    // record cube footprints in a pixels object for graphics computations
+    cubeFootprintsFbo.begin();
+    ofBackground(0);
+    ofSetColor(255);
+    setCubeHeights(140, RELIEF_SIZE_X);
+    cubeFootprintsFbo.end();
+    cubeFootprintsFbo.readToPixels(cubeFootprintPixels);
+
     updateGraphics();
 }
 
@@ -73,20 +83,36 @@ void HybridTokens::updateGraphics() {
     // paint pins for 2D display
     int numChannels = pinGraphicsPixels.getNumChannels(); // this should be 4
     for (int i = 0; i < pinGraphicsPixels.size(); i += numChannels) {
-        // since the height map rgba pixels are grayscale, the first channel is sufficient
-        // to distinguish pin height
-        if (pinHeightMapContentPixels[i] > 150) {
-            pinGraphicsPixels[i + 0] = pinColorIfHigh[0];
-            pinGraphicsPixels[i + 1] = pinColorIfHigh[1];
-            pinGraphicsPixels[i + 2] = pinColorIfHigh[2];
-        } else if (pinHeightMapContentPixels[i] > 0) {
-            pinGraphicsPixels[i + 0] = pinColorIfOn[0];
-            pinGraphicsPixels[i + 1] = pinColorIfOn[1];
-            pinGraphicsPixels[i + 2] = pinColorIfOn[2];
+        // if a cube sits here, do not paint graphics onto it
+        if (cubeFootprintPixels[i]) {
+            // do not paint this pixel
+            pinGraphicsPixels[i + 0] = 0;
+            pinGraphicsPixels[i + 1] = 0;
+            pinGraphicsPixels[i + 2] = 0;
+
+            // furthermore, ensure this pixel is reprojected to the location of the cube surface
+            int cubeHeight = 140;
+            pinHeightMapContentPixels[i + 0] += cubeHeight;
+            pinHeightMapContentPixels[i + 1] += cubeHeight;
+            pinHeightMapContentPixels[i + 2] += cubeHeight;
+
+        // otherwise, calculate this pixel's color
         } else {
-            pinGraphicsPixels[i + 0] = pinColorIfOff[0];
-            pinGraphicsPixels[i + 1] = pinColorIfOff[1];
-            pinGraphicsPixels[i + 2] = pinColorIfOff[2];
+            // since the height map rgba pixels are grayscale, the first channel is sufficient
+            // to distinguish pin height
+            if (pinHeightMapContentPixels[i] > 150) {
+                pinGraphicsPixels[i + 0] = pinColorIfHigh[0];
+                pinGraphicsPixels[i + 1] = pinColorIfHigh[1];
+                pinGraphicsPixels[i + 2] = pinColorIfHigh[2];
+            } else if (pinHeightMapContentPixels[i] > 0) {
+                pinGraphicsPixels[i + 0] = pinColorIfOn[0];
+                pinGraphicsPixels[i + 1] = pinColorIfOn[1];
+                pinGraphicsPixels[i + 2] = pinColorIfOn[2];
+            } else {
+                pinGraphicsPixels[i + 0] = pinColorIfOff[0];
+                pinGraphicsPixels[i + 1] = pinColorIfOff[1];
+                pinGraphicsPixels[i + 2] = pinColorIfOff[2];
+            }
         }
     }
 

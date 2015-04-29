@@ -41,6 +41,8 @@ public:
 private:
     KinectTracker *kinectTracker;
     ofFbo pinHeightMapImage;                  // FBO where we render height map
+    ofFbo cubeFootprintsFbo;                  // FBO describing space covered by cubes
+    ofPixels cubeFootprintPixels;             // pixels object of cube locations, to avoid painting on cubes
     ofPixels pinHeightMapContentPixels;       // pixels object for computing on pin height map content
     ofPixels pinGraphicsPixels;               // pixels object where we render graphics
     ofPixels reprojectedPinGraphicsPixels;    // pixels object whose graphics account for the underlying pin heights
