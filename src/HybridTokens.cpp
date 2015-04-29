@@ -56,11 +56,6 @@ void HybridTokens::update(float dt) {
     // store height map content for graphics computations
     pinHeightMapImage.readToPixels(pinHeightMapContentPixels);
 
-    // lift touched cubes slightly off the surface for a smooth dragging experience
-    pinHeightMapImage.begin();
-    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
-    pinHeightMapImage.end();
-
     // record cube footprints in a pixels object for graphics computations
     cubeFootprintsFbo.begin();
     ofBackground(0);
@@ -257,8 +252,11 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     ofSetColor(255);
     ofImage(swordsOutput).draw(0,0);
 
-    // but don't draw anything under the cubes
+    // but don't draw swords under the cubes
     setCubeHeights(0, lengthScale, 1.5);
+
+    // lift touched cubes slightly off the surface for a smooth dragging experience
+    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
@@ -318,8 +316,11 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
     ofVertices(vector<ofPoint>(boundaryVertices, boundaryVertices + 2 * sampleSize));
     ofEndShape();
 
-    // but don't draw anything under the cubes
+    // but don't draw swords under the cubes
     setCubeHeights(0, lengthScale, 1.5);
+
+    // lift touched cubes slightly off the surface for a smooth dragging experience
+    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
 }
 
 void HybridTokens::keyPressed(int key) {
