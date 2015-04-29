@@ -131,18 +131,14 @@ void HybridTokens::drawSword(float lengthScale, int height) {
     ofRect(left, top, right - left, bottom - top);
 }
 
-void HybridTokens::drawBooleanSwords(float lengthScale) {
-    if (!kinectTracker->redCubes.size()) {
-        return;
-    }
-
+// calculate the intersection and union drawings of the swords for all cubes
+void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale) {
     // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
     ofFbo swordBuffer;
     ofPixels swordPixels;
     swordBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
 
     // pixels objects used to calculate the swords' intersection and union
-    ofPixels swordsIntersection, swordsUnion;
     swordsIntersection.allocate(lengthScale, lengthScale, 1);
     swordsUnion.allocate(lengthScale, lengthScale, 1);
     swordsIntersection.set(255);
@@ -181,6 +177,16 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
             }
         }
     }
+}
+
+void HybridTokens::drawBooleanSwords(float lengthScale) {
+    if (!kinectTracker->redCubes.size()) {
+        return;
+    }
+
+    // calculate intersection and union of swords
+    ofPixels swordsIntersection, swordsUnion;
+    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion, lengthScale);
 
     // calculate appropriate output drawing given the active schema
     ofPixels swordsOutput;
