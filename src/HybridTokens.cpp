@@ -54,9 +54,9 @@ void HybridTokens::update(float dt) {
     // store height map content for graphics computations
     pinHeightMapImage.readToPixels(pinHeightMapContentPixels);
 
-    // lift cubes slightly off the surface for a smooth dragging experience
+    // lift touched cubes slightly off the surface for a smooth dragging experience
     pinHeightMapImage.begin();
-    setCubeHeights(40, RELIEF_SIZE_X);
+    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
     pinHeightMapImage.end();
 
     updateGraphics();
