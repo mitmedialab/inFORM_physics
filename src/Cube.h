@@ -79,6 +79,7 @@ public:
     ofPoint corners[4];     // coordinates relative to center
     ofPoint absCorners[4];  // corners in absolute coordinates
     float minX, maxX, minY, maxY; // cube boundary descriptors (absolute coordinates)
+    int cubeTrackingId = -1; // cube managers may assign cube ids if desired
 
 private:
     CubeUpdatesBuffer candidateUpdates;

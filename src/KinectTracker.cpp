@@ -293,6 +293,8 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, ColorB
             cubes.push_back(*cubes_itr);
         } else {
             Cube cube = Cube(cubeBlobs_itr->second, false);
+            cube.cubeTrackingId = nextCubeId;
+            nextCubeId++;
             cubes.push_back(cube);
         }
     }

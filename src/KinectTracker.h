@@ -116,6 +116,8 @@ private:
     ColorBand yellowColor;
     ColorBand excludePaintedPinsColor;
 
+    int nextCubeId = 0; // assign cube tracking ids from this value
+
 };
 
 #endif /* defined(__Relief2__KinectTracker__) */
