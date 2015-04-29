@@ -95,13 +95,13 @@ void HybridTokens::updateGraphics() {
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier) {
+void HybridTokens::setCubeHeight(Cube &cube, int height, float lengthScale, float edgeLengthMultiplier) {
     ofSetColor(height);
 
     // draw cube footprint
     glPushMatrix();
-    glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
-    glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
+    glTranslatef(cube.center.x * lengthScale, cube.center.y * lengthScale, 0.0f);
+    glRotatef(-cube.theta, 0.0f, 0.0f, 1.0f);
     float scaledEdgeLength = cubeEdgeLength * lengthScale * edgeLengthMultiplier;
     ofRect(-scaledEdgeLength / 2, -scaledEdgeLength / 2, scaledEdgeLength, scaledEdgeLength);
     glPopMatrix();
@@ -112,7 +112,7 @@ void HybridTokens::setCubeHeights(int height, float lengthScale, float edgeLengt
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
         if (touchCondition == UNDEFINED || (touchCondition == TOUCHED && cube->isTouched) ||
                 (touchCondition == NOT_TOUCHED && !cube->isTouched)) {
-            setCubeHeight(&(*cube), height, lengthScale, edgeLengthMultiplier);
+            setCubeHeight(*cube, height, lengthScale, edgeLengthMultiplier);
         }
     }
 }

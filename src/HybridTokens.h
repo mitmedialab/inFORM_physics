@@ -46,7 +46,7 @@ private:
     ofPixels reprojectedPinGraphicsPixels;    // pixels object whose graphics account for the underlying pin heights
 
     void updateGraphics();
-    void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
+    void setCubeHeight(Cube &cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
     void setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
     void drawSword(float lengthScale, int height=140);
     void drawSwordForCube(Cube &cube, float lengthScale, int height=140);
