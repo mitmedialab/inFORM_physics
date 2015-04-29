@@ -15,7 +15,7 @@
 #include "ofFbo.h"
 
 
-enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS};
+enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS, PHYSICS_SWORDS};
 enum BooleanSwordsSchema {SUM, XOR, UNION, INTERSECTION};
 enum TouchCondition {TOUCHED, NOT_TOUCHED, UNDEFINED};
 
@@ -55,6 +55,7 @@ private:
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale);
     void drawBooleanSwords(float lengthScale);
     void drawFlexibleSwords(float lengthScale, int height=140);
+    void drawPhysicsSwords(float lengthScale);
 
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red

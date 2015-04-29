@@ -251,17 +251,18 @@ void ReliefApplication::draw(){
         ofDrawBitmapString("Application:", 1, 350);
         ofDrawBitmapString(" 'b' : boolean swords", 1, 380);
         ofDrawBitmapString(" 'n' : flexible swords", 1, 400);
+        ofDrawBitmapString(" 'm' : physics swords", 1, 420);
         
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
-            ofDrawBitmapString("Sub-Application:", 1, 450);
-            ofDrawBitmapString(" 'a' : union", 1, 480);
-            ofDrawBitmapString(" 's' : intersect", 1, 500);
-            ofDrawBitmapString(" 'd' : sum", 1, 520);
-            ofDrawBitmapString(" 'f' : xor", 1, 540);
+            ofDrawBitmapString("Sub-Application:", 1, 470);
+            ofDrawBitmapString(" 'a' : union", 1, 500);
+            ofDrawBitmapString(" 's' : intersect", 1, 520);
+            ofDrawBitmapString(" 'd' : sum", 1, 540);
+            ofDrawBitmapString(" 'f' : xor", 1, 560);
         } else if (myHybridTokens->mode == FLEXIBLE_SWORDS) {
-            ofDrawBitmapString("Sub-Application:", 1, 450);
-            ofDrawBitmapString(" '-' : decrease extension", 1, 480);
-            ofDrawBitmapString(" '+' : increase extension", 1, 500);
+            ofDrawBitmapString("Sub-Application:", 1, 470);
+            ofDrawBitmapString(" '-' : decrease extension", 1, 500);
+            ofDrawBitmapString(" '+' : increase extension", 1, 520);
         }
     }
 
@@ -301,6 +302,10 @@ void ReliefApplication::keyPressed(int key){
 
     if(key == 'n') {
         myHybridTokens->setMode(FLEXIBLE_SWORDS);
+    }
+
+    if(key == 'm') {
+        myHybridTokens->setMode(PHYSICS_SWORDS);
     }
 
     if(key == ' ') {

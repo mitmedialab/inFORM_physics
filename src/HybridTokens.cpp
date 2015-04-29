@@ -50,7 +50,11 @@ void HybridTokens::update(float dt) {
 
     } else if (mode == FLEXIBLE_SWORDS) {
         drawFlexibleSwords(RELIEF_SIZE_X);
+
+    } else if (mode == PHYSICS_SWORDS) {
+        drawPhysicsSwords(RELIEF_SIZE_X);
     }
+
     pinHeightMapImage.end();
 
     // store height map content for graphics computations
@@ -321,6 +325,101 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
 
     // lift touched cubes slightly off the surface for a smooth dragging experience
     setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
+}
+
+// for now, this function assumes a maximum of two cubes to deal with
+void HybridTokens::drawPhysicsSwords(float lengthScale) {
+    if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
+        return;
+    }
+
+    // if there's just one cube, draw a standard sword
+    if (kinectTracker->redCubes.size() == 1) {
+        drawBooleanSwords(lengthScale);
+        return;
+    }
+
+    // calculate intersection and union of swords
+    ofPixels swordsIntersection, swordsUnion;
+    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion, lengthScale);
+
+    // determine whether the swords intersect
+    bool swordsIntersect = false;
+    for (int i = 0; i < swordsIntersection.size(); i++) {
+        if (swordsIntersection[i]) {
+            swordsIntersect = true;
+            break;
+        }
+    }
+
+    // if the swords don't intersect, simply draw them to screen
+    if (!swordsIntersect) {
+        // draw the swords
+        ofSetColor(255);
+        ofImage(swordsUnion).draw(0,0);
+
+        // but draw nothing under or near the cubes except touch-sensitive risers
+        setCubeHeights(0, lengthScale, 1.5);
+        setCubeHeights(40, lengthScale, 1.0, TOUCHED);
+
+    // else, draw the right-side sword on top of the other
+    } else {
+        // determine which cube goes on top
+        Cube *bottomCube, *topCube;
+        if (kinectTracker->redCubes[0].center.x < kinectTracker->redCubes[1].center.x) {
+            bottomCube = &kinectTracker->redCubes[0];
+            topCube = &kinectTracker->redCubes[1];
+        } else {
+            bottomCube = &kinectTracker->redCubes[1];
+            topCube = &kinectTracker->redCubes[0];
+        }
+
+        // allocate a drawing repository
+        ofFbo drawBuffer;
+        drawBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
+
+        // draw swords
+        drawBuffer.begin();
+        ofBackground(0);
+        drawSwordForCube(*bottomCube, lengthScale);
+        drawSwordForCube(*topCube, lengthScale, 255);
+        drawBuffer.end();
+
+        // extract sword data as grayscale pixels
+        ofPixels swordPixels;
+        drawBuffer.readToPixels(swordPixels);
+        swordPixels.setNumChannels(1);
+
+        // draw cube footprints as depressions into a white background.
+        // footprints include clearings and touch-sensitive risers
+        drawBuffer.begin();
+        ofBackground(255);
+        setCubeHeight(*topCube, 140, lengthScale, 1.5);
+        if (topCube->isTouched) {
+            setCubeHeight(*topCube, 160, lengthScale);
+        }
+        setCubeHeight(*bottomCube, 0, lengthScale, 1.5);
+        if (bottomCube->isTouched) {
+            setCubeHeight(*bottomCube, 40, lengthScale);
+        }
+        drawBuffer.end();
+
+        // extract cube footprint data as grayscale pixels
+        ofPixels cubeFootprintPixels;
+        drawBuffer.readToPixels(cubeFootprintPixels);
+        cubeFootprintPixels.setNumChannels(1);
+
+        // cap sword pixel heights at footprint pixel depressions
+        for (int i = 0; i < swordPixels.size(); i++) {
+            if (swordPixels[i] > cubeFootprintPixels[i]) {
+                swordPixels[i] = cubeFootprintPixels[i];
+            }
+        }
+        
+        // draw the swords
+        ofSetColor(255);
+        ofImage(swordPixels).draw(0,0);
+    }
 }
 
 void HybridTokens::keyPressed(int key) {
