@@ -49,6 +49,7 @@ private:
     void setCubeHeight(Cube *cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
     void setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
     void drawSword(float lengthScale, int height=140);
+    void drawSwordForCube(Cube &cube, float lengthScale, int height=140);
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale);
     void drawBooleanSwords(float lengthScale);
     void drawFlexibleSwords(float lengthScale, int height=140);

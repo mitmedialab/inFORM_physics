@@ -131,6 +131,20 @@ void HybridTokens::drawSword(float lengthScale, int height) {
     ofRect(left, top, right - left, bottom - top);
 }
 
+// height value default is 140, the height of our cubes
+void HybridTokens::drawSwordForCube(Cube &cube, float lengthScale, int height) {
+    // transition to the cube's reference frame
+    glPushMatrix();
+    glTranslatef(cube.center.x * lengthScale, cube.center.y * lengthScale, 0.0f);
+    glRotatef(-cube.theta, 0.0f, 0.0f, 1.0f);
+
+    // draw sword
+    drawSword(lengthScale, height);
+
+    // reset coordinate system
+    glPopMatrix();
+}
+
 // calculate the intersection and union drawings of the swords for all cubes
 void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale) {
     // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
@@ -146,20 +160,10 @@ void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, o
 
     // draw each cube's sword and update the swords' intersection and union
     for (int i = 0; i < kinectTracker->redCubes.size(); i++) {
-        Cube *cube = &kinectTracker->redCubes[i];
-
-        // open sword buffer and transition to the cube's reference frame
+        // draw sword into buffer
         swordBuffer.begin();
         ofBackground(0);
-        glPushMatrix();
-        glTranslatef(cube->center.x * lengthScale, cube->center.y * lengthScale, 0.0f);
-        glRotatef(-cube->theta, 0.0f, 0.0f, 1.0f);
-
-        // draw sword
-        drawSword(lengthScale);
-
-        // reset coordinate system and close buffer target
-        glPopMatrix();
+        drawSwordForCube(kinectTracker->redCubes[i], lengthScale);
         swordBuffer.end();
 
         // extract sword data as grayscale pixels
