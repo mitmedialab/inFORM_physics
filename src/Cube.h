@@ -25,6 +25,8 @@
 //
 // all cube distances are in fractions of a containing unit-square; the image
 // frame the cube comes from is interpreted as having units width = height = 1
+//
+// Note that this coordinate system is left-handed! Be careful when rotating.
 
 const float pinSize = 1.0 / RELIEF_SIZE_X;
 
@@ -62,6 +64,8 @@ public:
     void setBlobAndMarker(Blob *_blob, ofPoint _marker, bool _update=true);
     void clearMarker(bool _update=true);
     Blob *getCandidateBlob();
+    void transformPointToCubeReferenceFrame(ofPoint *src, ofPoint *dst, float lengthScale=1.0);
+    void transformPointFromCubeReferenceFrame(ofPoint *src, ofPoint *dst, float lengthScale=1.0);
 
     int blobId;
     double timeOfInitialization; // the time at which this object was created

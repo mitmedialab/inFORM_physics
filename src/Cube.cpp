@@ -17,6 +17,8 @@
 //
 // all cube distances are in fractions of a containing unit-square; the image
 // frame the cube comes from is interpreted as having units width = height = 1
+//
+// Note that this coordinate system is left-handed! Be careful when rotating.
 
 
 // Constructors
@@ -231,4 +233,21 @@ void Cube::update() {
 
 Blob * Cube::getCandidateBlob() {
     return candidateUpdates.blob;
+}
+
+// transform a point's coordinates from absolute coordinates into this cube's reference frame.
+// if lengthScale is passed in, it is used to define the scale of the coordinate system.
+void Cube::transformPointToCubeReferenceFrame(ofPoint *src, ofPoint *dst, float lengthScale) {
+    dst->set(*src - (center * lengthScale));
+    // rotation is by theta, not -theta, because +y is down
+    dst->rotate(theta, ofPoint(0, 0, 1));
+}
+
+// transform a point's coordinates from this cube's reference frame into absolute coordinates.
+// if lengthScale is passed in, it is used to define the scale of the coordinate system.
+void Cube::transformPointFromCubeReferenceFrame(ofPoint *src, ofPoint *dst, float lengthScale) {
+    dst->set(*src);
+    // rotation is by -theta, not theta, because +y is down
+    dst->rotate(-theta, ofPoint(0, 0, 1));
+    *dst += (center * lengthScale);
 }
