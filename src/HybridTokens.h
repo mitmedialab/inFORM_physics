@@ -12,6 +12,7 @@
 #include "RenderableObject.h"
 #include "KinectTracker.h"
 #include "CameraCalibration.h"
+#include "DrawingUtils.h"
 #include "ofFbo.h"
 
 
@@ -50,8 +51,8 @@ private:
     void updateGraphics();
     void setCubeHeight(Cube &cube, int height, float edgeLengthMultiplier = 1.0);
     void setCubeHeights(int height, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
-    void drawSword(int height=140);
-    void drawSwordForCube(Cube &cube, int height=140);
+    void drawSword(int height=140, int farHeight=-1);
+    void drawSwordForCube(Cube &cube, int height=140, int farHeight=-1);
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=140);

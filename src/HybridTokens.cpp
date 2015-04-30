@@ -143,28 +143,37 @@ void HybridTokens::setCubeHeights(int height, float edgeLengthMultiplier, TouchC
 }
 
 // height value default is 140, the height of our cubes
-void HybridTokens::drawSword(int height) {
-    // sword attributes: sword is the cube footprint extended three extra cube lengths up
-    ofSetColor(height);
+// passing a non-negative value to farHeight linearly interpolates the sword height
+void HybridTokens::drawSword(int height, int farHeight) {
+    // sword corners: a sword is the cube's footprint extended up by three extra cube lengths
     int left, right, top, bottom;
     left = -0.5 * cubeEdgeLength * lengthScale;
     right = 0.5 * cubeEdgeLength * lengthScale;
     top = (-0.5 - 3) * cubeEdgeLength * lengthScale;
     bottom = 0.5 * cubeEdgeLength * lengthScale;
 
-    // draw sword
-    ofRect(left, top, right - left, bottom - top);
+    // if a second height was given, draw a gradient sword
+    if (farHeight >= 0) {
+        Rectangle swordRectangle(left, top, right - left, bottom - top);
+        verticalGradientRect(swordRectangle, farHeight, height);
+
+    // else draw a simple sword
+    } else {
+        ofSetColor(height);
+        ofRect(left, top, right - left, bottom - top);
+    }
 }
 
 // height value default is 140, the height of our cubes
-void HybridTokens::drawSwordForCube(Cube &cube, int height) {
+// passing a non-negative value to farHeight linearly interpolates the sword height
+void HybridTokens::drawSwordForCube(Cube &cube, int height, int farHeight) {
     // transition to the cube's reference frame
     glPushMatrix();
     glTranslatef(cube.center.x * lengthScale, cube.center.y * lengthScale, 0.0f);
     glRotatef(-cube.theta, 0.0f, 0.0f, 1.0f);
 
     // draw sword
-    drawSword(height);
+    drawSword(height, farHeight);
 
     // reset coordinate system
     glPopMatrix();
@@ -381,8 +390,18 @@ void HybridTokens::drawPhysicsSwords() {
         // draw swords
         drawBuffer.begin();
         ofBackground(0);
+
+        // bottom cube gets a normal sword
         drawSwordForCube(*bottomCube);
-        drawSwordForCube(*topCube, 255);
+
+        // when top cube is touched, raise it fully
+        if (topCube->isTouched) {
+            drawSwordForCube(*topCube, 255);
+            
+        // otherwise, just raise its far end
+        } else {
+            drawSwordForCube(*topCube, 140, 255);
+        }
         drawBuffer.end();
 
         // extract sword data as grayscale pixels
@@ -394,10 +413,18 @@ void HybridTokens::drawPhysicsSwords() {
         // footprints include clearings and touch-sensitive risers
         drawBuffer.begin();
         ofBackground(255);
-        setCubeHeight(*topCube, 140, 1.5);
+
+        // when top cube is touched, raise it up high
         if (topCube->isTouched) {
+            setCubeHeight(*topCube, 140, 1.5);
             setCubeHeight(*topCube, 160);
+
+        // otherwise, just clear its environment
+        } else {
+            setCubeHeight(*topCube, 0, 1.5);
         }
+
+        // give bottom cube a normal riser
         setCubeHeight(*bottomCube, 0, 1.5);
         if (bottomCube->isTouched) {
             setCubeHeight(*bottomCube, 40);
