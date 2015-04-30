@@ -336,6 +336,10 @@ void HybridTokens::drawFlexibleSwords(int height) {
     setCubeHeights(40, 1.0, TOUCHED);
 }
 
+TiltDirection HybridTokens::getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube) {
+    return NO_TILT;
+}
+
 // for now, this function assumes a maximum of two cubes to deal with
 void HybridTokens::drawPhysicsSwords() {
     if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
@@ -383,6 +387,10 @@ void HybridTokens::drawPhysicsSwords() {
             topCube = &kinectTracker->redCubes[0];
         }
 
+        // determine whether the top cube should be falling off, and if so, which way
+        TiltDirection topCubeTiltDirection = topCube->isTouched ? NO_TILT :
+                getPhysicsSwordTiltDirection(*topCube, *bottomCube);
+
         // allocate a drawing repository
         ofFbo drawBuffer;
         drawBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
@@ -394,13 +402,13 @@ void HybridTokens::drawPhysicsSwords() {
         // bottom cube gets a normal sword
         drawSwordForCube(*bottomCube);
 
-        // when top cube is touched, raise it fully
-        if (topCube->isTouched) {
-            drawSwordForCube(*topCube, 255);
-            
-        // otherwise, just raise its far end
-        } else {
+        // draw the top cube according to its tilt
+        if (topCubeTiltDirection == TILT_BACKWARD) {
             drawSwordForCube(*topCube, 140, 255);
+        } else if (topCubeTiltDirection == TILT_FORWARD) {
+            drawSwordForCube(*topCube, 255, 140);
+        } else {
+            drawSwordForCube(*topCube, 255);
         }
         drawBuffer.end();
 
@@ -414,8 +422,8 @@ void HybridTokens::drawPhysicsSwords() {
         drawBuffer.begin();
         ofBackground(255);
 
-        // when top cube is touched, raise it up high
-        if (topCube->isTouched) {
+        // when top cube is not tilted back, raise it high
+        if (topCubeTiltDirection != TILT_BACKWARD) {
             setCubeHeight(*topCube, 140, 1.5);
             setCubeHeight(*topCube, 160);
 

@@ -19,6 +19,7 @@
 enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS, PHYSICS_SWORDS};
 enum BooleanSwordsSchema {SUM, XOR, UNION, INTERSECTION};
 enum TouchCondition {TOUCHED, NOT_TOUCHED, UNDEFINED};
+enum TiltDirection {NO_TILT, TILT_FORWARD, TILT_BACKWARD};
 
 class HybridTokens : public RenderableObject {
 public:
@@ -57,6 +58,7 @@ private:
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=140);
     void drawPhysicsSwords();
+    TiltDirection getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube);
 
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red
