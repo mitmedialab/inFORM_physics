@@ -19,6 +19,7 @@ class Rectangle {
 public:
     Rectangle(float left=0, float top=0, float width=0, float height=0);
     bool containsPoint(ofPoint &point);
+    void findNearestPointOnPerimeter(ofPoint &src, ofPoint &dst);
 
     float left;
     float top;
