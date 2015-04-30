@@ -23,6 +23,15 @@ HybridTokens::HybridTokens(KinectTracker *tracker) {
 
     // flexible swords extension parameter
     flexibleExtensionSize = 0.8;
+
+    // calculate the rectangle corresponding to a cube sword in the cube's reference frame.
+    // a sword is a cube footprint extended up by three extra cube lengths
+    int left, right, top, bottom;
+    left = -0.5 * cubeEdgeLength * lengthScale;
+    right = 0.5 * cubeEdgeLength * lengthScale;
+    top = (-0.5 - 3) * cubeEdgeLength * lengthScale;
+    bottom = 0.5 * cubeEdgeLength * lengthScale;
+    swordRectangle = Rectangle(left, top, right - left, bottom - top);
 }
 
 void HybridTokens::setMode(HybridTokensMode mode) {
@@ -145,22 +154,14 @@ void HybridTokens::setCubeHeights(int height, float edgeLengthMultiplier, TouchC
 // height value default is 140, the height of our cubes
 // passing a non-negative value to farHeight linearly interpolates the sword height
 void HybridTokens::drawSword(int height, int farHeight) {
-    // sword corners: a sword is the cube's footprint extended up by three extra cube lengths
-    int left, right, top, bottom;
-    left = -0.5 * cubeEdgeLength * lengthScale;
-    right = 0.5 * cubeEdgeLength * lengthScale;
-    top = (-0.5 - 3) * cubeEdgeLength * lengthScale;
-    bottom = 0.5 * cubeEdgeLength * lengthScale;
-
     // if a second height was given, draw a gradient sword
     if (farHeight >= 0) {
-        Rectangle swordRectangle(left, top, right - left, bottom - top);
         verticalGradientRect(swordRectangle, farHeight, height);
 
     // else draw a simple sword
     } else {
         ofSetColor(height);
-        ofRect(left, top, right - left, bottom - top);
+        ofRect(swordRectangle.left, swordRectangle.top, swordRectangle.width, swordRectangle.height);
     }
 }
 

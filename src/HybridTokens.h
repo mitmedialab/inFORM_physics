@@ -60,6 +60,8 @@ private:
     void drawPhysicsSwords();
     TiltDirection getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube);
 
+    Rectangle swordRectangle;
+
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red
     char pinColorIfOff[3] = {0, 0, 0}; // black
