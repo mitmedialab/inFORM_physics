@@ -260,7 +260,7 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     setCubeHeights(0, lengthScale, 1.5);
 
     // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
+    setCubeHeights(40, lengthScale, 1.0, TOUCHED);
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
@@ -324,7 +324,7 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
     setCubeHeights(0, lengthScale, 1.5);
 
     // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, RELIEF_SIZE_X, 1.0, TOUCHED);
+    setCubeHeights(40, lengthScale, 1.0, TOUCHED);
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
