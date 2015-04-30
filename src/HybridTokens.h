@@ -48,14 +48,14 @@ private:
     ofPixels reprojectedPinGraphicsPixels;    // pixels object whose graphics account for the underlying pin heights
 
     void updateGraphics();
-    void setCubeHeight(Cube &cube, int height, float lengthScale, float edgeLengthMultiplier = 1.0);
-    void setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
-    void drawSword(float lengthScale, int height=140);
-    void drawSwordForCube(Cube &cube, float lengthScale, int height=140);
-    void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale);
-    void drawBooleanSwords(float lengthScale);
-    void drawFlexibleSwords(float lengthScale, int height=140);
-    void drawPhysicsSwords(float lengthScale);
+    void setCubeHeight(Cube &cube, int height, float edgeLengthMultiplier = 1.0);
+    void setCubeHeights(int height, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
+    void drawSword(int height=140);
+    void drawSwordForCube(Cube &cube, int height=140);
+    void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
+    void drawBooleanSwords();
+    void drawFlexibleSwords(int height=140);
+    void drawPhysicsSwords();
 
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red
@@ -63,6 +63,7 @@ private:
 
     const float pinSize = 1.0 / RELIEF_SIZE_X;
     const float cubeEdgeLength = 4 * pinSize;
+    const float lengthScale = RELIEF_SIZE_X; // scalar to convert normalized lengths to image coordinate lengths
 
     float flexibleExtensionSize;
 

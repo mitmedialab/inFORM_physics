@@ -10,11 +10,11 @@
 
 HybridTokens::HybridTokens(KinectTracker *tracker) {
     kinectTracker = tracker;
-    pinHeightMapImage.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
-    cubeFootprintsFbo.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
-    cubeFootprintPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
-    pinHeightMapContentPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
-    pinGraphicsPixels.allocate(RELIEF_SIZE_X, RELIEF_SIZE_Y, GL_RGBA);
+    pinHeightMapImage.allocate(lengthScale, lengthScale, GL_RGBA);
+    cubeFootprintsFbo.allocate(lengthScale, lengthScale, GL_RGBA);
+    cubeFootprintPixels.allocate(lengthScale, lengthScale, GL_RGBA);
+    pinHeightMapContentPixels.allocate(lengthScale, lengthScale, GL_RGBA);
+    pinGraphicsPixels.allocate(lengthScale, lengthScale, GL_RGBA);
 
     mode = BOOLEAN_SWORDS;
 
@@ -46,13 +46,13 @@ void HybridTokens::update(float dt) {
     ofSetColor(255);
 
     if (mode == BOOLEAN_SWORDS) {
-        drawBooleanSwords(RELIEF_SIZE_X);
+        drawBooleanSwords();
 
     } else if (mode == FLEXIBLE_SWORDS) {
-        drawFlexibleSwords(RELIEF_SIZE_X);
+        drawFlexibleSwords();
 
     } else if (mode == PHYSICS_SWORDS) {
-        drawPhysicsSwords(RELIEF_SIZE_X);
+        drawPhysicsSwords();
     }
 
     pinHeightMapImage.end();
@@ -64,7 +64,7 @@ void HybridTokens::update(float dt) {
     cubeFootprintsFbo.begin();
     ofBackground(0);
     ofSetColor(255);
-    setCubeHeights(140, RELIEF_SIZE_X);
+    setCubeHeights(140);
     cubeFootprintsFbo.end();
     cubeFootprintsFbo.readToPixels(cubeFootprintPixels);
 
@@ -120,7 +120,7 @@ void HybridTokens::updateGraphics() {
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setCubeHeight(Cube &cube, int height, float lengthScale, float edgeLengthMultiplier) {
+void HybridTokens::setCubeHeight(Cube &cube, int height, float edgeLengthMultiplier) {
     ofSetColor(height);
 
     // draw cube footprint
@@ -133,17 +133,17 @@ void HybridTokens::setCubeHeight(Cube &cube, int height, float lengthScale, floa
 }
 
 // lift cubes slightly above neighboring pins to facilitate smooth sliding
-void HybridTokens::setCubeHeights(int height, float lengthScale, float edgeLengthMultiplier, TouchCondition touchCondition) {
+void HybridTokens::setCubeHeights(int height, float edgeLengthMultiplier, TouchCondition touchCondition) {
     for (vector<Cube>::iterator cube = kinectTracker->redCubes.begin(); cube < kinectTracker->redCubes.end(); cube++) {
         if (touchCondition == UNDEFINED || (touchCondition == TOUCHED && cube->isTouched) ||
                 (touchCondition == NOT_TOUCHED && !cube->isTouched)) {
-            setCubeHeight(*cube, height, lengthScale, edgeLengthMultiplier);
+            setCubeHeight(*cube, height, edgeLengthMultiplier);
         }
     }
 }
 
 // height value default is 140, the height of our cubes
-void HybridTokens::drawSword(float lengthScale, int height) {
+void HybridTokens::drawSword(int height) {
     // sword attributes: sword is the cube footprint extended three extra cube lengths up
     ofSetColor(height);
     int left, right, top, bottom;
@@ -157,21 +157,21 @@ void HybridTokens::drawSword(float lengthScale, int height) {
 }
 
 // height value default is 140, the height of our cubes
-void HybridTokens::drawSwordForCube(Cube &cube, float lengthScale, int height) {
+void HybridTokens::drawSwordForCube(Cube &cube, int height) {
     // transition to the cube's reference frame
     glPushMatrix();
     glTranslatef(cube.center.x * lengthScale, cube.center.y * lengthScale, 0.0f);
     glRotatef(-cube.theta, 0.0f, 0.0f, 1.0f);
 
     // draw sword
-    drawSword(lengthScale, height);
+    drawSword(height);
 
     // reset coordinate system
     glPopMatrix();
 }
 
 // calculate the intersection and union drawings of the swords for all cubes
-void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion, float lengthScale) {
+void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion) {
     // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
     ofFbo swordBuffer;
     ofPixels swordPixels;
@@ -188,7 +188,7 @@ void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, o
         // draw sword into buffer
         swordBuffer.begin();
         ofBackground(0);
-        drawSwordForCube(kinectTracker->redCubes[i], lengthScale);
+        drawSwordForCube(kinectTracker->redCubes[i]);
         swordBuffer.end();
 
         // extract sword data as grayscale pixels
@@ -208,14 +208,14 @@ void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, o
     }
 }
 
-void HybridTokens::drawBooleanSwords(float lengthScale) {
+void HybridTokens::drawBooleanSwords() {
     if (!kinectTracker->redCubes.size()) {
         return;
     }
 
     // calculate intersection and union of swords
     ofPixels swordsIntersection, swordsUnion;
-    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion, lengthScale);
+    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion);
 
     // calculate appropriate output drawing given the active schema
     ofPixels swordsOutput;
@@ -257,21 +257,21 @@ void HybridTokens::drawBooleanSwords(float lengthScale) {
     ofImage(swordsOutput).draw(0,0);
 
     // but don't draw swords under the cubes
-    setCubeHeights(0, lengthScale, 1.5);
+    setCubeHeights(0, 1.5);
 
     // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, lengthScale, 1.0, TOUCHED);
+    setCubeHeights(40, 1.0, TOUCHED);
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
-void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
+void HybridTokens::drawFlexibleSwords(int height) {
     if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
         return;
     }
 
     // if there's just one cube, draw a standard sword
     if (kinectTracker->redCubes.size() == 1) {
-        drawBooleanSwords(lengthScale);
+        drawBooleanSwords();
         return;
     }
 
@@ -321,27 +321,27 @@ void HybridTokens::drawFlexibleSwords(float lengthScale, int height) {
     ofEndShape();
 
     // but don't draw swords under the cubes
-    setCubeHeights(0, lengthScale, 1.5);
+    setCubeHeights(0, 1.5);
 
     // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, lengthScale, 1.0, TOUCHED);
+    setCubeHeights(40, 1.0, TOUCHED);
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
-void HybridTokens::drawPhysicsSwords(float lengthScale) {
+void HybridTokens::drawPhysicsSwords() {
     if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
         return;
     }
 
     // if there's just one cube, draw a standard sword
     if (kinectTracker->redCubes.size() == 1) {
-        drawBooleanSwords(lengthScale);
+        drawBooleanSwords();
         return;
     }
 
     // calculate intersection and union of swords
     ofPixels swordsIntersection, swordsUnion;
-    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion, lengthScale);
+    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion);
 
     // determine whether the swords intersect
     bool swordsIntersect = false;
@@ -359,8 +359,8 @@ void HybridTokens::drawPhysicsSwords(float lengthScale) {
         ofImage(swordsUnion).draw(0,0);
 
         // but draw nothing under or near the cubes except touch-sensitive risers
-        setCubeHeights(0, lengthScale, 1.5);
-        setCubeHeights(40, lengthScale, 1.0, TOUCHED);
+        setCubeHeights(0, 1.5);
+        setCubeHeights(40, 1.0, TOUCHED);
 
     // else, draw the right-side sword on top of the other
     } else {
@@ -381,8 +381,8 @@ void HybridTokens::drawPhysicsSwords(float lengthScale) {
         // draw swords
         drawBuffer.begin();
         ofBackground(0);
-        drawSwordForCube(*bottomCube, lengthScale);
-        drawSwordForCube(*topCube, lengthScale, 255);
+        drawSwordForCube(*bottomCube);
+        drawSwordForCube(*topCube, 255);
         drawBuffer.end();
 
         // extract sword data as grayscale pixels
@@ -394,13 +394,13 @@ void HybridTokens::drawPhysicsSwords(float lengthScale) {
         // footprints include clearings and touch-sensitive risers
         drawBuffer.begin();
         ofBackground(255);
-        setCubeHeight(*topCube, 140, lengthScale, 1.5);
+        setCubeHeight(*topCube, 140, 1.5);
         if (topCube->isTouched) {
-            setCubeHeight(*topCube, 160, lengthScale);
+            setCubeHeight(*topCube, 160);
         }
-        setCubeHeight(*bottomCube, 0, lengthScale, 1.5);
+        setCubeHeight(*bottomCube, 0, 1.5);
         if (bottomCube->isTouched) {
-            setCubeHeight(*bottomCube, 40, lengthScale);
+            setCubeHeight(*bottomCube, 40);
         }
         drawBuffer.end();
 
