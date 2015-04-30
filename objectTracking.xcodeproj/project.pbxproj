@@ -40,6 +40,7 @@
 		651E0EB21AC58ED500669265 /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EB11AC58ED400669265 /* Cube.cpp */; };
 		65DDC6611AEA8D0500AD8D80 /* ColorBand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */; };
 		65DDC66C1AEFE23900AD8D80 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC66B1AEFE23900AD8D80 /* Utils.cpp */; };
+		65E1E2D61AF26B5D005F6293 /* DrawingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E1E2D51AF26B5D005F6293 /* DrawingUtils.cpp */; };
 		65E6EA641AA4D7F500520937 /* R3DModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA221AA4D7F500520937 /* R3DModel.cpp */; };
 		65E6EA651AA4D7F500520937 /* RBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA241AA4D7F500520937 /* RBitmap.cpp */; };
 		65E6EA661AA4D7F500520937 /* RButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E6EA261AA4D7F500520937 /* RButton.cpp */; };
@@ -254,6 +255,8 @@
 		65DDC6621AEA8D1400AD8D80 /* ColorBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorBand.h; sourceTree = "<group>"; };
 		65DDC66B1AEFE23900AD8D80 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		65DDC66D1AEFE24200AD8D80 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		65E1E2D51AF26B5D005F6293 /* DrawingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingUtils.cpp; sourceTree = "<group>"; };
+		65E1E2D71AF26B69005F6293 /* DrawingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingUtils.h; sourceTree = "<group>"; };
 		65E6EA221AA4D7F500520937 /* R3DModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = R3DModel.cpp; sourceTree = "<group>"; };
 		65E6EA231AA4D7F500520937 /* R3DModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = R3DModel.h; sourceTree = "<group>"; };
 		65E6EA241AA4D7F500520937 /* RBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RBitmap.cpp; sourceTree = "<group>"; };
@@ -857,6 +860,8 @@
 				65DDC66D1AEFE24200AD8D80 /* Utils.h */,
 				65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */,
 				65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */,
+				65E1E2D51AF26B5D005F6293 /* DrawingUtils.cpp */,
+				65E1E2D71AF26B69005F6293 /* DrawingUtils.h */,
 				651E0EB11AC58ED400669265 /* Cube.cpp */,
 				651E0EA61AC35F0B00669265 /* Cube.h */,
 				65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */,
@@ -1602,6 +1607,7 @@
 				E2564CF7DDB3713772BB682E /* ofxUDPManager.cpp in Sources */,
 				250A95BA26587BE85DB0A353 /* ofxCvColorImage.cpp in Sources */,
 				65E6ECB71AA4EBD300520937 /* KinectTracker.cpp in Sources */,
+				65E1E2D61AF26B5D005F6293 /* DrawingUtils.cpp in Sources */,
 				1D5F3298C2FA073628012944 /* ofxCvContourFinder.cpp in Sources */,
 				169D3C72FDE6C5590A1616F5 /* ofxCvFloatImage.cpp in Sources */,
 				65E6EC9B1AA4E85300520937 /* ContourFinder.cpp in Sources */,
