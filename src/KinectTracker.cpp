@@ -260,7 +260,7 @@ void KinectTracker::detectCorners(ofxCvGrayscaleImage &imageIn, vector<ofPoint>&
 void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, ColorBand cubePlusHandColor, vector<Cube>& cubes) {
     // get cube blobs
     vector<Blob> cubeBlobs;
-    findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true);
+    findBlobs(cubeColor, pinArea * 8, pinArea * 26, cubeBlobs, true, true);
 
     // create a map of the new cube blobs with blobs keyed by id
     map<int, Blob *> newCubeBlobs;
@@ -378,7 +378,7 @@ void KinectTracker::findCubes(ColorBand cubeColor, ColorBand markerColor, ColorB
     }
 }
 
-void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue){
+void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue, bool trackBlobs){
     hsvImage.setFromPixels(dThresholdedColor.getPixelsRef());
     //hsvImage.warpIntoMe(thresholdedColor, src, dst); // use to better align input image
     hsvImage.convertRgbToHsv();
@@ -397,8 +397,11 @@ void KinectTracker::findBlobs(ColorBand blobColor, float minArea, float maxArea,
 
     blobColor.hsvThreshold(hue, sat, bri, colorThreshold);
 
+    // find blobs, and optionally track them across updates
     ball_contourFinder.findContours(colorThreshold, minArea, maxArea, 20, 20.0, false);
-    ball_tracker.track(&ball_contourFinder);
+    if (trackBlobs) {
+        ball_tracker.track(&ball_contourFinder);
+    }
     
     blobs = ball_contourFinder.blobs;
 }

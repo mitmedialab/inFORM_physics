@@ -43,7 +43,7 @@ public:
     void update();
 
     void findCubes(ColorBand cubeColor, ColorBand markerColor, ColorBand cubePlusHandColor, vector<Cube>& cubes);
-    void findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue=false);
+    void findBlobs(ColorBand blobColor, float minArea, float maxArea, vector<Blob>& blobs, bool dilateHue=false, bool trackBlobs=false);
     void findFingers(vector<ofPoint>& points);
     void findFingersAboveSurface(vector<ofPoint>& points);
 
