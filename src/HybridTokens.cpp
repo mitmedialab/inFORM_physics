@@ -338,7 +338,31 @@ void HybridTokens::drawFlexibleSwords(int height) {
 }
 
 TiltDirection HybridTokens::getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube) {
-    return NO_TILT;
+    // get the top sword's center point in the bottom cube's coordinates
+    ofPoint topSwordCenter(swordRectangle.left + 0.5 *  swordRectangle.width, swordRectangle.top + 0.5 * swordRectangle.height);
+    topCube.transformPointFromCubeReferenceFrame(&topSwordCenter, &topSwordCenter, lengthScale);
+    bottomCube.transformPointToCubeReferenceFrame(&topSwordCenter, &topSwordCenter, lengthScale);
+
+    // if the top sword's center overlaps the bottom sword, there is no tilt
+    if (swordRectangle.containsPoint(topSwordCenter)) {
+        return NO_TILT;
+
+    // else, figure out which way the sword tilts
+    } else {
+        // find the point on the bottom sword nearest the top sword center
+        ofPoint nearestPointOnBottomSword;
+        swordRectangle.findNearestPointOnPerimeter(topSwordCenter, nearestPointOnBottomSword);
+        
+        // get the top sword's base point (its bottom-center) in the bottom cube's coordinates
+        ofPoint topSwordBase(swordRectangle.left + 0.5 *  swordRectangle.width, swordRectangle.top + swordRectangle.height);
+        topCube.transformPointFromCubeReferenceFrame(&topSwordBase, &topSwordBase, lengthScale);
+        bottomCube.transformPointToCubeReferenceFrame(&topSwordBase, &topSwordBase, lengthScale);
+
+        // if the top sword's center point forms an obtuse angle with the bottom sword's nearest point
+        // and the top sword's base, the cube is tilted back. otherwise, it is tilted forward
+        float angle = (nearestPointOnBottomSword - topSwordCenter).angle(topSwordBase - topSwordCenter);
+        return angle > 90 ? TILT_BACKWARD : TILT_FORWARD;
+    }
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
