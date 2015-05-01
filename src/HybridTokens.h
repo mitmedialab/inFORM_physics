@@ -75,6 +75,9 @@ private:
 
     bool initializedInUpdate = false; // hack to fix an ofPixels bug. see .cpp for details
 
+    int physicsTopSwordHeightNearCube = 0;
+    int physicsTopSwordHeightFarFromCube = 0;
+
 };
 
 #endif /* defined(__Relief2__HybridTokens__) */

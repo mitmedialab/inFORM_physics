@@ -376,6 +376,16 @@ void HybridTokens::drawPhysicsSwords() {
         return;
     }
 
+    // designate the right-side cube as the top one
+    Cube *bottomCube, *topCube;
+    if (kinectTracker->redCubes[0].center.x < kinectTracker->redCubes[1].center.x) {
+        bottomCube = &kinectTracker->redCubes[0];
+        topCube = &kinectTracker->redCubes[1];
+    } else {
+        bottomCube = &kinectTracker->redCubes[1];
+        topCube = &kinectTracker->redCubes[0];
+    }
+
     // calculate intersection and union of swords
     ofPixels swordsIntersection, swordsUnion;
     getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion);
@@ -389,96 +399,100 @@ void HybridTokens::drawPhysicsSwords() {
         }
     }
 
-    // if the swords don't intersect, simply draw them to screen
+    // determine the target sword height for the top cube (the bottom cube will just lie flat)
+    int targetHeightNearTopCube, targetHeightFarFromTopCube;
+
+    // if the swords don't intersect, the "top" sword should lie on the ground
     if (!swordsIntersect) {
-        // draw the swords
-        ofSetColor(255);
-        ofImage(swordsUnion).draw(0,0);
+        targetHeightNearTopCube = cubeHeight;
+        targetHeightFarFromTopCube = cubeHeight;
 
-        // but draw nothing under or near the cubes except touch-sensitive risers
-        setCubeHeights(0, 1.5);
-        setCubeHeights(40, 1.0, TOUCHED);
-
-    // else, draw the right-side sword on top of the other
+    // else, figure out the top sword's tilt-dependent heights
     } else {
-        // determine which cube goes on top
-        Cube *bottomCube, *topCube;
-        if (kinectTracker->redCubes[0].center.x < kinectTracker->redCubes[1].center.x) {
-            bottomCube = &kinectTracker->redCubes[0];
-            topCube = &kinectTracker->redCubes[1];
-        } else {
-            bottomCube = &kinectTracker->redCubes[1];
-            topCube = &kinectTracker->redCubes[0];
-        }
-
         // determine whether the top cube should be falling off, and if so, which way
         TiltDirection topCubeTiltDirection = topCube->isTouched ? NO_TILT :
                 getPhysicsSwordTiltDirection(*topCube, *bottomCube);
 
-        // allocate a drawing repository
-        ofFbo drawBuffer;
-        drawBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
-
-        // draw swords
-        drawBuffer.begin();
-        ofBackground(0);
-
-        // bottom cube gets a normal sword
-        drawSwordForCube(*bottomCube);
-
-        // draw the top cube according to its tilt
+        // use tilt to determine target sword heights near and far from cube
         if (topCubeTiltDirection == TILT_BACKWARD) {
-            drawSwordForCube(*topCube, cubeHeight, 255);
+            targetHeightNearTopCube = cubeHeight;
+            targetHeightFarFromTopCube = 255;
         } else if (topCubeTiltDirection == TILT_FORWARD) {
-            drawSwordForCube(*topCube, 255, cubeHeight);
+            targetHeightNearTopCube = 255;
+            targetHeightFarFromTopCube = cubeHeight;
         } else {
-            drawSwordForCube(*topCube, 255);
+            targetHeightNearTopCube = 255;
+            targetHeightFarFromTopCube = 255;
         }
-        drawBuffer.end();
-
-        // extract sword data as grayscale pixels
-        ofPixels swordPixels;
-        drawBuffer.readToPixels(swordPixels);
-        swordPixels.setNumChannels(1);
-
-        // draw cube footprints as depressions into a white background.
-        // footprints include clearings and touch-sensitive risers
-        drawBuffer.begin();
-        ofBackground(255);
-
-        // when top cube is not tilted back, raise it high
-        if (topCubeTiltDirection != TILT_BACKWARD) {
-            setCubeHeight(*topCube, cubeHeight, 1.5);
-            setCubeHeight(*topCube, 160);
-
-        // otherwise, just clear its environment
-        } else {
-            setCubeHeight(*topCube, 0, 1.5);
-        }
-
-        // give bottom cube a normal riser
-        setCubeHeight(*bottomCube, 0, 1.5);
-        if (bottomCube->isTouched) {
-            setCubeHeight(*bottomCube, 40);
-        }
-        drawBuffer.end();
-
-        // extract cube footprint data as grayscale pixels
-        ofPixels cubeFootprintPixels;
-        drawBuffer.readToPixels(cubeFootprintPixels);
-        cubeFootprintPixels.setNumChannels(1);
-
-        // cap sword pixel heights at footprint pixel depressions
-        for (int i = 0; i < swordPixels.size(); i++) {
-            if (swordPixels[i] > cubeFootprintPixels[i]) {
-                swordPixels[i] = cubeFootprintPixels[i];
-            }
-        }
-        
-        // draw the swords
-        ofSetColor(255);
-        ofImage(swordPixels).draw(0,0);
     }
+
+    // interpolate top sword heights towards targets
+    int nearHeightAdjustment = targetHeightNearTopCube - physicsTopSwordHeightNearCube;
+    int farHeightAdjustment = targetHeightFarFromTopCube - physicsTopSwordHeightFarFromCube;
+    int maxChangePerFrame = 255 / ofGetFrameRate();
+    nearHeightAdjustment = max(-maxChangePerFrame, min(maxChangePerFrame, nearHeightAdjustment));
+    farHeightAdjustment = max(-maxChangePerFrame, min(maxChangePerFrame, farHeightAdjustment));
+    physicsTopSwordHeightNearCube += nearHeightAdjustment;
+    physicsTopSwordHeightFarFromCube += farHeightAdjustment;
+
+    // allocate a drawing repository
+    ofFbo drawBuffer;
+    drawBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
+    
+    // draw swords to buffer
+    drawBuffer.begin();
+    ofBackground(0);
+    
+    // bottom cube gets a normal sword
+    drawSwordForCube(*bottomCube);
+    
+    // top cube gets a sword with the calculated heights
+    drawSwordForCube(*topCube, physicsTopSwordHeightNearCube, physicsTopSwordHeightFarFromCube);
+    
+    drawBuffer.end();
+    
+    // extract sword data as grayscale pixels
+    ofPixels swordPixels;
+    drawBuffer.readToPixels(swordPixels);
+    swordPixels.setNumChannels(1);
+    
+    // draw cube footprints as depressions into a white background.
+    // footprints include clearings and touch-sensitive risers
+    drawBuffer.begin();
+    ofBackground(255);
+
+    // top cube's footprint
+    int topCubeBaseHeight = physicsTopSwordHeightNearCube - cubeHeight;
+    if (topCube->isTouched) {
+        int clearingHeight = max(0, topCubeBaseHeight - 40);
+        setCubeHeight(*topCube, clearingHeight, 1.5);
+        setCubeHeight(*topCube, clearingHeight + 40);
+    } else {
+        setCubeHeight(*topCube, topCubeBaseHeight, 1.5);
+    }
+    
+    // bottom cube's footprint
+    setCubeHeight(*bottomCube, 0, 1.5);
+    if (bottomCube->isTouched) {
+        setCubeHeight(*bottomCube, 40);
+    }
+    drawBuffer.end();
+    
+    // extract cube footprint data as grayscale pixels
+    ofPixels cubeFootprintPixels;
+    drawBuffer.readToPixels(cubeFootprintPixels);
+    cubeFootprintPixels.setNumChannels(1);
+    
+    // cap sword pixel heights at footprint pixel depressions
+    for (int i = 0; i < swordPixels.size(); i++) {
+        if (swordPixels[i] > cubeFootprintPixels[i]) {
+            swordPixels[i] = cubeFootprintPixels[i];
+        }
+    }
+    
+    // draw the swords
+    ofSetColor(255);
+    ofImage(swordPixels).draw(0,0);
 }
 
 void HybridTokens::keyPressed(int key) {
