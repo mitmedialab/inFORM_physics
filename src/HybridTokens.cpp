@@ -62,6 +62,9 @@ void HybridTokens::update(float dt) {
 
     } else if (mode == PHYSICS_SWORDS) {
         drawPhysicsSwords();
+
+    } else if (mode == DYNAMICALLY_CONSTRAINED_SWORDS) {
+        drawDynamicallyConstrainedSwords();
     }
 
     pinHeightMapImage.end();
@@ -493,6 +496,72 @@ void HybridTokens::drawPhysicsSwords() {
     // draw the swords
     ofSetColor(255);
     ofImage(swordPixels).draw(0,0);
+}
+
+void HybridTokens::drawDynamicallyConstrainedSwords() {
+    // only deal with 2-cube scenarios
+    if (kinectTracker->redCubes.size() > 2) {
+        return;
+    } else if (kinectTracker->redCubes.size() < 2) {
+        drawBooleanSwords();
+        return;
+    }
+
+    // designate the left-side cube as the fixed one
+    Cube *fixedCube, *dynamicCube;
+    if (kinectTracker->redCubes[0].center.x < kinectTracker->redCubes[1].center.x) {
+        fixedCube = &kinectTracker->redCubes[0];
+        dynamicCube = &kinectTracker->redCubes[1];
+    } else {
+        fixedCube = &kinectTracker->redCubes[1];
+        dynamicCube = &kinectTracker->redCubes[0];
+    }
+
+    // for now, assume all cubes are aligned to the coordinate axes
+
+    // draw static sword right
+    ofSetColor(140);
+    int fixedLeft, fixedRight, fixedTop, fixedBottom;
+    fixedLeft = (fixedCube->center.x + 0.5 * cubeEdgeLength) * lengthScale;
+    fixedRight = (fixedCube->center.x + (0.5 + 3) * cubeEdgeLength) * lengthScale;
+    fixedTop = (fixedCube->center.y - 0.5 * cubeEdgeLength) * lengthScale;
+    fixedBottom = (fixedCube->center.y + 0.5 * cubeEdgeLength) * lengthScale;
+    ofRect(fixedLeft, fixedTop, fixedRight - fixedLeft, fixedBottom - fixedTop);
+    
+    // get dynamic sword boundaries
+    int left, right, top, bottom;
+    left = (dynamicCube->center.x - 0.5 * cubeEdgeLength) * lengthScale;
+    right = (dynamicCube->center.x + 0.5 * cubeEdgeLength) * lengthScale;
+    top = (dynamicCube->center.y - (0.5 + 3) * cubeEdgeLength) * lengthScale;
+    bottom = (dynamicCube->center.y + 0.5 * cubeEdgeLength) * lengthScale;
+
+    bool swordMayPass = top > fixedBottom;
+
+    // draw dynamic sword up - if it's on a collision course, make sure it doesn't accidentally pass the static sword
+    ofSetColor(140);
+    if (swordMayPass) {
+        ofRect(left, top, right - left, bottom - top);
+    } else {
+        ofRect(max(left, fixedRight), top, right - left, bottom - top);
+    }
+
+    // don't draw swords under the cubes
+    setCubeHeights(0, 1.5);
+    
+    // lift touched cubes slightly off the surface for a smooth dragging experience
+    setCubeHeights(40, 1.0, TOUCHED);
+
+    // draw blockade if appropriate
+    if (!swordMayPass) {
+        ofSetColor(140);
+        int closeDistance = 0.07 * lengthScale;
+        if (left < fixedRight + closeDistance) {
+            int adjWidth = cubeEdgeLength * lengthScale;
+            int adjHeight = cubeEdgeLength * lengthScale;
+            int cubeBottom = (dynamicCube->center.y + 0.07) * lengthScale;
+            ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
+        }
+    }
 }
 
 void HybridTokens::keyPressed(int key) {
