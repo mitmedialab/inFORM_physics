@@ -82,11 +82,12 @@
 #define DANIEL_SCREEN_RESOLUTION_Y 1050
 #define CINEMA_DISPLAY_OFFSET 880
 
-
 #define CINEMA_DISPLAY 0
 
 // { 0: Acer, 1: Sean, 2: Daniel }
 #define SCREEN_IN_USE 0
+
+#define STANDARD_CUBE_HEIGHT 140
 
 #define USE_KINECT 1
 

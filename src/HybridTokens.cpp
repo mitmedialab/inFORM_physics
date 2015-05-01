@@ -73,7 +73,7 @@ void HybridTokens::update(float dt) {
     cubeFootprintsFbo.begin();
     ofBackground(0);
     ofSetColor(255);
-    setCubeHeights(140);
+    setCubeHeights(cubeHeight);
     cubeFootprintsFbo.end();
     cubeFootprintsFbo.readToPixels(cubeFootprintPixels);
 
@@ -99,7 +99,6 @@ void HybridTokens::updateGraphics() {
             pinGraphicsPixels[i + 2] = 0;
 
             // furthermore, ensure this pixel is reprojected to the location of the cube surface
-            int cubeHeight = 140;
             pinHeightMapContentPixels[i + 0] += cubeHeight;
             pinHeightMapContentPixels[i + 1] += cubeHeight;
             pinHeightMapContentPixels[i + 2] += cubeHeight;
@@ -151,8 +150,8 @@ void HybridTokens::setCubeHeights(int height, float edgeLengthMultiplier, TouchC
     }
 }
 
-// height value default is 140, the height of our cubes
-// passing a non-negative value to farHeight linearly interpolates the sword height
+// height value defaults to cube height. passing a non-negative value to farHeight
+// linearly interpolates the sword height
 void HybridTokens::drawSword(int height, int farHeight) {
     // if a second height was given, draw a gradient sword
     if (farHeight >= 0) {
@@ -165,8 +164,8 @@ void HybridTokens::drawSword(int height, int farHeight) {
     }
 }
 
-// height value default is 140, the height of our cubes
-// passing a non-negative value to farHeight linearly interpolates the sword height
+// height value defaults to cube height. passing a non-negative value to farHeight
+// linearly interpolates the sword height
 void HybridTokens::drawSwordForCube(Cube &cube, int height, int farHeight) {
     // transition to the cube's reference frame
     glPushMatrix();
@@ -429,9 +428,9 @@ void HybridTokens::drawPhysicsSwords() {
 
         // draw the top cube according to its tilt
         if (topCubeTiltDirection == TILT_BACKWARD) {
-            drawSwordForCube(*topCube, 140, 255);
+            drawSwordForCube(*topCube, cubeHeight, 255);
         } else if (topCubeTiltDirection == TILT_FORWARD) {
-            drawSwordForCube(*topCube, 255, 140);
+            drawSwordForCube(*topCube, 255, cubeHeight);
         } else {
             drawSwordForCube(*topCube, 255);
         }
@@ -449,7 +448,7 @@ void HybridTokens::drawPhysicsSwords() {
 
         // when top cube is not tilted back, raise it high
         if (topCubeTiltDirection != TILT_BACKWARD) {
-            setCubeHeight(*topCube, 140, 1.5);
+            setCubeHeight(*topCube, cubeHeight, 1.5);
             setCubeHeight(*topCube, 160);
 
         // otherwise, just clear its environment

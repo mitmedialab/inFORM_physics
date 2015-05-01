@@ -52,11 +52,11 @@ private:
     void updateGraphics();
     void setCubeHeight(Cube &cube, int height, float edgeLengthMultiplier = 1.0);
     void setCubeHeights(int height, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
-    void drawSword(int height=140, int farHeight=-1);
-    void drawSwordForCube(Cube &cube, int height=140, int farHeight=-1);
+    void drawSword(int height=STANDARD_CUBE_HEIGHT, int farHeight=-1);
+    void drawSwordForCube(Cube &cube, int height=STANDARD_CUBE_HEIGHT, int farHeight=-1);
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
     void drawBooleanSwords();
-    void drawFlexibleSwords(int height=140);
+    void drawFlexibleSwords(int height=STANDARD_CUBE_HEIGHT);
     void drawPhysicsSwords();
     TiltDirection getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube);
 
@@ -69,6 +69,7 @@ private:
     const float pinSize = 1.0 / RELIEF_SIZE_X;
     const float cubeEdgeLength = 4 * pinSize;
     const float lengthScale = RELIEF_SIZE_X; // scalar to convert normalized lengths to image coordinate lengths
+    const int cubeHeight = STANDARD_CUBE_HEIGHT;
 
     float flexibleExtensionSize;
 
