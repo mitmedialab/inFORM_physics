@@ -17,7 +17,7 @@
 
 void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, ofColor &color0, ofColor &color1);
 void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, int color0, int color1);
-void verticalGradientRect(Rectangle &rect, ofColor &colorTop, ofColor &colorBottom);
-void verticalGradientRect(Rectangle &rect, int colorTop, int colorBottom);
+void verticalLinearGradientRect(Rectangle &rect, ofColor &colorTop, ofColor &colorBottom);
+void verticalLinearGradientRect(Rectangle &rect, int colorTop, int colorBottom);
 
 #endif /* defined(__Relief2__DrawingUtils__) */

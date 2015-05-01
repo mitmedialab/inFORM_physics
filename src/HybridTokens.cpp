@@ -158,7 +158,7 @@ void HybridTokens::setCubeHeights(int height, float edgeLengthMultiplier, TouchC
 void HybridTokens::drawSword(int height, int farHeight) {
     // if a second height was given, draw a gradient sword
     if (farHeight >= 0) {
-        verticalGradientRect(swordRectangle, farHeight, height);
+        verticalLinearGradientRect(swordRectangle, farHeight, height);
 
     // else draw a simple sword
     } else {
