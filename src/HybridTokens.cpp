@@ -219,6 +219,15 @@ void HybridTokens::drawSwordForCube(Cube &cube, vector<pair<float, float> > &int
     glPopMatrix();
 }
 
+// make it easy to move cubes by clearing space around them and lifting up touched cubes
+void HybridTokens::drawStandardClearingsAndRisers() {
+    // don't draw swords under the cubes
+    setCubeHeights(0, 1.5);
+
+    // lift touched cubes slightly off the surface for a smooth dragging experience
+    setCubeHeights(40, 1.0, TOUCHED);
+}
+
 // calculate the intersection and union drawings of the swords for all cubes
 void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion) {
     // buffer repository for drawing a single sword into; associated pixels object for manipulating the result
@@ -265,11 +274,8 @@ void HybridTokens::drawSwords() {
         drawSwordForCube(kinectTracker->redCubes[i]);
     }
 
-    // but don't draw swords under the cubes
-    setCubeHeights(0, 1.5);
-
-    // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, 1.0, TOUCHED);
+    // but give cubes room to move
+    drawStandardClearingsAndRisers();
 }
 
 void HybridTokens::drawBooleanSwords() {
@@ -321,11 +327,8 @@ void HybridTokens::drawBooleanSwords() {
     ofSetColor(255);
     ofImage(swordsOutput).draw(0,0);
 
-    // but don't draw swords under the cubes
-    setCubeHeights(0, 1.5);
-
-    // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, 1.0, TOUCHED);
+    // but give cubes room to move
+    drawStandardClearingsAndRisers();
 }
 
 // for now, this function assumes a maximum of two cubes to deal with
@@ -385,11 +388,8 @@ void HybridTokens::drawFlexibleSwords(int height) {
     ofVertices(vector<ofPoint>(boundaryVertices, boundaryVertices + 2 * sampleSize));
     ofEndShape();
 
-    // but don't draw swords under the cubes
-    setCubeHeights(0, 1.5);
-
-    // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, 1.0, TOUCHED);
+    // but give cubes room to move
+    drawStandardClearingsAndRisers();
 }
 
 TiltDirection HybridTokens::getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube) {
@@ -600,11 +600,8 @@ void HybridTokens::drawDynamicallyConstrainedSwords() {
         ofRect(max(left, fixedRight), top, right - left, bottom - top);
     }
 
-    // don't draw swords under the cubes
-    setCubeHeights(0, 1.5);
-    
-    // lift touched cubes slightly off the surface for a smooth dragging experience
-    setCubeHeights(40, 1.0, TOUCHED);
+    // but give cubes room to move
+    drawStandardClearingsAndRisers();
 
     // draw blockade if appropriate
     if (!swordMayPass) {
