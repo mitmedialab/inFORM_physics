@@ -55,3 +55,36 @@ void verticalLinearGradientRect(Rectangle &rect, int colorTop, int colorBottom) 
     ofColor _colorBottom(colorBottom);
     verticalLinearGradientRect(rect, _colorTop, _colorBottom);
 }
+
+// interpolateBezierControlPoints
+//
+// Generate interpolated points based on bezier control points. Use with float
+// and ofFloatColor types, or any other types that can be set to 0.0 and support
+// addition and multiplication by floats.
+//
+// Note: only use with types that play well with floating point arithmetic;
+// other types will yield nonsensical results.
+template<typename FloatType>
+void interpolateBezierControlPoints(vector<pair<float, FloatType> > &controlPoints, vector<pair<float, FloatType> > &interpolatedPoints, float stepSize) {
+    interpolatedPoints.clear();
+    int n = controlPoints.size();
+
+    // for each increment in the range [0, 1), calculate the interpolated point
+    for (float t = 0; t < 1; t += stepSize) {
+        float tIndex = 0.0;
+        FloatType tValue = 0.0;
+        float tCurrentPower = pow(1 - t, n - 1);
+        float tStepChange = t / (1 - t);
+        for (int i = 0; i < n; i++) {
+            // at each step i, add control point i scaled by t^i * (1-t)^(n-i) * (n-1 choose i)
+            // for efficiency, calculate scalar i by iteratively multiplying by t / (1-t)
+            tIndex += controlPoints[i].first * tCurrentPower * binomialCoefficient(n - 1, i);
+            tValue += controlPoints[i].second * tCurrentPower * binomialCoefficient(n - 1, i);
+            tCurrentPower *= tStepChange;
+        }
+        interpolatedPoints.push_back(pair<float, FloatType>(tIndex, tValue));
+    }
+
+    // last, push the interpolated point for t == 1
+    interpolatedPoints.push_back(controlPoints[n - 1]);
+}

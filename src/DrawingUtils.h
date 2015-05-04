@@ -9,6 +9,7 @@
 #include "ofMain.h"
 #include "Constants.h"
 #include "Utils.h"
+#include "MathUtils.h"
 
 
 #ifndef __Relief2__DrawingUtils__
@@ -19,5 +20,8 @@ void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, o
 void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, int color0, int color1);
 void verticalLinearGradientRect(Rectangle &rect, ofColor &colorTop, ofColor &colorBottom);
 void verticalLinearGradientRect(Rectangle &rect, int colorTop, int colorBottom);
+
+template<typename FloatType>
+void interpolateBezierControlPoints(vector<pair<float, FloatType> > &controlPoints, vector<pair<float, FloatType> > &interpolatedPoints, float stepSize=0.01);
 
 #endif /* defined(__Relief2__DrawingUtils__) */
