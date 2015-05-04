@@ -12,6 +12,7 @@
 #include "RenderableObject.h"
 #include "KinectTracker.h"
 #include "CameraCalibration.h"
+#include "Rectangle.h"
 #include "DrawingUtils.h"
 #include "ofFbo.h"
 

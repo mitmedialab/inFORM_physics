@@ -38,6 +38,7 @@
 		640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */; };
 		651E0EA21AC34E8E00669265 /* StaticManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EA11AC34E8E00669265 /* StaticManipulator.cpp */; };
 		651E0EB21AC58ED500669265 /* Cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E0EB11AC58ED400669265 /* Cube.cpp */; };
+		652556D11AF7E7F500193829 /* Rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652556D01AF7E7F500193829 /* Rectangle.cpp */; };
 		65DDC6611AEA8D0500AD8D80 /* ColorBand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */; };
 		65DDC66C1AEFE23900AD8D80 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DDC66B1AEFE23900AD8D80 /* Utils.cpp */; };
 		65E1E2D61AF26B5D005F6293 /* DrawingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E1E2D51AF26B5D005F6293 /* DrawingUtils.cpp */; };
@@ -252,6 +253,8 @@
 		651E0EA41AC350C500669265 /* KeycodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeycodeConstants.h; sourceTree = "<group>"; };
 		651E0EA61AC35F0B00669265 /* Cube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cube.h; sourceTree = "<group>"; };
 		651E0EB11AC58ED400669265 /* Cube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cube.cpp; sourceTree = "<group>"; };
+		652556D01AF7E7F500193829 /* Rectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rectangle.cpp; sourceTree = "<group>"; };
+		652556D21AF7E80200193829 /* Rectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rectangle.h; sourceTree = "<group>"; };
 		65DDC6601AEA8D0400AD8D80 /* ColorBand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorBand.cpp; sourceTree = "<group>"; };
 		65DDC6621AEA8D1400AD8D80 /* ColorBand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorBand.h; sourceTree = "<group>"; };
 		65DDC66B1AEFE23900AD8D80 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
@@ -865,6 +868,8 @@
 				65E1E2E91AF6CE7E005F6293 /* MathUtils.h */,
 				65E96FA91ADC4CD600A77ABD /* CameraCalibration.cpp */,
 				65E96FAB1ADC4CEA00A77ABD /* CameraCalibration.h */,
+				652556D01AF7E7F500193829 /* Rectangle.cpp */,
+				652556D21AF7E80200193829 /* Rectangle.h */,
 				65E1E2D51AF26B5D005F6293 /* DrawingUtils.cpp */,
 				65E1E2D71AF26B69005F6293 /* DrawingUtils.h */,
 				651E0EB11AC58ED400669265 /* Cube.cpp */,
@@ -1607,6 +1612,7 @@
 				65E6EC971AA4E85300520937 /* TouchMessenger.cpp in Sources */,
 				65FDDE661ABA383A00649421 /* HybridTokens.cpp in Sources */,
 				65E6EC901AA4E85300520937 /* ofxGuiPanel.cpp in Sources */,
+				652556D11AF7E7F500193829 /* Rectangle.cpp in Sources */,
 				65DDC66C1AEFE23900AD8D80 /* Utils.cpp in Sources */,
 				65E6EC8C1AA4E85300520937 /* ofxGuiGlobals.cpp in Sources */,
 				E2564CF7DDB3713772BB682E /* ofxUDPManager.cpp in Sources */,

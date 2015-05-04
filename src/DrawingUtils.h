@@ -8,7 +8,7 @@
 
 #include "ofMain.h"
 #include "Constants.h"
-#include "Utils.h"
+#include "Rectangle.h"
 #include "MathUtils.h"
 
 
