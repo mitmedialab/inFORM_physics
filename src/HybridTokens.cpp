@@ -257,8 +257,24 @@ void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, o
     }
 }
 
+void HybridTokens::drawSwords() {
+    // draw the swords
+    ofSetColor(255);
+    ofBackground(0);
+    for (int i = 0; i < kinectTracker->redCubes.size(); i++) {
+        drawSwordForCube(kinectTracker->redCubes[i]);
+    }
+
+    // but don't draw swords under the cubes
+    setCubeHeights(0, 1.5);
+
+    // lift touched cubes slightly off the surface for a smooth dragging experience
+    setCubeHeights(40, 1.0, TOUCHED);
+}
+
 void HybridTokens::drawBooleanSwords() {
-    if (!kinectTracker->redCubes.size()) {
+    if (kinectTracker->redCubes.size() < 2) {
+        drawSwords();
         return;
     }
 
@@ -314,13 +330,13 @@ void HybridTokens::drawBooleanSwords() {
 
 // for now, this function assumes a maximum of two cubes to deal with
 void HybridTokens::drawFlexibleSwords(int height) {
-    if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
+    if (kinectTracker->redCubes.size() < 2) {
+        drawSwords();
         return;
     }
 
-    // if there's just one cube, draw a standard sword
-    if (kinectTracker->redCubes.size() == 1) {
-        drawBooleanSwords();
+    // for now, only deal with the two cubes case
+    if (kinectTracker->redCubes.size() > 2) {
         return;
     }
 
@@ -406,13 +422,13 @@ TiltDirection HybridTokens::getPhysicsSwordTiltDirection(Cube &topCube, Cube &bo
 
 // for now, this function assumes a maximum of two cubes to deal with
 void HybridTokens::drawPhysicsSwords() {
-    if (!kinectTracker->redCubes.size() || kinectTracker->redCubes.size() > 2) {
+    if (kinectTracker->redCubes.size() < 2) {
+        drawSwords();
         return;
     }
 
-    // if there's just one cube, draw a standard sword
-    if (kinectTracker->redCubes.size() == 1) {
-        drawBooleanSwords();
+    // for now, only deal with the two cubes case
+    if (kinectTracker->redCubes.size() > 2) {
         return;
     }
 
@@ -536,11 +552,13 @@ void HybridTokens::drawPhysicsSwords() {
 }
 
 void HybridTokens::drawDynamicallyConstrainedSwords() {
-    // only deal with 2-cube scenarios
-    if (kinectTracker->redCubes.size() > 2) {
+    if (kinectTracker->redCubes.size() < 2) {
+        drawSwords();
         return;
-    } else if (kinectTracker->redCubes.size() < 2) {
-        drawBooleanSwords();
+    }
+
+    // for now, only deal with the two cubes case
+    if (kinectTracker->redCubes.size() > 2) {
         return;
     }
 
