@@ -111,3 +111,52 @@ void verticalBezierGradientRect(Rectangle &rect, vector<pair<float, float> > &co
 
     mesh.draw();
 }
+
+// verticalBezierInterpolatedGradientRect
+//
+// basic bezier curve interpolator through three given points. this does not guarantee
+// preservation of interpolation point extrema in the generated bezier curve (unless
+// the passed in bezier step parameter q guarantees preservation).
+//
+// See verticalBezierSmartInterpolatedGradientRect for stronger guarantees.
+//
+// Note: currently, only the case with three interpolation points has been implemented.
+void verticalBezierInterpolatedGradientRect(Rectangle &rect, vector<pair<float, float> > &interpolationPoints, float stepSize, float q) {
+    if (interpolationPoints.size() != 3) {
+        cout << "ERROR: verticalBezierInterpolatedGradientRect expects interpolationPoints parameter to have length 3. More general behavior has not yet been implemented." << endl;
+    }
+
+    // controlPoint[0] and [2] are the same as interpolationPoint[0] and [2]. We just
+    // need to find controlPoint[1] such that interpolationPoint[1] comes out correctly.
+
+    // the bezier step at the middle interpolation point is t = q satisfying 0 < q < 1.
+    // q can be optionally specified in the call arguments.
+
+    // if the passed argument q is below 0 (the default case), use q = 0.5
+    if (q <= 0) {
+        q = 0.5;
+    // if the passed argument q is above 1, use q = ipIndex[1]
+    } else if (q >= 1) {
+        q = interpolationPoints[1].first;
+    }
+    float _q = 1 - q;
+
+    // Find cpIndex[1] such that
+    //   ipIndex[1] = cpIndex[0] * _q * _q + 2 * cpIndex[1] * _q * q + cpIndex[2] * q * q
+    //              = ipIndex[0] * _q * _q + 2 * cpIndex[1] * _q * q + ipIndex[2] * q * q
+    float cpIndex1 = (interpolationPoints[1].first - interpolationPoints[0].first * _q * _q - interpolationPoints[2].first * q * q) / (2 * _q * q);
+
+    // Find cpValue[1] such that
+    //   ipValue[1] = cpValue[0] * _q * _q + 2 * cpValue[1] * _q * q + cpValue[2] * q * q
+    //              = ipValue[0] * _q * _q + 2 * cpValue[1] * _q * q + ipValue[2] * q * q
+    float cpValue1 = (interpolationPoints[1].second - interpolationPoints[0].second * _q * _q - interpolationPoints[2].second * q * q) / (2 * _q * q);
+
+    // populate controlPoints vector
+    vector<pair<float, float> > controlPoints;
+    controlPoints.push_back(interpolationPoints[0]);
+    controlPoints.push_back(pair<float, float>(cpIndex1, cpValue1));
+    controlPoints.push_back(interpolationPoints[2]);
+
+    // draw rectangle using control points
+    verticalBezierGradientRect(rect, controlPoints, stepSize);
+}
