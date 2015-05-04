@@ -266,6 +266,35 @@ void HybridTokens::getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, o
     }
 }
 
+// find the intersection point of two swords' primary axes
+void HybridTokens::getSwordsAxesIntersectionPoint(Cube &firstCube, Cube &secondCube, ofPoint &dst) {
+    // get cube center coordinates
+    ofPoint topCubeCenter, bottomCubeCenter;
+    topCubeCenter = firstCube.center * lengthScale;
+    bottomCubeCenter = secondCube.center * lengthScale;
+
+    // calculate the y = mx + b equations for the swords' central axes:
+    //   m = tan(theta)        // note that theta here is cube->theta + 90
+    //   b = -m * x_0 + y_0    // x_0 and y_0 can be any intercept; use the cube center
+    float m = tan(firstCube.thetaRadians + pi / 2);
+    float b = -m * topCubeCenter.x + topCubeCenter.y;
+    float m_ = tan(secondCube.thetaRadians + pi / 2);
+    float b_ = -m_ * bottomCubeCenter.x + bottomCubeCenter.y;
+
+    // BUT - because the cube coordinate system is left-handed, negate the slopes
+    m = -m;
+    m_ = -m_;
+
+    // determine the intersection point of these axes:
+    //   x = - (b - b') / (m - m')
+    //   y = m * x + b
+    ofPoint intersectionPoint;
+    intersectionPoint.x = -(b - b_) / (m - m_);
+    intersectionPoint.y = m * intersectionPoint.x + b;
+
+    dst.set(intersectionPoint);
+}
+
 void HybridTokens::drawSwords() {
     // draw the swords
     ofSetColor(255);

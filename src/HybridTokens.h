@@ -59,6 +59,7 @@ private:
     void drawSwordForCube(Cube &cube, vector<pair<float, float> > &interpolationPoints);
     void drawStandardClearingsAndRisers();
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
+    void getSwordsAxesIntersectionPoint(Cube &firstCube, Cube &secondCube, ofPoint &dst);
     void drawSwords();
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=STANDARD_CUBE_HEIGHT);
