@@ -22,6 +22,7 @@ void verticalLinearGradientRect(Rectangle &rect, ofColor &colorTop, ofColor &col
 void verticalLinearGradientRect(Rectangle &rect, int colorTop, int colorBottom);
 void verticalBezierGradientRect(Rectangle &rect, vector<pair<float, float> > &controlPoints, float stepSize=0.01);
 void verticalBezierInterpolatedGradientRect(Rectangle &rect, vector<pair<float, float> > &interpolationPoints, float stepSize=0.01, float q=-1);
+void verticalBezierSmartInterpolatedGradientRect(Rectangle &rect, vector<pair<float, float> > &interpolationPoints, float stepSize=0.01);
 
 template<typename FloatType>
 void interpolateBezierControlPoints(vector<pair<float, FloatType> > &controlPoints, vector<pair<float, FloatType> > &interpolatedPoints, float stepSize=0.01);

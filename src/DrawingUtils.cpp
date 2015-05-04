@@ -160,3 +160,124 @@ void verticalBezierInterpolatedGradientRect(Rectangle &rect, vector<pair<float, 
     // draw rectangle using control points
     verticalBezierGradientRect(rect, controlPoints, stepSize);
 }
+
+// verticalBezierSmartInterpolatedGradientRect
+//
+// Draw a rectangle with a bezier curve gradient stretching from top to bottom.
+// The curve gradient will pass through each point in the interpolationPoints parameter.
+//
+// For the case with three interpolation points, if the middle point is an extremum of the
+// three points (i.e. maximum or minimum), the gradient will preserve this extremum.
+//
+// Note: currently, only the case with three interpolation points has been implemented.
+void verticalBezierSmartInterpolatedGradientRect(Rectangle &rect, vector<pair<float, float> > &interpolationPoints, float stepSize) {
+    if (interpolationPoints.size() != 3) {
+        cout << "ERROR: verticalBezierInterpolatedGradientRect expects interpolationPoints parameter to have length 3. More general behavior has not yet been implemented." << endl;
+    }
+
+    // controlPoint[0] and [2] are the same as interpolationPoint[0] and [2]. We just
+    // need to find controlPoint[1] such that interpolationPoint[1] comes out correctly.
+    // interpolationPoint[1] should be an extremum of the curve if it is an extremum of
+    // the interpolation points.
+
+    // Okay, lots of math here! This justifies the brief code that follows.
+    //
+    // The bezier function is
+    //   i(t) = cpIndex[0] * (1 - t)^2 + 2 * cpIndex[1] * (1 - t) * t + cpIndex[2] * t^2
+    //        = cpIndex[0] * (1 - 2t + t^2) + cpIndex[1] * (2t - 2t^2) + cpIndex[2] * t^2
+    //   v(t) = cpValue[0] * (1 - t)^2 + 2 * cpValue[1] * (1 - t) * t + cpValue[2] * t^2
+    //        = cpValue[0] * (1 - 2t + t^2) + cpValue[1] * (2t - 2t^2) + cpValue[2] * t^2
+    //   v'(t) = cpValue[0] * (-2 + 2t) + cpValue[1] * (2 - 4t) + cpValue[2] * 2t
+    //         = 2 * (cpValue[0] * (-1 + t) + cpValue[1] * (1 - 2t) + cpValue[2] * t)
+    //
+    // Find cpIndex[1], cpValue[1] such that for some q : 0 < q < 1,
+    //   i(q) = ipIndex[1]
+    //   v(q) = ipValue[1]
+    //   v'(q) = 0
+    //
+    //   Such a q will always exist if ipValue[1] is an extrema of the interpolation points.
+    //   Else it would be impossible to draw a quadratic bezier curve starting and ending
+    //   with interpolation points 0 and 2 and having an extrema at interpolation point 1,
+    //   and it is not impossible.
+    //
+    //   i(q) = ipIndex[1] :
+    //     ipIndex[1] = cpIndex[0] * (1 - 2q + q^2) + cpIndex[1] * (2q - 2q^2) + cpIndex[2] * q^2
+    //     cpIndex[1] * (2q - 2q^2) = ipIndex[1] + cpIndex[0] * (-1 + 2q - q^2) - cpIndex[2] * q^2
+    //     cpIndex[1] = (ipIndex[1] - cpIndex[0] * (1 - 2q + q^2) - cpIndex[2] * q^2) / (2q - 2q^2)
+    //
+    //   v(q) = ipValue[1] :
+    //     ipValue[1] = cpValue[0] * (1 - 2q + q^2) + cpValue[1] * (2q - 2q^2) + cpValue[2] * q^2
+    //     cpValue[1] * (2q - 2q^2) = ipValue[1] + cpValue[0] * (-1 + 2q - q^2) + cpValue[2] * q^2
+    //     cpValue[1] = (ipValue[1] - cpValue[0] * (1 - 2q + q^2) - cpValue[2] * q^2) / (2q - 2q^2)
+    //
+    //   v'(q) = 0 :
+    //     0 = 2 * (cpValue[0] * (-1 + q) + cpValue[1] * (1 - 2q) + cpValue[2] * q)
+    //     0 = cpValue[0] * (-1 + q) + cpValue[1] * (1 - 2q) + cpValue[2] * q
+    //     cpValue[1] * (-1 + 2q) = cpValue[0] * (-1 + q) + cpValue[2] * q
+    //
+    //   combining:
+    //     v(q):  cpValue[1] * (2q - 2q^2) = ipValue[1] + cpValue[0] * (-1 + 2q - q^2) + cpValue[2] * q^2
+    //     v'(q): cpValue[1] * (-1 + 2q) = cpValue[0] * (-1 + q) + cpValue[2] * q
+    //   we see:
+    //     0 = (ipValue[1] + cpValue[0] * (-1 + 2q - q^2) + cpValue[2] * q^2) * (-1 + 2q)
+    //         - (cpValue[0] * (-1 + q) + cpValue[2] * q) * (2q - 2q^2)
+    //       = ipValue[1] * (-1 + 2q) + cpValue[0] * (1 - 4q + 5q^2 - 2q^3) + cpValue[2] * (-q^2 + 2q^3)
+    //         + cpValue[0] * (2q - 4q^2 + 2q^3) + cpValue[2] * (-2q^2 + 2q^3)
+    //       = ipValue[1] * (-1 + 2q) + cpValue[0] * (1 - 2q + q^2) + cpValue[2] * (-3q^2 + 4q^3)
+    //       = (-ipValue[1] + cpValue[0]) * 1
+    //         + (2 * ipValue[1] - 2 * cpValue[0]) * q
+    //         + (cpValue[0] - 3 * cpValue[2]) * q^2
+    //         + (4 * cpValue[2]) * q^3
+    //
+    //   recalling that:
+    //     controlPoint[0] == interpolationPoint[0], and
+    //     controlPoint[2] == interpolationPoint[2]
+    //   we can find q by solving the cubic equation:
+    //     0 = (-ipValue[1] + ipValue[0]) * 1
+    //         + (2 * ipValue[1] - 2 * ipValue[0]) * q
+    //         + (ipValue[0] - 3 * ipValue[2]) * q^2
+    //         + (4 * ipValue[2]) * q^3
+    //   and taking the first root in the interval (0, 1) (assuming one exists).
+    //   If ipValue[1] is an extremum of the interpolation points, it will exist.
+    //
+    //   we can then find controlPoint[1] from the equations derived above:
+    //     cpIndex[1] = (ipIndex[1] - ipIndex[0] * (1 - 2q + q^2) - ipIndex[2] * q^2) / (2q - 2q^2)
+    //     cpValue[1] = (ipValue[1] - ipValue[0] * (1 - 2q + q^2) - ipValue[2] * q^2) / (2q - 2q^2)
+    //
+    // okay... let's get to it!
+
+    // find the bezier interpolation step t = q corresponding to interpolation point 1
+    // by solving the cubic equation:
+    //     0 = (-ipValue[1] + ipValue[0]) * 1 + (2 * ipValue[1] - 2 * ipValue[0]) * q
+    //         + (ipValue[0] - 3 * ipValue[2]) * q^2 + (4 * ipValue[2]) * q^3
+    double cubicCoefficients[4];
+    cubicCoefficients[0] = -interpolationPoints[1].second + interpolationPoints[0].second; // 1
+    cubicCoefficients[1] = 2 * interpolationPoints[1].second - 2 * interpolationPoints[0].second; // q
+    cubicCoefficients[2] = interpolationPoints[0].second - 3 * interpolationPoints[2].second; // q^2
+    cubicCoefficients[3] = 4 * interpolationPoints[2].second; // q^3
+
+    double cubicRoots[3];
+
+    int numberOfRoots = solveCubic(cubicCoefficients, cubicRoots);
+
+    // find the first root between 0 and 1, if it exists
+    double q = -1;
+    for (int i = 0; i < numberOfRoots; i++) {
+        if (0 < cubicRoots[i] && cubicRoots[i] < 1) {
+            q = cubicRoots[i];
+            break;
+        }
+    }
+
+    // if no valid q is found, print a warning
+    if (q < 0) {
+        cout << "WARNING - could not find valid q : 0 < q < 1 satisfying extremum constraint for interpolation points: " << endl;
+        cout << "    (" << interpolationPoints[0].first << ", " << interpolationPoints[0].second << ")" << endl;
+        cout << "    (" << interpolationPoints[1].first << ", " << interpolationPoints[1].second << ")" << endl;
+        cout << "    (" << interpolationPoints[2].first << ", " << interpolationPoints[2].second << ")" << endl;
+    }
+
+    // pass q parameter to function that draws a bezier rect through interpolation points.
+    // if no q was found, q is still -1, correctly yielding to the default q behavior
+    verticalBezierInterpolatedGradientRect(rect, interpolationPoints, stepSize, q);
+}
