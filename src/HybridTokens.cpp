@@ -65,6 +65,9 @@ void HybridTokens::update(float dt) {
 
     } else if (mode == DYNAMICALLY_CONSTRAINED_SWORDS) {
         drawDynamicallyConstrainedSwords();
+
+    } else if (mode == VERTICAL_DEFORMATION_SWORDS) {
+        drawVerticalDeformationSwords();
     }
 
     pinHeightMapImage.end();
@@ -672,6 +675,141 @@ void HybridTokens::drawDynamicallyConstrainedSwords() {
             ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
         }
     }
+}
+
+// for now, this function assumes a maximum of two cubes to deal with
+void HybridTokens::drawVerticalDeformationSwords() {
+    if (kinectTracker->redCubes.size() < 2) {
+        drawSwords();
+        return;
+    }
+
+    // for now, only deal with the two cubes case
+    if (kinectTracker->redCubes.size() > 2) {
+        return;
+    }
+
+    // designate the right-side cube as the top one (the deforming one)
+    Cube *bottomCube, *topCube;
+    if (kinectTracker->redCubes[0].center.x < kinectTracker->redCubes[1].center.x) {
+        bottomCube = &kinectTracker->redCubes[0];
+        topCube = &kinectTracker->redCubes[1];
+    } else {
+        bottomCube = &kinectTracker->redCubes[1];
+        topCube = &kinectTracker->redCubes[0];
+    }
+
+    // calculate intersection and union of swords
+    ofPixels swordsIntersection, swordsUnion;
+    getSwordsIntersectionAndUnion(swordsIntersection, swordsUnion);
+
+    // determine whether the swords intersect
+    bool swordsIntersect = false;
+    for (int i = 0; i < swordsIntersection.size(); i++) {
+        if (swordsIntersection[i]) {
+            swordsIntersect = true;
+            break;
+        }
+    }
+
+    // if there's no intersection, just draw regular swords
+    if (!swordsIntersect) {
+        drawSwords();
+        return;
+    }
+
+    // find the center of the swords' intersection
+    ofPoint intersectionPoint;
+    getCenterOfImageBlob(swordsIntersection, intersectionPoint);
+
+    // transform the intersection point into a displacement vector along the top sword's axis
+    topCube->transformPointToCubeReferenceFrame(&intersectionPoint, &intersectionPoint, lengthScale);
+
+    // find the displacement vector representing the base of a sword axis
+    ofPoint swordAxisBase(0, swordRectangle.top + swordRectangle.height);
+
+    // determine the intersection point's percent displacement along the top sword's central axis
+    float intersectionDistance = abs(intersectionPoint.y - swordAxisBase.y) / swordRectangle.height;
+    float minimumInterpolationDistance = 0.05;
+    intersectionDistance = max(minimumInterpolationDistance, min(1 - minimumInterpolationDistance, intersectionDistance));
+
+    // construct interpolation points through the intersection for the deformed top sword
+    float baseInterpolationPoint = cubeHeight * 0.7;
+    float tipInterpolationPoint = cubeHeight;
+    if (intersectionDistance > 0.8) {
+        tipInterpolationPoint = 255;
+    } else {
+        if (intersectionDistance < 0.2) {
+            baseInterpolationPoint = 255;
+        }
+    }
+    vector<pair<float, float> > deformationInterpolationPoints;
+    deformationInterpolationPoints.push_back(pair<float, float>(0, baseInterpolationPoint));
+    deformationInterpolationPoints.push_back(pair<float, float>(intersectionDistance, 255));
+    deformationInterpolationPoints.push_back(pair<float, float>(1, tipInterpolationPoint));
+
+    // calculate the deformed sword cube's matching riser height. use a logistic function
+    // that, roughly speaking, lifts the curve from zero to full height as the intersection's
+    // distance to the cube's base falls from 0.8 to 0.4
+    int topCubeRiserHeight = (255 - cubeHeight) / (1 + exp(10 * (intersectionDistance - 0.6)));
+
+    // allocate a drawing repository
+    ofFbo drawBuffer;
+    drawBuffer.allocate(lengthScale, lengthScale, GL_RGBA);
+    
+    // draw swords to buffer
+    drawBuffer.begin();
+    ofBackground(0);
+    
+    // bottom cube gets a normal sword
+    drawSwordForCube(*bottomCube);
+    
+    // top cube gets a sword interpolated through the intersection distance
+    drawSwordForCube(*topCube, deformationInterpolationPoints);
+
+    drawBuffer.end();
+    
+    // extract sword data as grayscale pixels
+    ofPixels swordPixels;
+    drawBuffer.readToPixels(swordPixels);
+    swordPixels.setNumChannels(1);
+    
+    // draw cube footprints as depressions into a white background.
+    // footprints include clearings and touch-sensitive risers
+    drawBuffer.begin();
+    ofBackground(255);
+
+    // top cube's footprint
+    if (topCube->isTouched) {
+        int clearingHeight = max(0, topCubeRiserHeight - 40);
+        setCubeHeight(*topCube, clearingHeight, 1.5);
+        setCubeHeight(*topCube, clearingHeight + 40);
+    } else {
+        setCubeHeight(*topCube, topCubeRiserHeight, 1.5);
+    }
+    
+    // bottom cube's footprint
+    setCubeHeight(*bottomCube, 0, 1.5);
+    if (bottomCube->isTouched) {
+        setCubeHeight(*bottomCube, 40);
+    }
+    drawBuffer.end();
+    
+    // extract cube footprint data as grayscale pixels
+    ofPixels cubeFootprintPixels;
+    drawBuffer.readToPixels(cubeFootprintPixels);
+    cubeFootprintPixels.setNumChannels(1);
+    
+    // cap sword pixel heights at footprint pixel depressions
+    for (int i = 0; i < swordPixels.size(); i++) {
+        if (swordPixels[i] > cubeFootprintPixels[i]) {
+            swordPixels[i] = cubeFootprintPixels[i];
+        }
+    }
+    
+    // draw the swords
+    ofSetColor(255);
+    ofImage(swordPixels).draw(0,0);
 }
 
 void HybridTokens::keyPressed(int key) {

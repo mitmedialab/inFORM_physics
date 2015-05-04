@@ -252,9 +252,10 @@ void ReliefApplication::draw(){
         ofDrawBitmapString(" 'b' : boolean swords", 1, 380);
         ofDrawBitmapString(" 'n' : flexible swords", 1, 400);
         ofDrawBitmapString(" 'm' : physics swords", 1, 420);
-        ofDrawBitmapString(" 'k' : dynamically constrained swords", 1, 440);
+        ofDrawBitmapString(" 'j' : dynamically constrained swords", 1, 440);
+        ofDrawBitmapString(" 'k' : vertical deformation swords", 1, 460);
 
-        int subMenuHeight = 440 + 50;
+        int subMenuHeight = 460 + 50;
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
             ofDrawBitmapString("Sub-Application:", 1, subMenuHeight);
             ofDrawBitmapString(" 'a' : union", 1, subMenuHeight + 30);
@@ -310,8 +311,12 @@ void ReliefApplication::keyPressed(int key){
         myHybridTokens->setMode(PHYSICS_SWORDS);
     }
 
-    if(key == 'k') {
+    if(key == 'j') {
         myHybridTokens->setMode(DYNAMICALLY_CONSTRAINED_SWORDS);
+    }
+
+    if(key == 'k') {
+        myHybridTokens->setMode(VERTICAL_DEFORMATION_SWORDS);
     }
 
     if(key == ' ') {
