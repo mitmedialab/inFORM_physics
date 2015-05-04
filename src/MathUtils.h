@@ -7,7 +7,6 @@
 //
 
 #include "ofMain.h"
-#include <math.h>
 
 
 #ifndef __Relief2__MathUtils__
