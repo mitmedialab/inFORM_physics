@@ -54,7 +54,9 @@ private:
     void setCubeHeight(Cube &cube, int height, float edgeLengthMultiplier = 1.0);
     void setCubeHeights(int height, float edgeLengthMultiplier = 1.0, TouchCondition touchCondition=UNDEFINED);
     void drawSword(int height=STANDARD_CUBE_HEIGHT, int farHeight=-1);
+    void drawSword(vector<pair<float, float> > &interpolationPoints);
     void drawSwordForCube(Cube &cube, int height=STANDARD_CUBE_HEIGHT, int farHeight=-1);
+    void drawSwordForCube(Cube &cube, vector<pair<float, float> > &interpolationPoints);
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=STANDARD_CUBE_HEIGHT);

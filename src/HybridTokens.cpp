@@ -167,6 +167,29 @@ void HybridTokens::drawSword(int height, int farHeight) {
     }
 }
 
+// draw sword with a bezier gradient passing through the given interpolation points
+void HybridTokens::drawSword(vector<pair<float, float> > &interpolationPoints) {
+    // if too few interpolation points are passed in, gracefully fall through to
+    // simpler cases. if too many points are passed in, complain and exit.
+    if (interpolationPoints.size() != 3) {
+        if (interpolationPoints.size() == 0) {
+            drawSword();
+        } else if (interpolationPoints.size() == 1) {
+            drawSword(interpolationPoints[0].second);
+        } else if (interpolationPoints.size() == 2) {
+            drawSword(interpolationPoints[0].second, interpolationPoints[1].second);
+        } else {
+            cout << "Error: drawSword does not currently support more than three interpolation points." << endl;
+        }
+        return;
+    }
+
+    // draw sword - use an inverted sword rectangle so that interpolation indices map to
+    // distance from cube (e.g. index 0 is the cube, index 1 is the top tip of the sword)
+    Rectangle invertedTopAndBottomSword = swordRectangle.withInvertedTopAndBottom();
+    verticalBezierSmartInterpolatedGradientRect(invertedTopAndBottomSword, interpolationPoints);
+}
+
 // height value defaults to cube height. passing a non-negative value to farHeight
 // linearly interpolates the sword height
 void HybridTokens::drawSwordForCube(Cube &cube, int height, int farHeight) {
@@ -177,6 +200,20 @@ void HybridTokens::drawSwordForCube(Cube &cube, int height, int farHeight) {
 
     // draw sword
     drawSword(height, farHeight);
+
+    // reset coordinate system
+    glPopMatrix();
+}
+
+// draw sword with a bezier gradient passing through the given interpolation points
+void HybridTokens::drawSwordForCube(Cube &cube, vector<pair<float, float> > &interpolationPoints) {
+    // transition to the cube's reference frame
+    glPushMatrix();
+    glTranslatef(cube.center.x * lengthScale, cube.center.y * lengthScale, 0.0f);
+    glRotatef(-cube.theta, 0.0f, 0.0f, 1.0f);
+
+    // draw sword
+    drawSword(interpolationPoints);
 
     // reset coordinate system
     glPopMatrix();
