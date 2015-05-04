@@ -49,3 +49,11 @@ void Rectangle::findNearestPointOnPerimeter(ofPoint &src, ofPoint &dst) {
         }
     }
 }
+
+Rectangle Rectangle::withInvertedTopAndBottom(){
+    return Rectangle(left, top + height, width, -height);
+}
+
+Rectangle Rectangle::withInvertedLeftAndRight() {
+    return Rectangle(left + width, top, -width, height);
+}
