@@ -482,7 +482,7 @@ void HybridTokens::drawPhysicsSwords() {
         }
     }
 
-    // interpolate top sword heights towards targets
+    // interpolate top sword heights towards targets for smooth frame-to-frame animation
     int nearHeightAdjustment = targetHeightNearTopCube - physicsTopSwordHeightNearCube;
     int farHeightAdjustment = targetHeightFarFromTopCube - physicsTopSwordHeightFarFromCube;
     int maxChangePerFrame = 255 / ofGetFrameRate();
