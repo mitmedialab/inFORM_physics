@@ -88,3 +88,26 @@ void interpolateBezierControlPoints(vector<pair<float, FloatType> > &controlPoin
     // last, push the interpolated point for t == 1
     interpolatedPoints.push_back(controlPoints[n - 1]);
 }
+
+// verticalBezierGradientRect
+//
+// draw a rectangle with a bezier curve gradient stretching from top to bottom
+void verticalBezierGradientRect(Rectangle &rect, vector<pair<float, float> > &controlPoints, float stepSize) {
+    vector<pair<float, float> > interpolatedPoints;
+    interpolateBezierControlPoints(controlPoints, interpolatedPoints, stepSize);
+    int n = interpolatedPoints.size();
+
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    mesh.enableColors();
+
+    for (int i = 0; i < n; i++) {
+        ofColor color(min(255, max(0, (int) interpolatedPoints[i].second)));
+        mesh.addVertex(ofPoint(rect.left, rect.top + rect.height * interpolatedPoints[i].first));
+        mesh.addColor(ofColor(color));
+        mesh.addVertex(ofPoint(rect.left + rect.width, rect.top + rect.height * interpolatedPoints[i].first));
+        mesh.addColor(ofColor(color));
+    }
+
+    mesh.draw();
+}

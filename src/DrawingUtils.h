@@ -20,6 +20,7 @@ void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, o
 void gradientQuadrilateral(ofPoint &p0, ofPoint &p1, ofPoint &p2, ofPoint &p3, int color0, int color1);
 void verticalLinearGradientRect(Rectangle &rect, ofColor &colorTop, ofColor &colorBottom);
 void verticalLinearGradientRect(Rectangle &rect, int colorTop, int colorBottom);
+void verticalBezierGradientRect(Rectangle &rect, vector<pair<float, float> > &controlPoints, float stepSize=0.01);
 
 template<typename FloatType>
 void interpolateBezierControlPoints(vector<pair<float, FloatType> > &controlPoints, vector<pair<float, FloatType> > &interpolatedPoints, float stepSize=0.01);
