@@ -295,6 +295,35 @@ void HybridTokens::getSwordsAxesIntersectionPoint(Cube &firstCube, Cube &secondC
     dst.set(intersectionPoint);
 }
 
+// use the blob finder to find the center point of the swords' intersection
+void HybridTokens::getCenterOfImageBlob(ofPixels &thresholdedPixels, ofPoint &dst) {
+    // set up blob finder parameters
+    blobFinder.bTrackBlobs = true;
+    blobFinder.bTrackFingers = false;
+
+    // convert pixels to a cvImage
+    int width = thresholdedPixels.getWidth();
+    int height = thresholdedPixels.getHeight();
+    ofxCvGrayscaleImage cvImage;
+    cvImage.allocate(width, height);
+    cvImage.setFromPixels(thresholdedPixels);
+
+    // find blob
+    blobFinder.findContours(cvImage, 1, width * height, 1, 20.0, false);
+    vector<Blob> blobs = blobFinder.blobs;
+
+    // for now, take the simplest exit route when no blobs are found
+    if (!blobs.size()) {
+        cout << "Error: blob detection failed in getCenterOfImageBlob" << endl;
+        return;
+    }
+
+    // set dst to the normalized blob centroid
+    Blob *intersectionBlob = &blobs[0];
+    ofPoint normalizationVector(1.0 / intersectionBlob->widthScale, 1.0 / intersectionBlob->heightScale);
+    dst.set(intersectionBlob->centroid * normalizationVector * lengthScale);
+}
+
 void HybridTokens::drawSwords() {
     // draw the swords
     ofSetColor(255);

@@ -15,6 +15,7 @@
 #include "Rectangle.h"
 #include "DrawingUtils.h"
 #include "ofFbo.h"
+#include "ofxKCore.h"
 
 
 enum HybridTokensMode {BOOLEAN_SWORDS, FLEXIBLE_SWORDS, PHYSICS_SWORDS, DYNAMICALLY_CONSTRAINED_SWORDS};
@@ -60,6 +61,7 @@ private:
     void drawStandardClearingsAndRisers();
     void getSwordsIntersectionAndUnion(ofPixels &swordsIntersection, ofPixels &swordsUnion);
     void getSwordsAxesIntersectionPoint(Cube &firstCube, Cube &secondCube, ofPoint &dst);
+    void getCenterOfImageBlob(ofPixels &thresholdedPixels, ofPoint &dst);
     void drawSwords();
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=STANDARD_CUBE_HEIGHT);
@@ -68,6 +70,7 @@ private:
     TiltDirection getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube);
 
     Rectangle swordRectangle;
+    ContourFinder blobFinder;
 
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red
