@@ -40,9 +40,9 @@ public:
     ReliefIOManager * mIOManager;
 	unsigned char mPinHeightToRelief [RELIEF_SIZE_X][RELIEF_SIZE_Y];
 
+    bool paused = false;
     bool drawPins = true;
     bool paintGraphics = true;
-    bool paused = false;
 
     ofFbo colorInputImage;                      // color from camera
     ofFbo depthInputImage;                      // depth from camera

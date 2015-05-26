@@ -282,11 +282,11 @@ void ReliefApplication::draw(){
     if (myCurrentRenderedObject == myHybridTokens) {
         menuHeight += 30;
         ofDrawBitmapString("Select Application:", 1, menuHeight); menuHeight += 30;
-        ofDrawBitmapString(" 'b' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'n' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'm' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'j' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'k' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'q' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'w' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'e' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'r' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 't' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
 
         // draw application-specific instructions
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
@@ -392,24 +392,28 @@ void ReliefApplication::keyPressed(int key){
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
     if(key == KEY_RIGHT) myCurrentRenderedObject->keyPressed(KEY_RIGHT);
 
-    if(key == 'b') {
+    if(key == 'q') {
         myHybridTokens->setMode(BOOLEAN_SWORDS);
     }
 
-    if(key == 'n') {
+    if(key == 'w') {
         myHybridTokens->setMode(FLEXIBLE_SWORDS);
     }
 
-    if(key == 'm') {
+    if(key == 'e') {
         myHybridTokens->setMode(PHYSICS_SWORDS);
     }
 
-    if(key == 'j') {
+    if(key == 'r') {
         myHybridTokens->setMode(DYNAMICALLY_CONSTRAINED_SWORDS);
     }
 
-    if(key == 'k') {
+    if(key == 't') {
         myHybridTokens->setMode(VERTICAL_DEFORMATION_SWORDS);
+    }
+
+    if(key == ' ') {
+        paused = !paused;
     }
 
     if(key == 'z') {
@@ -420,16 +424,12 @@ void ReliefApplication::keyPressed(int key){
         paintGraphics = !paintGraphics;
     }
 
-    if(key == ' ') {
-        paused = !paused;
-    }
-
     // other keys
     if(key == 'p') {
         kinectTracker.saveDepthImage();
     }
     
-    if(key == 'r') {
+    if(key == 'm') {
         show3DModel = !show3DModel;
     }
 }
