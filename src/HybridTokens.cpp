@@ -667,11 +667,11 @@ void HybridTokens::drawDynamicallyConstrainedSwords(int height) {
     // draw blockade if appropriate
     if (!swordMayPass) {
         ofSetColor(height);
-        int closeDistance = 0.07 * lengthScale;
+        int closeDistance = 0.5 * cubeEdgeLength * lengthScale;
         if (left < fixedRight + closeDistance) {
             int adjWidth = cubeEdgeLength * lengthScale;
             int adjHeight = cubeEdgeLength * lengthScale;
-            int cubeBottom = (dynamicCube->center.y + 0.07) * lengthScale;
+            int cubeBottom = (dynamicCube->center.y + 0.5 * cubeEdgeLength) * lengthScale;
             ofRect(fixedRight - adjWidth / 4, cubeBottom - adjHeight, adjWidth / 4, adjHeight);
         }
     }
