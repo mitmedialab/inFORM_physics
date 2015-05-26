@@ -655,7 +655,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords(int height) {
     top = (dynamicCube->center.y - (0.5 + 3) * cubeEdgeLength) * lengthScale;
     bottom = (dynamicCube->center.y + 0.5 * cubeEdgeLength) * lengthScale;
 
-    bool swordMayPass = top > fixedBottom;
+    bool swordMayPass = top > fixedBottom || bottom < fixedTop;
 
     // draw dynamic sword up - if it's on a collision course, make sure it doesn't accidentally pass the static sword
     ofSetColor(height);
