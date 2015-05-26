@@ -34,12 +34,14 @@ public:
     void windowResized(int w, int h);
     //void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-    
+
     void sendHeightToRelief();
     
     ReliefIOManager * mIOManager;
 	unsigned char mPinHeightToRelief [RELIEF_SIZE_X][RELIEF_SIZE_Y];
 
+    bool drawPins = true;
+    bool paintGraphics = true;
     bool paused = false;
 
     ofFbo colorInputImage;                      // color from camera

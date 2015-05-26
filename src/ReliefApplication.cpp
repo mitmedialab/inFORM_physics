@@ -247,31 +247,45 @@ void ReliefApplication::draw(){
         debugImage3.draw(914, 332, 300, 300);
     }
 
-    if (myCurrentRenderedObject == myHybridTokens) {
-        ofDrawBitmapString("Application:", 1, 350);
-        ofDrawBitmapString(" 'b' : boolean swords", 1, 380);
-        ofDrawBitmapString(" 'n' : flexible swords", 1, 400);
-        ofDrawBitmapString(" 'm' : physics swords", 1, 420);
-        ofDrawBitmapString(" 'j' : dynamically constrained swords", 1, 440);
-        ofDrawBitmapString(" 'k' : vertical deformation swords", 1, 460);
 
-        int subMenuHeight = 460 + 50;
+    // draw general instructions
+    int menuHeight = 350;
+    ofDrawBitmapString("General:", 1, menuHeight); menuHeight += 30;
+    ofDrawBitmapString((string) " ' ' : " + (paused ? "play application" : "pause application"), 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) " 'z' : turn pins " + (drawPins ? "off" : "on"), 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) " 'x' : turn graphics " + (paintGraphics ? "off" : "on"), 1, menuHeight); menuHeight += 20;
+
+    // draw application selection instructions
+    if (myCurrentRenderedObject == myHybridTokens) {
+        menuHeight += 30;
+        ofDrawBitmapString("Select Application:", 1, menuHeight); menuHeight += 30;
+        ofDrawBitmapString(" 'b' : boolean swords", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'n' : flexible swords", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'm' : physics swords", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'j' : dynamically constrained swords", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'k' : vertical deformation swords", 1, menuHeight); menuHeight += 20;
+
+        // draw application-specific instructions
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
-            ofDrawBitmapString("Sub-Application:", 1, subMenuHeight);
-            ofDrawBitmapString(" 'a' : union", 1, subMenuHeight + 30);
-            ofDrawBitmapString(" 's' : intersect", 1, subMenuHeight + 50);
-            ofDrawBitmapString(" 'd' : sum", 1, subMenuHeight + 70);
-            ofDrawBitmapString(" 'f' : xor", 1, subMenuHeight + 90);
+            menuHeight += 30;
+            ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString(" 'a' : union", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString(" 's' : intersect", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString(" 'd' : sum", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString(" 'f' : xor", 1, menuHeight); menuHeight += 20;
         } else if (myHybridTokens->mode == FLEXIBLE_SWORDS) {
-            ofDrawBitmapString("Sub-Application:", 1, subMenuHeight);
-            ofDrawBitmapString(" '-' : decrease extension", 1, subMenuHeight + 30);
-            ofDrawBitmapString(" '+' : increase extension", 1, subMenuHeight + 50);
+            menuHeight += 30;
+            ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString(" '-' : decrease extension", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString(" '+' : increase extension", 1, menuHeight); menuHeight += 20;
         }
     }
 
 
     //Draw Graphics onto projector
-    pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);
+    if (paintGraphics) {
+        pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);
+    }
     
     
     //kinectTracker.draw(1, 306, 640, 480, 0, 0);
@@ -317,6 +331,14 @@ void ReliefApplication::keyPressed(int key){
 
     if(key == 'k') {
         myHybridTokens->setMode(VERTICAL_DEFORMATION_SWORDS);
+    }
+
+    if(key == 'z') {
+        drawPins = !drawPins;
+    }
+
+    if(key == 'x') {
+        paintGraphics = !paintGraphics;
     }
 
     if(key == ' ') {
@@ -385,10 +407,14 @@ void ReliefApplication::sendHeightToRelief(){
     
     for (int j = 0; j < RELIEF_SIZE_Y; j ++) {
         for (int i = 0; i < RELIEF_SIZE_X; i ++) {
-            int y = j;
-            int x = RELIEF_SIZE_X - 1 - i;
-            int heightMapValue = pixels[((x + (y * RELIEF_SIZE_X)) * 4)];
-            mPinHeightToRelief[i][j] = heightMapValue;
+            if (drawPins) {
+                int y = j;
+                int x = RELIEF_SIZE_X - 1 - i;
+                int heightMapValue = pixels[((x + (y * RELIEF_SIZE_X)) * 4)];
+                mPinHeightToRelief[i][j] = heightMapValue;
+            } else {
+                mPinHeightToRelief[i][j] = 0;
+            }
         }
     }
     
