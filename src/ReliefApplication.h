@@ -1,22 +1,11 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxSimpleGuiToo.h"
 #include "ReliefIOManager.h"
 #include "RenderableObject.h"
-#include "RWell.h"
-#include "RRectangle.h"
-#include "RBitmap.h"
-#include "RRipple.h"
 #include "KinectTracker.h"
 #include "HybridTokens.h"
 #include "StaticManipulator.h"
-#include <memory>
-#include "R3DModel.h"
-
-//#define RECTDRAW_SIZE 10
-//#define DRAW_OFFSET 300
-//#define MID_PIN_HEIGHT 127
 
 class ReliefApplication : public ofBaseApp {
 public:
@@ -64,9 +53,4 @@ public:
     StaticManipulator * myStaticManipulator;
 
     KinectTracker kinectTracker;
-        
-    ofx3DModelLoader model;
-    ofShader mHeightMapShader;
-    
-    bool show3DModel;
 };

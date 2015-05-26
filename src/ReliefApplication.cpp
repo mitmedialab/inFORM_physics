@@ -6,25 +6,21 @@ void ReliefApplication::setup(){
         kinectTracker.setup();
     }
 
-    if(SCREEN_IN_USE == 0){
+    if (SCREEN_IN_USE == 0) {
         //For Acer Screen
         ofSetWindowShape(ACER_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=ACER_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
         ofSetWindowPosition(0, 0);
-    }
-    else if(SCREEN_IN_USE == 1){
+    } else if (SCREEN_IN_USE == 1) {
         //For Sean Screen
         ofSetWindowShape(SEAN_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=SEAN_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
         if(CINEMA_DISPLAY){
             ofSetWindowPosition(CINEMA_DISPLAY_OFFSET, 0);
-        }
-        else{
+        } else {
             ofSetWindowPosition(0, 0);
-            
         }
-    }
-    else{
+    } else {
     //For Daniel Screen
         ofSetWindowShape(DANIEL_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=DANIEL_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
@@ -82,33 +78,10 @@ void ReliefApplication::setup(){
     myStaticManipulator = new StaticManipulator(&kinectTracker);
 
     myCurrentRenderedObject = myHybridTokens;
-    
-    bool loadPlane = false;
-    
-    if (loadPlane) {
-        model.loadModel("plane/plane.3ds", 18);
-        model.setRotation(0, -5, 1, 0, 0); // plane
-        model.setRotation(1, 29, 0, 0, 1); // plane
-        model.setPosition(435, 420, -400); // plane
-    }
-    else {
-        model.loadModel("VWBeetle/VWBeetle.3ds", 0.099);
-        model.setScale(1,1,1);
-        model.setPosition(470, 420, -250);
-        model.setRotation(1, 180, 0, 0, 1);
-    }
-    
-    //model.loadModel("plane/plane.3ds", 18); // plant
-    
-    mHeightMapShader.load("shaders/heightMapShader");
-    
-    show3DModel = false;
 }
 
 //--------------------------------------------------------------
 void ReliefApplication::update(){
-
-    
     if (USE_KINECT) {
         kinectTracker.update();
     }
@@ -119,10 +92,6 @@ void ReliefApplication::update(){
     if (!paused) {
         myCurrentRenderedObject->update(dt);
     }
-    
-    //for(int i=0; i < renderableObjects.size(); i++){
-    //    renderableObjects[i]->update(dt);
-    //}
     
     // render input color image
     colorInputImage.begin();
@@ -138,11 +107,7 @@ void ReliefApplication::update(){
     glPopMatrix();
     
     ofBackground(0);
-    
-    glEnable(GL_DEPTH_TEST);
-    if(show3DModel) model.draw();
-    glDisable(GL_DEPTH_TEST);
-    
+
     kinectTracker.drawColorImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     
     colorInputImage.end();
@@ -161,14 +126,6 @@ void ReliefApplication::update(){
     glPopMatrix();
     
     ofBackground(0);
-
-    mHeightMapShader.begin();
-    
-    glEnable(GL_DEPTH_TEST);
-    if(show3DModel) model.draw();
-    //glPopMatrix();
-    glDisable(GL_DEPTH_TEST);
-    mHeightMapShader.end();
 
     kinectTracker.drawDepthImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
 
@@ -365,15 +322,6 @@ void ReliefApplication::draw(){
     if (paintGraphics) {
         pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);
     }
-    
-    
-    //kinectTracker.draw(1, 306, 640, 480, 0, 0);
-   /* if (kinectTracker.fingers.size()>0) {
-        for (int i = 0; i<kinectTracker.fingers.size(); i++){
-            cout<< kinectTracker.fingers[i].x << " " << kinectTracker.fingers[i].y << " " << kinectTracker.fingers[i].z << endl;
-            //ofCircle(projectorOffsetX+(kinectTracker.fingers[i].x / RELIEF_PROJECTOR_SCALED_SIZE_X), RELIEF_PROJECTOR_OFFSET_Y+ (kinectTracker.fingers[i].y / RELIEF_PROJECTOR_SCALED_SIZE_Y), 10);
-        }
-    }*/
 }
 
 //--------------------------------------------------------------
@@ -427,10 +375,6 @@ void ReliefApplication::keyPressed(int key){
     // other keys
     if(key == 'p') {
         kinectTracker.saveDepthImage();
-    }
-    
-    if(key == 'm') {
-        show3DModel = !show3DModel;
     }
 }
 
