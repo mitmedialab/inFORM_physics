@@ -612,7 +612,7 @@ void HybridTokens::drawPhysicsSwords() {
     ofImage(swordPixels).draw(0,0);
 }
 
-void HybridTokens::drawDynamicallyConstrainedSwords() {
+void HybridTokens::drawDynamicallyConstrainedSwords(int height) {
     if (kinectTracker->redCubes.size() < 2) {
         drawSwords();
         return;
@@ -636,7 +636,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords() {
     // for now, assume all cubes are aligned to the coordinate axes
 
     // draw static sword right
-    ofSetColor(140);
+    ofSetColor(height);
     int fixedLeft, fixedRight, fixedTop, fixedBottom;
     fixedLeft = (fixedCube->center.x + 0.5 * cubeEdgeLength) * lengthScale;
     fixedRight = (fixedCube->center.x + (0.5 + 3) * cubeEdgeLength) * lengthScale;
@@ -654,7 +654,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords() {
     bool swordMayPass = top > fixedBottom;
 
     // draw dynamic sword up - if it's on a collision course, make sure it doesn't accidentally pass the static sword
-    ofSetColor(140);
+    ofSetColor(height);
     if (swordMayPass) {
         ofRect(left, top, right - left, bottom - top);
     } else {
@@ -666,7 +666,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords() {
 
     // draw blockade if appropriate
     if (!swordMayPass) {
-        ofSetColor(140);
+        ofSetColor(height);
         int closeDistance = 0.07 * lengthScale;
         if (left < fixedRight + closeDistance) {
             int adjWidth = cubeEdgeLength * lengthScale;

@@ -72,7 +72,7 @@ private:
     void drawBooleanSwords();
     void drawFlexibleSwords(int height=STANDARD_CUBE_HEIGHT);
     void drawPhysicsSwords();
-    void drawDynamicallyConstrainedSwords();
+    void drawDynamicallyConstrainedSwords(int height=STANDARD_CUBE_HEIGHT);
     void drawVerticalDeformationSwords();
     TiltDirection getPhysicsSwordTiltDirection(Cube &topCube, Cube &bottomCube);
 
