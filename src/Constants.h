@@ -91,6 +91,6 @@
 
 #define USE_KINECT 1
 
-#define DEBUG 1
+#define DEBUG 0
 
 #endif

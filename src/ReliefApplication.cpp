@@ -282,11 +282,11 @@ void ReliefApplication::draw(){
     if (myCurrentRenderedObject == myHybridTokens) {
         menuHeight += 30;
         ofDrawBitmapString("Select Application:", 1, menuHeight); menuHeight += 30;
-        ofDrawBitmapString(" 'b' : boolean swords", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'n' : flexible swords", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'm' : physics swords", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'j' : dynamically constrained swords", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'k' : vertical deformation swords", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'b' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'n' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'm' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'j' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString(" 'k' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
 
         // draw application-specific instructions
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
@@ -301,6 +301,62 @@ void ReliefApplication::draw(){
             ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
             ofDrawBitmapString(" '-' : decrease extension", 1, menuHeight); menuHeight += 20;
             ofDrawBitmapString(" '+' : increase extension", 1, menuHeight); menuHeight += 20;
+        }
+
+        // when drawing asci diagrams, this spacing will make vertical character distances
+        // match horizontal character distances for nicely dimensioned drawings
+        int asciArtLineHeight = 8;
+
+        // draw application-specific notes
+        if (myHybridTokens->mode == PHYSICS_SWORDS) {
+            menuHeight += 30;
+            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - the cube on the right is always the top sword", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - stacking swords in this        - stacking swords in this", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("    orientation works well:          orientation is buggy:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("              WORKS                     SORT OF WORKS  ", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        | | |  | |  |                     |       | | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                                                       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("    this is because in the second case, graphics get accidentally", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("    projected onto the cube and hinder accurate object detection", 1, menuHeight); menuHeight += 20;
+
+        } else if (myHybridTokens->mode == DYNAMICALLY_CONSTRAINED_SWORDS) {
+            menuHeight += 30;
+            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - try this starting arrangement:", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    +-+ +-------+  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    | | |       |  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    +-+ +-------+  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                      ", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the left is always aligned to the x axis", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the right is always aligned to the y axis", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the right cannot slide left if this would cause sword collision", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - this application does NOT handle illegal scenarios intelligently", 1, menuHeight); menuHeight += 20;
+
+        } else if (myHybridTokens->mode == VERTICAL_DEFORMATION_SWORDS) {
+            menuHeight += 30;
+            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - the cube on the right is always the top sword", 1, menuHeight); menuHeight += 20;
         }
     }
 
