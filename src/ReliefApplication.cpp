@@ -228,8 +228,14 @@ void ReliefApplication::draw(){
     }
 
 
-    // draw general instructions
+    // draw general notes
     int menuHeight = 350;
+    ofDrawBitmapString("Use red cubes with yellow markers for these applications. The marker specifies the", 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString("cube's orientation. Only use sideways-pointing cube orientations - these apps don't", 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString("understand the cubes' up (center marker) and down (no marker) orientations.", 1, menuHeight); menuHeight += 20;
+
+    // draw general instructions
+    menuHeight += 30;
     ofDrawBitmapString("General:", 1, menuHeight); menuHeight += 30;
     ofDrawBitmapString((string) " ' ' : " + (paused ? "play application" : "pause application"), 1, menuHeight); menuHeight += 20;
     ofDrawBitmapString((string) " 'z' : turn pins " + (drawPins ? "off" : "on"), 1, menuHeight); menuHeight += 20;
