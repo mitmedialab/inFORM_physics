@@ -81,6 +81,7 @@ private:
 
     char pinColorIfHigh[3] = {255, 135, 0}; // yellow
     char pinColorIfOn[3] = {255, 12, 16}; // red
+    char pinColorAltIfOn[3] = {0, 0, 255}; // blue
     char pinColorIfOff[3] = {0, 0, 0}; // black
 
     const float pinSize = 1.0 / RELIEF_SIZE_X;

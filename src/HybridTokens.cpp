@@ -113,10 +113,14 @@ void HybridTokens::updateGraphics() {
         } else {
             // since the height map rgba pixels are grayscale, the first channel is sufficient
             // to distinguish pin height
-            if (pinHeightMapContentPixels[i] > 150) {
+            if (pinHeightMapContentPixels[i] > STANDARD_CUBE_HEIGHT) {
                 pinGraphicsPixels[i + 0] = pinColorIfHigh[0];
                 pinGraphicsPixels[i + 1] = pinColorIfHigh[1];
                 pinGraphicsPixels[i + 2] = pinColorIfHigh[2];
+            } else if (pinHeightMapContentPixels[i] == STANDARD_CUBE_HEIGHT - 1) {
+                pinGraphicsPixels[i + 0] = pinColorAltIfOn[0];
+                pinGraphicsPixels[i + 1] = pinColorAltIfOn[1];
+                pinGraphicsPixels[i + 2] = pinColorAltIfOn[2];
             } else if (pinHeightMapContentPixels[i] > 0) {
                 pinGraphicsPixels[i + 0] = pinColorIfOn[0];
                 pinGraphicsPixels[i + 1] = pinColorIfOn[1];
