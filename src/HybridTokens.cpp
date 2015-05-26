@@ -640,7 +640,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords(int height) {
     // for now, assume all cubes are aligned to the coordinate axes
 
     // draw static sword right
-    ofSetColor(height);
+    ofSetColor(height + 1); // increase height to receive special high color
     int fixedLeft, fixedRight, fixedTop, fixedBottom;
     fixedLeft = (fixedCube->center.x + 0.5 * cubeEdgeLength) * lengthScale;
     fixedRight = (fixedCube->center.x + (0.5 + 3) * cubeEdgeLength) * lengthScale;
@@ -670,7 +670,7 @@ void HybridTokens::drawDynamicallyConstrainedSwords(int height) {
 
     // draw blockade if appropriate
     if (!swordMayPass) {
-        ofSetColor(height);
+        ofSetColor(height - 1); // decrease height to get special alt color
         int closeDistance = 0.5 * cubeEdgeLength * lengthScale;
         if (left < fixedRight + closeDistance) {
             int adjWidth = cubeEdgeLength * lengthScale;
