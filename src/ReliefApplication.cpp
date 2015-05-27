@@ -237,28 +237,37 @@ void ReliefApplication::draw(){
     // draw general instructions
     menuHeight += 30;
     ofDrawBitmapString("General:", 1, menuHeight); menuHeight += 30;
-    ofDrawBitmapString((string) " ' ' : " + (paused ? "play application" : "pause application"), 1, menuHeight); menuHeight += 20;
-    ofDrawBitmapString((string) " 'z' : turn pins " + (drawPins ? "off" : "on"), 1, menuHeight); menuHeight += 20;
-    ofDrawBitmapString((string) " 'x' : turn graphics " + (paintGraphics ? "off" : "on"), 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) "   ' ' : " + (paused ? "play application" : "pause application"), 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) "   'z' : turn pins " + (drawPins ? "off" : "on"), 1, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) "   'x' : turn graphics " + (paintGraphics ? "off" : "on"), 1, menuHeight); menuHeight += 20;
 
     // draw application selection instructions
     if (myCurrentRenderedObject == myHybridTokens) {
         menuHeight += 30;
         ofDrawBitmapString("Select Application:", 1, menuHeight); menuHeight += 30;
-        ofDrawBitmapString(" 'q' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'w' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'e' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'r' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 't' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == BOOLEAN_SWORDS ? " * " : "   ") +
+                "'q' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == FLEXIBLE_SWORDS ? " * " : "   ") +
+                "'w' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == PHYSICS_SWORDS ? " * " : "   ") +
+                "'e' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == DYNAMICALLY_CONSTRAINED_SWORDS ? " * " : "   ") +
+                "'r' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == VERTICAL_DEFORMATION_SWORDS ? " * " : "   ") +
+                "'t' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
 
         // draw application-specific instructions
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
             menuHeight += 30;
             ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString(" 'a' : union", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 's' : intersect", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 'd' : sum", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 'f' : xor", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == UNION ? " * " : "   ") +
+                    "'a' : union", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == INTERSECTION ? " * " : "   ") +
+                    "'s' : intersectiion", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == SUM ? " * " : "   ") +
+                    "'d' : sum", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == XOR ? " * " : "   ") +
+                    "'f' : xor", 1, menuHeight); menuHeight += 20;
         } else if (myHybridTokens->mode == FLEXIBLE_SWORDS) {
             menuHeight += 30;
             ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
