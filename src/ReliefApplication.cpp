@@ -6,25 +6,21 @@ void ReliefApplication::setup(){
         kinectTracker.setup();
     }
 
-    if(SCREEN_IN_USE == 0){
+    if (SCREEN_IN_USE == 0) {
         //For Acer Screen
         ofSetWindowShape(ACER_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=ACER_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
         ofSetWindowPosition(0, 0);
-    }
-    else if(SCREEN_IN_USE == 1){
+    } else if (SCREEN_IN_USE == 1) {
         //For Sean Screen
         ofSetWindowShape(SEAN_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=SEAN_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
         if(CINEMA_DISPLAY){
             ofSetWindowPosition(CINEMA_DISPLAY_OFFSET, 0);
-        }
-        else{
+        } else {
             ofSetWindowPosition(0, 0);
-            
         }
-    }
-    else{
+    } else {
     //For Daniel Screen
         ofSetWindowShape(DANIEL_SCREEN_RESOLUTION_X+PROJECTOR_RAW_RESOLUTION_X,PROJECTOR_RAW_RESOLUTION_Y);
         projectorOffsetX=DANIEL_SCREEN_RESOLUTION_X+RELIEF_PROJECTOR_OFFSET_X;
@@ -82,33 +78,10 @@ void ReliefApplication::setup(){
     myStaticManipulator = new StaticManipulator(&kinectTracker);
 
     myCurrentRenderedObject = myHybridTokens;
-    
-    bool loadPlane = false;
-    
-    if (loadPlane) {
-        model.loadModel("plane/plane.3ds", 18);
-        model.setRotation(0, -5, 1, 0, 0); // plane
-        model.setRotation(1, 29, 0, 0, 1); // plane
-        model.setPosition(435, 420, -400); // plane
-    }
-    else {
-        model.loadModel("VWBeetle/VWBeetle.3ds", 0.099);
-        model.setScale(1,1,1);
-        model.setPosition(470, 420, -250);
-        model.setRotation(1, 180, 0, 0, 1);
-    }
-    
-    //model.loadModel("plane/plane.3ds", 18); // plant
-    
-    mHeightMapShader.load("shaders/heightMapShader");
-    
-    show3DModel = false;
 }
 
 //--------------------------------------------------------------
 void ReliefApplication::update(){
-
-    
     if (USE_KINECT) {
         kinectTracker.update();
     }
@@ -119,10 +92,6 @@ void ReliefApplication::update(){
     if (!paused) {
         myCurrentRenderedObject->update(dt);
     }
-    
-    //for(int i=0; i < renderableObjects.size(); i++){
-    //    renderableObjects[i]->update(dt);
-    //}
     
     // render input color image
     colorInputImage.begin();
@@ -138,11 +107,7 @@ void ReliefApplication::update(){
     glPopMatrix();
     
     ofBackground(0);
-    
-    glEnable(GL_DEPTH_TEST);
-    if(show3DModel) model.draw();
-    glDisable(GL_DEPTH_TEST);
-    
+
     kinectTracker.drawColorImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
     
     colorInputImage.end();
@@ -161,14 +126,6 @@ void ReliefApplication::update(){
     glPopMatrix();
     
     ofBackground(0);
-
-    mHeightMapShader.begin();
-    
-    glEnable(GL_DEPTH_TEST);
-    if(show3DModel) model.draw();
-    //glPopMatrix();
-    glDisable(GL_DEPTH_TEST);
-    mHeightMapShader.end();
 
     kinectTracker.drawDepthImage(0, 0, RELIEF_PROJECTOR_SIZE_X, RELIEF_PROJECTOR_SIZE_X);
 
@@ -271,36 +228,52 @@ void ReliefApplication::draw(){
     }
 
 
-    // draw general instructions
+    // draw general notes
     int menuHeight = 350;
-    ofDrawBitmapString("General:", 1, menuHeight); menuHeight += 30;
-    ofDrawBitmapString((string) " ' ' : " + (paused ? "play application" : "pause application"), 1, menuHeight); menuHeight += 20;
-    ofDrawBitmapString((string) " 'z' : turn pins " + (drawPins ? "off" : "on"), 1, menuHeight); menuHeight += 20;
-    ofDrawBitmapString((string) " 'x' : turn graphics " + (paintGraphics ? "off" : "on"), 1, menuHeight); menuHeight += 20;
+    int menuLeftCoordinate = 21;
+    ofDrawBitmapString("Use red cubes with yellow markers for these applications. The marker specifies the", menuLeftCoordinate, menuHeight); menuHeight += 20;
+    ofDrawBitmapString("cube's orientation. Only use sideways-pointing cube orientations - these apps don't", menuLeftCoordinate, menuHeight); menuHeight += 20;
+    ofDrawBitmapString("understand the cubes' up (center marker) and down (no marker) orientations.", menuLeftCoordinate, menuHeight); menuHeight += 20;
+
+    // draw general instructions
+    menuHeight += 30;
+    ofDrawBitmapString("General:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+    ofDrawBitmapString((string) "   ' ' : " + (paused ? "play application" : "pause application"), menuLeftCoordinate, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) "   'z' : turn pins " + (drawPins ? "off" : "on"), menuLeftCoordinate, menuHeight); menuHeight += 20;
+    ofDrawBitmapString((string) "   'x' : turn graphics " + (paintGraphics ? "off" : "on"), menuLeftCoordinate, menuHeight); menuHeight += 20;
 
     // draw application selection instructions
     if (myCurrentRenderedObject == myHybridTokens) {
         menuHeight += 30;
-        ofDrawBitmapString("Select Application:", 1, menuHeight); menuHeight += 30;
-        ofDrawBitmapString(" 'b' : boolean swords - intersecting swords do fun things", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'n' : flexible swords - use two cubes to control a bezier curve", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'm' : physics swords - stack one sword on the other; unbalanced swords will tip over", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'j' : dynamically constrained swords - swords cannot share the same space", 1, menuHeight); menuHeight += 20;
-        ofDrawBitmapString(" 'k' : vertical deformation swords - the top sword is rubbery and will droop", 1, menuHeight); menuHeight += 20;
+        ofDrawBitmapString("Select Application:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+        ofDrawBitmapString((string) (myHybridTokens->mode == BOOLEAN_SWORDS ? " * " : "   ") +
+                "'q' : boolean swords - intersecting swords do fun things", menuLeftCoordinate, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == FLEXIBLE_SWORDS ? " * " : "   ") +
+                "'w' : flexible swords - use two cubes to control a bezier curve", menuLeftCoordinate, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == PHYSICS_SWORDS ? " * " : "   ") +
+                "'e' : physics swords - stack one sword on the other; unbalanced swords will tip over", menuLeftCoordinate, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == DYNAMICALLY_CONSTRAINED_SWORDS ? " * " : "   ") +
+                "'r' : dynamically constrained swords - swords cannot share the same space", menuLeftCoordinate, menuHeight); menuHeight += 20;
+        ofDrawBitmapString((string) (myHybridTokens->mode == VERTICAL_DEFORMATION_SWORDS ? " * " : "   ") +
+                "'t' : vertical deformation swords - the top sword is rubbery and will droop", menuLeftCoordinate, menuHeight); menuHeight += 20;
 
         // draw application-specific instructions
         if (myHybridTokens->mode == BOOLEAN_SWORDS) {
             menuHeight += 30;
-            ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString(" 'a' : union", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 's' : intersect", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 'd' : sum", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" 'f' : xor", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("Select Sub-Application:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == UNION ? " * " : "   ") +
+                    "'a' : union", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == INTERSECTION ? " * " : "   ") +
+                    "'s' : intersectiion", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == SUM ? " * " : "   ") +
+                    "'d' : sum", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString((string) (myHybridTokens->booleanSwordsSchema == XOR ? " * " : "   ") +
+                    "'f' : xor", menuLeftCoordinate, menuHeight); menuHeight += 20;
         } else if (myHybridTokens->mode == FLEXIBLE_SWORDS) {
             menuHeight += 30;
-            ofDrawBitmapString("Select Sub-Application:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString(" '-' : decrease extension", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString(" '+' : increase extension", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("Select Sub-Application:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString(" '-' : decrease extension", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString(" '+' : increase extension", menuLeftCoordinate, menuHeight); menuHeight += 20;
         }
 
         // when drawing asci diagrams, this spacing will make vertical character distances
@@ -310,53 +283,53 @@ void ReliefApplication::draw(){
         // draw application-specific notes
         if (myHybridTokens->mode == PHYSICS_SWORDS) {
             menuHeight += 30;
-            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("  - the cube on the right is always the top sword", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("  - stacking swords in this        - stacking swords in this", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("    orientation works well:          orientation is buggy:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("              WORKS                     SORT OF WORKS  ", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("        | | |  | |  |                     |       | | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                                                       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               | |                           | |       ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("               +-+                           +-+       ", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("    this is because in the second case, graphics get accidentally", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("    projected onto the cube and hinder accurate object detection", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("Notes:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - the cube on the right is always the top sword", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - stacking swords in this        - stacking swords in this", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("    orientation works well:          orientation is buggy:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("              WORKS                     SORT OF WORKS  ", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("               +-+                           +-+       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        | | |  | |  |                     |       | | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("        +-+ +--| |--+                     +-------+ +-+", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                                                       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               | |                           | |       ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("               +-+                           +-+       ", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("    this is because in the second case, graphics get accidentally", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("    projected onto the cube and hinder accurate object detection", menuLeftCoordinate, menuHeight); menuHeight += 20;
 
         } else if (myHybridTokens->mode == DYNAMICALLY_CONSTRAINED_SWORDS) {
             menuHeight += 30;
-            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("  - try this starting arrangement:", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("    +-+ +-------+  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("    | | |       |  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("    +-+ +-------+  | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                      ", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   | |", 1, menuHeight); menuHeight += asciArtLineHeight;
-            ofDrawBitmapString("                   +-+", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("  - the cube on the left is always aligned to the x axis", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("  - the cube on the right is always aligned to the y axis", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("  - the cube on the right cannot slide left if this would cause sword collision", 1, menuHeight); menuHeight += 20;
-            ofDrawBitmapString("  - this application does NOT handle illegal scenarios intelligently", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("Notes:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - try this starting arrangement:", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("                   +-+", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    +-+ +-------+  | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    | | |       |  | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("    +-+ +-------+  | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                      ", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   | |", menuLeftCoordinate, menuHeight); menuHeight += asciArtLineHeight;
+            ofDrawBitmapString("                   +-+", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the left is always aligned to the x axis", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the right is always aligned to the y axis", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - the cube on the right cannot slide left if this would cause sword collision", menuLeftCoordinate, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("  - this application does NOT handle illegal scenarios intelligently", menuLeftCoordinate, menuHeight); menuHeight += 20;
 
         } else if (myHybridTokens->mode == VERTICAL_DEFORMATION_SWORDS) {
             menuHeight += 30;
-            ofDrawBitmapString("Notes:", 1, menuHeight); menuHeight += 30;
-            ofDrawBitmapString("  - the cube on the right is always the top sword", 1, menuHeight); menuHeight += 20;
+            ofDrawBitmapString("Notes:", menuLeftCoordinate, menuHeight); menuHeight += 30;
+            ofDrawBitmapString("  - the cube on the right is always the top sword", menuLeftCoordinate, menuHeight); menuHeight += 20;
         }
     }
 
@@ -365,15 +338,6 @@ void ReliefApplication::draw(){
     if (paintGraphics) {
         pinDisplayImage.draw(projectorOffsetX, RELIEF_PROJECTOR_OFFSET_Y, RELIEF_PROJECTOR_SCALED_SIZE_X, RELIEF_PROJECTOR_SCALED_SIZE_Y);
     }
-    
-    
-    //kinectTracker.draw(1, 306, 640, 480, 0, 0);
-   /* if (kinectTracker.fingers.size()>0) {
-        for (int i = 0; i<kinectTracker.fingers.size(); i++){
-            cout<< kinectTracker.fingers[i].x << " " << kinectTracker.fingers[i].y << " " << kinectTracker.fingers[i].z << endl;
-            //ofCircle(projectorOffsetX+(kinectTracker.fingers[i].x / RELIEF_PROJECTOR_SCALED_SIZE_X), RELIEF_PROJECTOR_OFFSET_Y+ (kinectTracker.fingers[i].y / RELIEF_PROJECTOR_SCALED_SIZE_Y), 10);
-        }
-    }*/
 }
 
 //--------------------------------------------------------------
@@ -392,24 +356,28 @@ void ReliefApplication::keyPressed(int key){
     if(key == KEY_LEFT) myCurrentRenderedObject->keyPressed(KEY_LEFT);
     if(key == KEY_RIGHT) myCurrentRenderedObject->keyPressed(KEY_RIGHT);
 
-    if(key == 'b') {
+    if(key == 'q') {
         myHybridTokens->setMode(BOOLEAN_SWORDS);
     }
 
-    if(key == 'n') {
+    if(key == 'w') {
         myHybridTokens->setMode(FLEXIBLE_SWORDS);
     }
 
-    if(key == 'm') {
+    if(key == 'e') {
         myHybridTokens->setMode(PHYSICS_SWORDS);
     }
 
-    if(key == 'j') {
+    if(key == 'r') {
         myHybridTokens->setMode(DYNAMICALLY_CONSTRAINED_SWORDS);
     }
 
-    if(key == 'k') {
+    if(key == 't') {
         myHybridTokens->setMode(VERTICAL_DEFORMATION_SWORDS);
+    }
+
+    if(key == ' ') {
+        paused = !paused;
     }
 
     if(key == 'z') {
@@ -420,17 +388,9 @@ void ReliefApplication::keyPressed(int key){
         paintGraphics = !paintGraphics;
     }
 
-    if(key == ' ') {
-        paused = !paused;
-    }
-
     // other keys
     if(key == 'p') {
         kinectTracker.saveDepthImage();
-    }
-    
-    if(key == 'r') {
-        show3DModel = !show3DModel;
     }
 }
 
