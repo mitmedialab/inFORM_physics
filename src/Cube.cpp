@@ -29,6 +29,7 @@ Cube::Cube() :
 {
     candidateUpdates.blob = NULL;
     candidateUpdates.hasMarker = false;
+    initialize();
 }
 
 Cube::Cube(Blob *_blob, bool _update) :
@@ -37,6 +38,7 @@ Cube::Cube(Blob *_blob, bool _update) :
 {
     candidateUpdates.hasMarker = false;
     setBlob(_blob, _update);
+    initialize();
 }
 
 Cube::Cube(Blob *_blob, ofPoint _marker, bool _update) :
@@ -44,6 +46,14 @@ Cube::Cube(Blob *_blob, ofPoint _marker, bool _update) :
     timeOfInitialization(clockInSeconds())
 {
     setBlobAndMarker(_blob, _marker, _update);
+    initialize();
+}
+
+void Cube::initialize() {
+    // initialize all recent theta values negative (for null)
+    for (int i = 0; i < recentThetaCandidatesLength; i++) {
+        recentThetaCandidates[i] = -1;
+    }
 }
 
 Cube::~Cube() {
@@ -153,14 +163,85 @@ void Cube::calculateCandidateUpdates() {
         }
     }
 
-    // adjust the cube angle appropriately
-    cand.theta = cand.rawTheta + (360 - 90 * cornerA) % 360;
+    // adjust the cube angle appropriately (applying a mod-90 angle hysteresis filter for marker noise)
+    float thetaCandidate = fmod(cand.rawTheta - 90 * cornerA + 360, 360);
+    cand.theta = thetaUsingMarkerHysteresis(thetaCandidate);
     cand.thetaRadians = cand.theta * pi / 180;
 
     // relative corner coordinates, determined by cycling indices of raw corners
     for (int i = 0; i < 4; i++) {
         cand.corners[i] = cand.rawCorners[(i + cornerA) % 4];
     }
+}
+
+// since theta angles are cyclic, with 0 == 360, find the degrees betweewn two angles
+float Cube::thetaDistance(float theta1, float theta2) {
+    // restrict angles to 0 <= theta < 360
+    theta1 = fmod(theta1, 360);
+    if (theta1 < 0) {
+        theta1 += 360;
+    }
+    theta2 = fmod(theta2, 360);
+    if (theta2 < 0) {
+        theta2 += 360;
+    }
+
+    float distance = abs(theta1 - theta2);
+    return distance < 180 ? distance : 360 - distance;
+}
+
+// since marker noise is common, track recent (marker-adjusted) theta values to guard against noise
+// and return the theta value that takes this history into account. Assume that sudden angle changes
+// of 90, 180, and 270 degrees are unlikely
+float Cube::thetaUsingMarkerHysteresis(float thetaCandidate) {
+    float selectedTheta;
+    
+    // enforce 0 <= thetaCandidate < 360
+    thetaCandidate = fmod(thetaCandidate, 360);
+    if (thetaCandidate < 0) {
+        thetaCandidate += 360;
+    }
+
+    // if the candidate theta shows no risk of a marker misdetection, accept it
+    if (thetaDistance(thetaCandidate, theta) < 70) {
+        selectedTheta = thetaCandidate;
+
+    // else, only accept the candidate theta if it matches recent history better than the current theta
+    } else {
+        int acceptanceRating = 0;
+        for (int i = 0; i < recentThetaCandidatesLength; i++) {
+            if (recentThetaCandidates[i] >= 0) {
+                if (thetaDistance(thetaCandidate, recentThetaCandidates[i]) < thetaDistance(theta, recentThetaCandidates[i])) {
+                    acceptanceRating++;
+                } else {
+                    acceptanceRating--;
+                }
+            }
+        }
+
+        // if the candidate is acceptable, use it
+        if (acceptanceRating > 0) {
+            selectedTheta = thetaCandidate;
+
+        // else, pick its rotation by 90 that best agrees with the current theta
+        } else {
+            if (thetaCandidate < theta) {
+                int numRotations = ((int) (theta - thetaCandidate) + 45) / 90;
+                selectedTheta = fmod(thetaCandidate + 90 * numRotations, 360);
+            } else {
+                int numRotations = ((int) (thetaCandidate - theta) + 45) / 90;
+                selectedTheta = fmod(thetaCandidate - 90 * numRotations + 360, 360);
+            }
+        }
+    }
+
+    // update candidate theta history with uncorrected value
+    for (int i = 0; i < recentThetaCandidatesLength - 1; i++) {
+        recentThetaCandidates[i + 1] = recentThetaCandidates[i];
+    }
+    recentThetaCandidates[0] = thetaCandidate;
+
+    return selectedTheta;
 }
 
 bool Cube::candidateUpdatesAreSignificant() {

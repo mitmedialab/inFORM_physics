@@ -87,8 +87,13 @@ public:
 
 private:
     CubeUpdatesBuffer candidateUpdates;
+    const static int recentThetaCandidatesLength = 5;
+    float recentThetaCandidates[recentThetaCandidatesLength];
 
+    void initialize();
     void calculateCandidateUpdates();
+    float thetaDistance(float theta1, float theta2);
+    float thetaUsingMarkerHysteresis(float thetaCandidate);
     bool candidateUpdatesAreSignificant();
 
 };
