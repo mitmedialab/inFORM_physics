@@ -5,6 +5,14 @@ ofxOpenCv
 ofxOsc
 ofxXmlSettings
 ofxAnimatable
+ofxBox2d
+ofxMovieExporter
 ofxMSAInteractiveObject
+ofxMSATimer
 ofxObjLoader
+ofxRange
 ofxSimpleGuiToo
+ofxTextInputField
+ofxTimecode
+ofxTween
+ofxUI
